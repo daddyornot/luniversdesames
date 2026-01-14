@@ -1,0 +1,47 @@
+import { Component, input, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { MatIconModule } from '@angular/material/icon';
+import {CartService} from '../../../services/cart';
+
+@Component({
+  selector: 'app-shop-item',
+  standalone: true,
+  imports: [RouterLink, MatIconModule],
+  template: `
+    <div class="group relative flex flex-col bg-white rounded-[2rem] p-3 shadow-sm border border-spirit-primary/5 transition-all hover:shadow-xl">
+      <div class="relative aspect-square overflow-hidden rounded-[1.5rem] bg-spirit-background">
+        <img [src]="product().image"
+             [routerLink]="['/boutique', product().id]"
+             class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 cursor-pointer">
+
+        <button class="absolute top-3 right-3 h-8 w-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md text-spirit-primary">
+          <mat-icon class="scale-75">favorite_border</mat-icon>
+        </button>
+      </div>
+
+      <div class="p-3 space-y-1">
+        <h3 class="font-serif text-lg text-spirit-primary truncate">{{ product().name }}</h3>
+        <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">{{ product().stone }}</p>
+
+        <div class="flex items-center justify-between pt-2">
+          <span class="text-xl font-bold text-spirit-primary">{{ product().price }}€</span>
+
+          <button (click)="addToCart($event)"
+                  class="h-10 w-10 flex items-center justify-center rounded-2xl bg-spirit-primary text-white shadow-lg shadow-spirit-primary/20 active:scale-90 transition-transform">
+            <mat-icon>add</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  `
+})
+export class ShopItem {
+  // Déclaration du signal d'entrée
+  product = input.required<any>();
+  private cartService = inject(CartService);
+
+  addToCart(event: Event) {
+    event.stopPropagation(); // Évite de naviguer vers le détail au clic sur le bouton
+    this.cartService.addToCart({ ...this.product(), quantity: 1 });
+  }
+}
