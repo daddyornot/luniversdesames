@@ -1,31 +1,53 @@
-<div class="min-h-screen bg-spirit-cream pb-20">
-  <header class="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50">
-    <h1 class="font-serif text-xl font-bold text-spirit-purple italic">L'Âme Zen</h1>
-    <button mat-icon-button>
-      <mat-icon>search</mat-icon>
-    </button>
+<div class="min-h-screen bg-spirit-cream">
+  <header class="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-spirit-primary/5">
+    <h1 class="font-serif text-xl font-bold text-spirit-primary italic tracking-tight">L'Univers des Âmes</h1>
+    <div class="flex gap-2">
+      <button mat-icon-button class="text-spirit-primary/70">
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
   </header>
 
-  <main class="p-4">
+  <main>
     <router-outlet></router-outlet>
   </main>
 
-  <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around py-3">
-    <a routerLink="/" class="flex flex-col items-center text-spirit-purple">
-      <mat-icon>home</mat-icon>
-      <span class="text-xs font-medium">Accueil</span>
+  <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-100 flex justify-around py-2 pb-6 z-50">
+
+    <a routerLink="/"
+       routerLinkActive="text-spirit-primary"
+       [routerLinkActiveOptions]="{exact: true}"
+       class="flex flex-col items-center transition-colors text-gray-400">
+      <mat-icon class="text-[28px]">home</mat-icon>
+      <span class="text-[10px] font-medium uppercase tracking-tighter">Accueil</span>
     </a>
-    <a routerLink="/shop" class="flex flex-col items-center text-gray-400">
-      <mat-icon>auto_awesome</mat-icon>
-      <span class="text-xs">Bracelets</span>
+
+    <a routerLink="/boutique"
+       routerLinkActive="text-spirit-primary"
+       class="flex flex-col items-center transition-colors text-gray-400">
+      <mat-icon class="text-[28px]">auto_awesome</mat-icon>
+      <span class="text-[10px] font-medium uppercase tracking-tighter">Bracelets</span>
     </a>
-    <a routerLink="/services" class="flex flex-col items-center text-gray-400">
-      <mat-icon>self_improvement</mat-icon>
-      <span class="text-xs">Soins</span>
+
+    <a routerLink="/accompagnement"
+       routerLinkActive="text-spirit-primary"
+       class="flex flex-col items-center transition-colors text-gray-400">
+      <mat-icon class="text-[28px]">self_improvement</mat-icon>
+      <span class="text-[10px] font-medium uppercase tracking-tighter">Soins</span>
     </a>
-    <a routerLink="/cart" class="flex flex-col items-center text-gray-400">
-      <mat-icon>shopping_bag</mat-icon>
-      <span class="text-xs text-spirit-gold">Panier</span>
+
+    <a routerLink="/panier"
+       routerLinkActive="text-spirit-primary"
+       class="relative flex flex-col items-center transition-colors text-gray-400">
+      <mat-icon class="text-[28px]">shopping_bag</mat-icon>
+      <span class="text-[10px] font-medium uppercase tracking-tighter">Panier</span>
+
+      @if (cartCount() > 0) {
+        <span class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-spirit-accent text-[10px] font-bold text-white ring-2 ring-white animate-in zoom-in">
+          {{ cartCount() }}
+        </span>
+      }
     </a>
+
   </nav>
 </div>

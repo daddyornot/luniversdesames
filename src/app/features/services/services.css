@@ -1,0 +1,18 @@
+@layer utilities {
+  .animate-slide-up {
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  /* Personnalisation du calendrier Material pour qu'il soit "Spirit" */
+  /*.mat-calendar {*/
+  /*  @apply font-sans;*/
+  /*}*/
+  /*.mat-calendar-body-selected {*/
+  /*  @apply bg-spirit-accent text-white !important;*/
+  /*}*/
+}

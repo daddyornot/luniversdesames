@@ -1,73 +1,78 @@
 <div class="space-y-12 pb-12">
 
-  <section class="relative h-[80vh] w-full flex items-center justify-center overflow-hidden">
-    <div class="absolute inset-0 z-0">
-      <img src="assets/images/hero-spirit.jpg" class="h-full w-full object-cover scale-105 animate-slow-zoom" alt="Zen Background">
-      <div class="absolute inset-0 bg-black/20"></div> </div>
-
-    <div class="relative z-10 text-center px-6">
-      <h2 class="font-serif text-4xl md:text-6xl text-white drop-shadow-lg">
-        Alignez votre <span class="italic">énergie</span>
-      </h2>
-      <p class="mt-4 text-white/90 font-light tracking-wide">Bracelets en pierres naturelles & Soins énergétiques</p>
-      <button class="mt-8 px-8 py-3 bg-white text-spirit-primary rounded-full font-medium shadow-xl active:scale-95 transition-transform">
-        Explorer la collection
-      </button>
-    </div>
-  </section>
-
-  <section class="px-6 flex justify-around">
-    <div class="flex flex-col items-center space-y-2">
-      <div class="w-16 h-16 rounded-full bg-spirit-leaf/20 flex items-center justify-center text-spirit-leaf">
-        <mat-icon size="large">auto_awesome</mat-icon>
-      </div>
-      <span class="text-xs font-semibold uppercase tracking-tighter">Bracelets</span>
-    </div>
-    <div class="flex flex-col items-center space-y-2">
-      <div class="w-16 h-16 rounded-full bg-spirit-primary/20 flex items-center justify-center text-spirit-primary">
-        <mat-icon>self_improvement</mat-icon>
-      </div>
-      <span class="text-xs font-semibold uppercase tracking-tighter">Soins</span>
-    </div>
-    <div class="flex flex-col items-center space-y-2">
-      <div class="w-16 h-16 rounded-full bg-spirit-accent/20 flex items-center justify-center text-spirit-accent">
-        <mat-icon>History_edu</mat-icon>
-      </div>
-      <span class="text-xs font-semibold uppercase tracking-tighter">Oracles</span>
-    </div>
-  </section>
-
-  <section class="pl-6">
-    <div class="flex justify-between items-end pr-6 mb-6">
-      <h3 class="font-serif text-2xl text-spirit-primary">Les Essentiels</h3>
-      <a href="#" class="text-sm text-spirit-accent border-b border-spirit-accent">Voir tout</a>
-    </div>
-
-    <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4">
-      @for (product of featuredBracelets(); track product.id) {
-        <div class="snap-center shrink-0 w-[70vw]">
-          <app-product-card [product]="product"></app-product-card>
+    <section class="relative h-[80vh] w-full flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0">
+            <img ngSrc="assets/images/viva-luna-studios-mnf5Q9nTkhs-unsplash.jpg" class="h-full w-full object-cover scale-105 animate-slow-zoom"
+                 alt="Zen Background" height="2071" width="2953">
+            <div class="absolute inset-0 bg-black/20"></div>
         </div>
-      }
-    </div>
-  </section>
 
-  <section class="px-6 py-10 bg-spirit-primary/5 rounded-3xl mx-4">
-    <div class="text-center mb-8">
-      <h3 class="font-serif text-2xl text-spirit-primary">Accompagnement Spirituel</h3>
-      <p class="text-sm text-gray-500 mt-2">Retrouvez votre équilibre intérieur</p>
-    </div>
-
-    <div class="space-y-4">
-      <div class="bg-white p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-spirit-leaf/10">
-        <div class="text-3xl">🧘‍♀️</div>
-        <div class="flex-1">
-          <h4 class="font-bold text-gray-800">Soin Reiki à distance</h4>
-          <p class="text-xs text-gray-500">1h de rééquilibrage énergétique</p>
+        <div class="relative z-10 text-center px-6">
+            <h2 class="font-serif text-4xl md:text-6xl text-white drop-shadow-lg">
+                Alignez votre <span class="italic">énergie</span>
+            </h2>
+            <p class="mt-4 text-white/90 font-light tracking-wide">Bracelets en pierres naturelles & Soins
+                énergétiques</p>
+            <button class="mt-8 px-8 py-3 bg-white text-spirit-primary rounded-full font-medium shadow-xl active:scale-95 transition-transform">
+                Explorer la collection
+            </button>
         </div>
-        <button mat-icon-button class="text-spirit-accent"><mat-icon>arrow_forward</mat-icon></button>
-      </div>
-    </div>
-  </section>
+    </section>
+
+    <section class="px-6 flex justify-around">
+        <div class="flex flex-col items-center space-y-2">
+            <div class="w-16 h-16 rounded-full bg-spirit-leaf/20 flex items-center justify-center text-spirit-leaf">
+                <mat-icon size="large">auto_awesome</mat-icon>
+            </div>
+            <span class="text-xs font-semibold uppercase tracking-tighter">Bracelets</span>
+        </div>
+        <div class="flex flex-col items-center space-y-2">
+            <div class="w-16 h-16 rounded-full bg-spirit-primary/20 flex items-center justify-center text-spirit-primary">
+                <mat-icon>self_improvement</mat-icon>
+            </div>
+            <span class="text-xs font-semibold uppercase tracking-tighter">Soins</span>
+        </div>
+        <div class="flex flex-col items-center space-y-2">
+            <div class="w-16 h-16 rounded-full bg-spirit-accent/20 flex items-center justify-center text-spirit-accent">
+                <mat-icon>History_edu</mat-icon>
+            </div>
+            <span class="text-xs font-semibold uppercase tracking-tighter">Oracles</span>
+        </div>
+    </section>
+
+    <section class="pl-6">
+        <div class="flex justify-between items-end pr-6 mb-6">
+            <h3 class="font-serif text-2xl text-spirit-primary">Les Essentiels</h3>
+            <a href="#" class="text-sm text-spirit-accent border-b border-spirit-accent">Voir tout</a>
+        </div>
+
+        <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4">
+            @for (product of bracelets(); track product.id) {
+                <div class="snap-center shrink-0 w-[70vw]">
+                    <app-shop-item [product]="product"></app-shop-item>
+                </div>
+            }
+        </div>
+    </section>
+
+    <section class="px-6 py-10 bg-spirit-primary/5 rounded-3xl mx-4">
+        <div class="text-center mb-8">
+            <h3 class="font-serif text-2xl text-spirit-primary">Accompagnement Spirituel</h3>
+            <p class="text-sm text-gray-500 mt-2">Retrouvez votre équilibre intérieur</p>
+        </div>
+
+        <div class="space-y-4">
+            <div class="bg-white p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-spirit-leaf/10">
+                <div class="text-3xl">🧘‍♀️</div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-gray-800">Soin Reiki à distance</h4>
+                    <p class="text-xs text-gray-500">1h de rééquilibrage énergétique</p>
+                </div>
+                <button mat-icon-button class="text-spirit-accent">
+                    <mat-icon>arrow_forward</mat-icon>
+                </button>
+            </div>
+        </div>
+    </section>
 
 </div>

@@ -1,1 +1,50 @@
-/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+@theme {
+  /* Couleurs personnalisées pour l'univers spirituel */
+  --color-spirit-background: #fdfbf7; /* Crème très doux */
+  /*--color-spirit-primary: #6d5b97;    !* Améthyste profond *!*/
+  --color-spirit-primary: #6e3126;    /* Améthyste profond */
+  --color-spirit-accent: #d4af37;     /* Or mat */
+  --color-spirit-leaf: #8da399;       /* Vert sauge */
+  /* Typographies */
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+
+  /* Animations douces pour les produits */
+  --animate-float: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Animation pour le Hero */
+@keyframes slow-zoom {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.1);
+  }
+}
+
+.animate-slow-zoom {
+  animation: slow-zoom 20s linear infinite alternate;
+}
+
+/* Masquer la scrollbar pour le carrousel tout en gardant le scroll */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
