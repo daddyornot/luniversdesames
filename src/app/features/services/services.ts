@@ -1,7 +1,9 @@
-import {Component, signal} from '@angular/core';
+import {Component, inject, Signal, signal, WritableSignal} from '@angular/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatIconModule} from '@angular/material/icon';
 import {MatNativeDateModule} from '@angular/material/core';
+import {ProductService} from '../../services/product/product';
+import {ProductDTO} from '../../core/models/ProductDTO';
 
 @Component({
   selector: 'app-services',
@@ -11,41 +13,32 @@ import {MatNativeDateModule} from '@angular/material/core';
   styleUrl: 'services.css'
 })
 export class Services {
+  private readonly service = inject(ProductService)
+
   // Données des Tirages
-  tirages = signal([
-    {id: 1, title: 'Tirage Flash (3 cartes)', price: 25, duration: '20 min'},
-    {id: 2, title: 'Grand Tirage Roue de l\'Année', price: 60, duration: '1h'}
-  ]);
+  // tirages = signal([
+  //   {id: 1, title: 'Tirage Flash (3 cartes)', price: 25, duration: '20 min'},
+  //   {id: 2, title: 'Grand Tirage Roue de l\'Année', price: 60, duration: '1h'}
+  // ]);
 
   // Données Coaching
-  coachingPack = signal([
-    {
-      id: 101,
-      title: 'Séance Renaissance',
-      price: 85,
-      description: 'Un voyage intérieur pour débloquer vos peurs et retrouver votre souveraineté.',
-      image: 'assets/images/wellness-285590_1280.jpg'
-    },
-    {
-      id: 102,
-      title: 'Séance Accompagnement',
-      price: 185,
-      description: 'Un voyage intérieur pour débloquer vos peurs et retrouver votre souveraineté.',
-      image: 'assets/images/pexels-ekaterina-bolovtsova-6766456.jpg'
-    }
-  ]);
+  coachingPack: Signal<ProductDTO[]> = this.service.services
 
   // Gestion de la sélection pour le RDV
-  selectedService = signal<any>(null);
+  selectedService = signal<ProductDTO | null>(null);
   selectedDate = signal<Date | null>(null);
 
-  openBooking(service: any) {
-    this.selectedService.set(service);
+  openCalendar = signal(false);
+
+  openBooking(service: ProductDTO) {
+    this.selectedService.set(service)
+    this.openCalendar.set(true);
   }
 
   confirmDate() {
-    console.log(`RDV confirmé pour ${this.selectedService().title} le ${this.selectedDate()}`);
+    console.log(`RDV confirmé pour ${this.selectedService()?.name} le ${this.selectedDate()}`);
     // Ici, tu pourras envoyer les infos vers Spring Boot plus tard
-    this.selectedService.set(null);
+    this.openCalendar.set(false);
+    this.selectedService.set(null)
   }
 }

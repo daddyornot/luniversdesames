@@ -1,10 +1,13 @@
 import {computed, effect, inject, Injectable, signal} from '@angular/core';
-import {CartItem} from '../core/models/cart';
+import {CartItem} from '../../core/models/cart';
+import {LocalStorageService} from '../../core/local-storage/local-storage';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
+  private readonly localStorageService = inject(LocalStorageService);
+
   // 1. L'état du panier (Privé pour ne pas le modifier directement de l'extérieur)
   private cartItems = signal<CartItem[]>([]);
 
@@ -22,7 +25,7 @@ export class CartService {
   constructor() {
     // 3. Persistance : Sauvegarde automatique en LocalStorage dès que le signal change
     effect(() => {
-      // localStorage.setItem('spirit_cart', JSON.stringify(this.cartItems()));
+      this.localStorageService.setItem('spirit_cart', JSON.stringify(this.cartItems()));
     });
   }
 
@@ -63,8 +66,8 @@ export class CartService {
     this.cartItems.set([]);
   }
 
-  // private loadFromStorage(): CartItem[] {
-  //   const saved = localStorage.getItem('spirit_cart');
-  //   return saved ? JSON.parse(saved) : [];
-  // }
+  private loadFromStorage(): CartItem[] {
+    const saved = this.localStorageService.getItem('spirit_cart');
+    return saved ? JSON.parse(saved) : [];
+  }
 }

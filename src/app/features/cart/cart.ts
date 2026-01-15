@@ -1,7 +1,7 @@
 import {Component, inject} from '@angular/core';
 import {CommonModule, NgOptimizedImage} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
-import {CartService} from '../../services/cart';
+import {CartService} from '../../services/cart/cart';
 import {RouterLink} from '@angular/router';
 
 @Component({

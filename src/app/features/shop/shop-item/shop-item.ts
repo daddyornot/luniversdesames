@@ -1,7 +1,7 @@
 import { Component, input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import {CartService} from '../../../services/cart';
+import {CartService} from '../../../services/cart/cart';
 
 @Component({
   selector: 'app-shop-item',

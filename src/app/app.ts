@@ -2,7 +2,7 @@ import {Component, inject} from '@angular/core';
 import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
 import {MatIconButton} from '@angular/material/button';
 import {MatIcon} from '@angular/material/icon';
-import {CartService} from "./services/cart";
+import {CartService} from "./services/cart/cart";
 
 @Component({
     selector: 'app-root',
