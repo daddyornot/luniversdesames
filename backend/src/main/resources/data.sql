@@ -1,5 +1,15 @@
 -- Suppression au cas où pour éviter les doublons si tu relances souvent
--- DELETE FROM product;
+-- CREATE TABLE IF NOT EXISTS PRODUCT (
+-- id bigint primary key not null auto_increment,
+-- name varchar(50),
+-- description text,
+-- price numeric,
+-- stone varchar(50),
+-- image_url varchar(200),
+-- category varchar(100)
+-- );
+
+DELETE FROM product;
 
 -- Insertion des Bracelets
 INSERT INTO product (name, description, price, stone, image_url, category)
