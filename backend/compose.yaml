@@ -3,9 +3,15 @@ services:
     image: 'postgres:latest'
     container_name: bdd-udl
     environment:
-      - 'POSTGRES_DB=udl'
-      - 'POSTGRES_PASSWORD=admin'
-      - 'POSTGRES_USER=admin'
+      POSTGRES_DB: jamify-uaa
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 15s
+      timeout: 2s
+      retries: 15
     ports:
       - "5432:5432"
     volumes:

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import {authGuard} from './core/guards/auth.guard';
 
 export const routes: Routes = [
   // Page d'accueil : Chargée immédiatement pour le SEO et la rapidité
@@ -7,6 +8,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home').then(m => m.Home),
     title: 'L\'Âme Zen - Accueil'
   },
+  {
+    path: 'auth',
+    loadComponent: () => import('./features/auth/auth').then(m => m.AuthComponent),
+    title: 'S\'authentifer'
+  },
+  // {
+  //   path: 'mon-compte',
+  //   component: MyAccountComponent,
+  //   canActivate: [authGuard] // Protection active
+  // },
 
   // // E-commerce : Les Bracelets
   {

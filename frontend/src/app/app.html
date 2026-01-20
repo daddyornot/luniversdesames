@@ -1,10 +1,47 @@
 <div class="min-h-screen bg-spirit-cream">
-  <header class="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-spirit-primary/5">
+  <header
+    class="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-spirit-primary/5">
     <h1 class="font-serif text-xl font-bold text-spirit-primary italic tracking-tight">L'Univers des Âmes</h1>
-    <div class="flex gap-2">
+    <div class="flex items-center gap-1">
       <button mat-icon-button class="text-spirit-primary/70">
         <mat-icon>search</mat-icon>
       </button>
+
+      <button mat-icon-button [matMenuTriggerFor]="profileMenu" class="text-spirit-primary/70">
+        @if (auth.isAuthenticated()) {
+          <mat-icon class="text-spirit-primary">account_circle</mat-icon>
+        } @else {
+          <mat-icon>person_outline</mat-icon>
+        }
+      </button>
+
+      <mat-menu #profileMenu="matMenu" xPosition="before" class="spirit-menu">
+        @if (auth.isAuthenticated()) {
+          <div class="px-4 py-2 border-b border-gray-50 mb-1">
+            <p class="text-[10px] uppercase tracking-widest text-gray-400">Mon Espace</p>
+            <p class="text-sm font-medium text-spirit-primary">{{ auth.currentUser()?.firstName }}</p>
+          </div>
+
+          <button mat-menu-item routerLink="/mon-compte/commandes">
+            <mat-icon>history</mat-icon>
+            <span>Mes commandes</span>
+          </button>
+
+          <button mat-menu-item (click)="logout()" class="text-red-500">
+            <mat-icon class="text-red-500">logout</mat-icon>
+            <span>Déconnexion</span>
+          </button>
+        } @else {
+          <button mat-menu-item routerLink="/auth">
+            <mat-icon>login</mat-icon>
+            <span>Se connecter</span>
+          </button>
+          <button mat-menu-item routerLink="/auth">
+            <mat-icon>person_add</mat-icon>
+            <span>Créer un compte</span>
+          </button>
+        }
+      </mat-menu>
     </div>
   </header>
 
@@ -12,7 +49,8 @@
     <router-outlet></router-outlet>
   </main>
 
-  <nav class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-100 flex justify-around py-2 pb-6 z-50">
+  <nav
+    class="fixed bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-100 flex justify-around py-2 pb-6 z-50">
 
     <a routerLink="/"
        routerLinkActive="text-spirit-primary"
@@ -43,7 +81,8 @@
       <span class="text-[10px] font-medium uppercase tracking-tighter">Panier</span>
 
       @if (cartCount() > 0) {
-        <span class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-spirit-accent text-[10px] font-bold text-white ring-2 ring-white animate-in zoom-in">
+        <span
+          class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-spirit-accent text-[10px] font-bold text-white ring-2 ring-white animate-in zoom-in">
           {{ cartCount() }}
         </span>
       }

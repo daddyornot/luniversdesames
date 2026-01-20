@@ -58,3 +58,16 @@
   --mdc-snackbar-container-color: #d32f2f; /* Rouge alerte */
   --mdc-snackbar-label-text-color: white;
 }
+
+/* Style pour le menu Material afin qu'il reste dans ton thème */
+.spirit-menu {
+  border-radius: 12px !important;
+  overflow: hidden;
+  border: 1px solid rgba(var(--color-spirit-primary), 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05) !important;
+}
+
+.mat-mdc-menu-item {
+  font-family: 'Inter', sans-serif !important; /* Ou ta police principale */
+  font-size: 14px !important;
+}

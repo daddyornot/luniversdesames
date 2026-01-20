@@ -3,7 +3,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatIconModule} from '@angular/material/icon';
 import {MatNativeDateModule} from '@angular/material/core';
 import {ProductService} from '../../services/product/product';
-import {ProductDTO} from '../../core/models/ProductDTO';
+import {Product} from '../../core/models/product';
 
 @Component({
   selector: 'app-services',
@@ -22,15 +22,15 @@ export class Services {
   // ]);
 
   // Données Coaching
-  coachingPack: Signal<ProductDTO[]> = this.service.services
+  coachingPack: Signal<Product[]> = this.service.services
 
   // Gestion de la sélection pour le RDV
-  selectedService = signal<ProductDTO | null>(null);
+  selectedService = signal<Product | null>(null);
   selectedDate = signal<Date | null>(null);
 
   openCalendar = signal(false);
 
-  openBooking(service: ProductDTO) {
+  openBooking(service: Product) {
     this.selectedService.set(service)
     this.openCalendar.set(true);
   }

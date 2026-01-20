@@ -1,7 +1,7 @@
 import {computed, inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {toSignal} from '@angular/core/rxjs-interop';
-import {ProductDTO} from '../../core/models/ProductDTO';
+import {Product} from '../../core/models/product';
 
 @Injectable({providedIn: 'root'})
 export class ProductService {
@@ -10,7 +10,7 @@ export class ProductService {
 
   // 1. On récupère les données du Back (Observable -> Signal)
   // On met une valeur initiale [] pour éviter que le signal soit 'undefined' au début
-  private productsSource = toSignal(this.http.get<ProductDTO[]>(this.apiUrl), {initialValue: []});
+  private productsSource = toSignal(this.http.get<Product[]>(this.apiUrl), {initialValue: []});
 
   // 2. On expose des signaux calculés (très performant)
   readonly allProducts = computed(() => this.productsSource());
