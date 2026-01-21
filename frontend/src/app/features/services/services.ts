@@ -1,4 +1,4 @@
-import {Component, inject, Signal, signal} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
 import {ProductService} from '../../services/product/product';
 import {Product} from '../../core/models/product';
@@ -14,19 +14,25 @@ import {CartItem} from '../../core/models/cart';
   templateUrl: './services.html',
   styleUrl: 'services.css'
 })
-export class Services {
+export class Services implements OnInit {
   private readonly service = inject(ProductService);
   private cartService = inject(CartService);
   private toast = inject(ToastService);
 
   // Données Coaching
-  coachingPack: Signal<Product[]> = this.service.services;
+  coachingPack = signal<Product[]>([]);
 
   // Gestion de la sélection pour le RDV
   selectedService = signal<Product | null>(null);
   selectedSlot = signal<string | null>(null); // Date ISO complète avec heure
 
   openCalendar = signal(false);
+
+  ngOnInit() {
+    this.service.getServices().subscribe(services => {
+      this.coachingPack.set(services);
+    });
+  }
 
   openBooking(service: Product) {
     this.selectedService.set(service);

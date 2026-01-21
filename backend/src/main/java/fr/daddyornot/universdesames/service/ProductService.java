@@ -1,6 +1,7 @@
 package fr.daddyornot.universdesames.service;
 
 import fr.daddyornot.universdesames.model.Product;
+import fr.daddyornot.universdesames.model.ProductType;
 import fr.daddyornot.universdesames.model.ProductVariant;
 import fr.daddyornot.universdesames.model.dto.ProductDTO;
 import fr.daddyornot.universdesames.model.dto.ProductVariantDTO;
@@ -19,6 +20,20 @@ public class ProductService {
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll()
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    public List<ProductDTO> getProductsByType(ProductType type) {
+        return productRepository.findByType(type)
+                .stream()
+                .map(this::mapToDTO)
+                .toList();
+    }
+
+    public List<ProductDTO> getServices() {
+        return productRepository.findByTypeNot(ProductType.PHYSICAL)
                 .stream()
                 .map(this::mapToDTO)
                 .toList();

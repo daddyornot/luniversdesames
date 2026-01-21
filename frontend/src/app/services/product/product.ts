@@ -1,7 +1,7 @@
 import {computed, inject, Injectable} from '@angular/core';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {Product} from '../../core/models/product';
-import {BehaviorSubject, switchMap, tap} from 'rxjs';
+import {BehaviorSubject, Observable, switchMap, tap} from 'rxjs';
 import {ApiService} from '../../core/services/api.service';
 
 @Injectable({providedIn: 'root'})
@@ -30,6 +30,14 @@ export class ProductService {
     return computed(() =>
       this.productsSource().find(p => p.id.toString() === id.toString())
     );
+  }
+
+  getProductsByType(type: string): Observable<Product[]> {
+    return this.api.get<Product[]>(`products?type=${type}`);
+  }
+
+  getServices(): Observable<Product[]> {
+    return this.api.get<Product[]>('products/services');
   }
 
   refresh() {

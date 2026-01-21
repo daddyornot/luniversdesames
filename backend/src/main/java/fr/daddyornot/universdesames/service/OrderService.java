@@ -25,7 +25,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final EmailService emailService; // Injection du service email
+    private final EmailService emailService;
 
     @Transactional
     public Order saveOrder(OrderRequest request, String userEmail) {
@@ -37,6 +37,12 @@ public class OrderService {
         order.setCustomerEmail(request.customerEmail());
         order.setCustomerName(request.customerName());
         order.setInvoiceNumber(generateInvoiceReference());
+        
+        // On fige l'adresse de facturation
+        order.setBillingAddress(user.getAddress());
+        order.setBillingCity(user.getCity());
+        order.setBillingPostalCode(user.getPostalCode());
+        order.setBillingCountry(user.getCountry());
 
         double total = 0;
 
@@ -58,15 +64,18 @@ public class OrderService {
         order.setTotalAmount(total);
         Order savedOrder = orderRepository.save(order);
 
-        // Envoi de l'email de confirmation
         try {
             sendOrderConfirmationEmail(savedOrder);
         } catch (MessagingException e) {
-            // Log l'erreur mais ne bloque pas la transaction
             System.err.println("Erreur lors de l'envoi de l'email de confirmation : " + e.getMessage());
         }
 
         return savedOrder;
+    }
+
+    public Order getOrderById(Long id) {
+        return orderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
     }
 
     private void sendOrderConfirmationEmail(Order order) throws MessagingException {

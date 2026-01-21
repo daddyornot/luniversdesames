@@ -15,3 +15,7 @@ spring:
 google:
   calendar:
     id: "primary"
+
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY} # Sera injecté par variable d'env ou Docker Secret
+  public-key: ${STRIPE_PUBLIC_KEY}

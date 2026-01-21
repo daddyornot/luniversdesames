@@ -1,6 +1,5 @@
-import { Routes } from '@angular/router';
+import {Routes} from '@angular/router';
 import {authGuard} from './core/guards/auth.guard';
-// import {adminGuard} from './core/guards/admin.guard'; // À réactiver quand vous aurez géré les rôles
 
 export const routes: Routes = [
   // Page d'accueil
@@ -15,28 +14,27 @@ export const routes: Routes = [
     title: 'S\'authentifer'
   },
 
-  // Administration (Nouveau)
-  {
-    path: 'admin',
-    // canActivate: [adminGuard], // Protection temporairement désactivée pour faciliter vos tests
-    children: [
-      {
-        path: '',
-        loadComponent: () => import('./features/admin/dashboard/admin-dashboard').then(m => m.AdminDashboard),
-        title: 'Administration'
-      },
-      {
-        path: 'product/new',
-        loadComponent: () => import('./features/admin/product-form/product-form').then(m => m.ProductForm),
-        title: 'Nouveau Produit'
-      },
-      {
-        path: 'product/:id',
-        loadComponent: () => import('./features/admin/product-form/product-form').then(m => m.ProductForm),
-        title: 'Modifier Produit'
-      }
-    ]
-  },
+  // Administration
+  // {
+  //   path: 'admin',
+  //   children: [
+  //     {
+  //       path: '',
+  //       loadComponent: () => import('./features/admin/dashboard/admin-dashboard').then(m => m.AdminDashboard),
+  //       title: 'Administration'
+  //     },
+  //     {
+  //       path: 'product/new',
+  //       loadComponent: () => import('./features/admin/product-form/product-form').then(m => m.ProductForm),
+  //       title: 'Nouveau Produit'
+  //     },
+  //     {
+  //       path: 'product/:id',
+  //       loadComponent: () => import('./features/admin/product-form/product-form').then(m => m.ProductForm),
+  //       title: 'Modifier Produit'
+  //     }
+  //   ]
+  // },
 
   // Espace Client
   {
@@ -76,11 +74,40 @@ export const routes: Routes = [
     title: 'Coaching & Guidance'
   },
 
-  // Panier
+  // Panier & Paiement
   {
     path: 'panier',
     loadComponent: () => import('./features/cart/cart').then(m => m.Cart),
     title: 'Mon Panier Spirituel'
+  },
+  {
+    path: 'checkout',
+    loadComponent: () => import('./features/cart/payment/payment').then(m => m.PaymentComponent),
+    canActivate: [authGuard],
+    title: 'Paiement Sécurisé'
+  },
+  {
+    path: 'checkout/success',
+    loadComponent: () => import('./features/cart/payment/payment-success').then(m => m.PaymentSuccessComponent),
+    canActivate: [authGuard],
+    title: 'Paiement Réussi'
+  },
+
+  // Pages Légales & Contact
+  {
+    path: 'mentions-legales',
+    loadComponent: () => import('./features/legal/legal-mentions/legal-mentions').then(m => m.LegalMentionsComponent),
+    title: 'Mentions Légales'
+  },
+  {
+    path: 'cgv',
+    loadComponent: () => import('./features/legal/cgv/cgv').then(m => m.CgvComponent),
+    title: 'Conditions Générales de Vente'
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./features/contact/contact').then(m => m.ContactComponent),
+    title: 'Contactez-nous'
   },
 
   { path: '**', redirectTo: '' }

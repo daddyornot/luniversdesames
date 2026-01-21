@@ -16,6 +16,7 @@ export interface Order {
   status: string;
   totalAmount: number;
   items: OrderItem[];
+  invoiceNumber?: string; // Utile pour le nom du fichier
 }
 
 export interface CreateOrderRequest {
@@ -40,5 +41,11 @@ export class OrderService {
 
   createOrder(order: CreateOrderRequest): Observable<any> {
     return this.api.post('orders', order);
+  }
+
+  downloadInvoice(orderId: number): Observable<Blob> {
+    return this.api.get(`orders/${orderId}/invoice`, {
+      responseType: 'blob'
+    });
   }
 }

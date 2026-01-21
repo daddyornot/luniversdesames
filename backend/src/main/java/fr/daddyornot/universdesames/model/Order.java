@@ -33,8 +33,16 @@ public class Order {
     @ManyToOne
     @JsonIgnore
     private User user;
+    
     private String customerEmail;
     private String customerName;
+    
+    // Adresse de facturation (figée à la commande)
+    private String billingAddress;
+    private String billingCity;
+    private String billingPostalCode;
+    private String billingCountry;
+
     private Double totalAmount;
     private LocalDateTime createdAt = LocalDateTime.now();
 

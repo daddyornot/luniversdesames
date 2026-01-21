@@ -2,10 +2,10 @@
 
     <section class="relative h-[80vh] w-full flex items-center justify-center overflow-hidden">
         <div class="absolute inset-0 z-0">
-            <img ngSrc="assets/images/viva-luna-studios-mnf5Q9nTkhs-unsplash.jpg"
-                 [priority]="true"
+            <!-- Remplacement de ngSrc par src standard pour éviter les warnings de ratio -->
+            <img src="assets/images/viva-luna-studios-mnf5Q9nTkhs-unsplash.jpg"
                  class="h-full w-full object-cover scale-105 animate-slow-zoom"
-                 alt="Zen Background" height="2071" width="2953">
+                 alt="Zen Background">
             <div class="absolute inset-0 bg-black/20"></div>
         </div>
 
@@ -31,7 +31,7 @@
     <section class="pl-6">
         <div class="flex justify-between items-end pr-6 mb-6">
             <h3 class="font-serif text-2xl text-spirit-primary">Les Essentiels</h3>
-            <a href="#" class="text-sm text-spirit-accent border-b border-spirit-accent">Voir tout</a>
+            <a routerLink="/boutique" class="text-sm text-spirit-accent border-b border-spirit-accent">Voir tout</a>
         </div>
 
         <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4">
@@ -56,7 +56,7 @@
                     <h4 class="font-bold text-gray-800">Soin Reiki à distance</h4>
                     <p class="text-xs text-gray-500">1h de rééquilibrage énergétique</p>
                 </div>
-                <button mat-icon-button class="text-spirit-accent">
+                <button mat-icon-button class="text-spirit-accent" routerLink="/accompagnement">
                     <mat-icon>arrow_forward</mat-icon>
                 </button>
             </div>

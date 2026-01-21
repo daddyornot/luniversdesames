@@ -40,7 +40,7 @@ public class AuthController {
         String jwt = jwtUtils.generateToken(authentication.getName());
         User user = (User) authentication.getPrincipal();
 
-        return ResponseEntity.ok(new AuthResponse(jwt, user.getEmail(), user.getFirstName()));
+        return ResponseEntity.ok(new AuthResponse(jwt, user.getEmail(), user.getFirstName(), user.getLastName()));
     }
 
     @GetMapping("/profile")

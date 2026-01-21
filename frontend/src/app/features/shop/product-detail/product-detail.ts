@@ -1,5 +1,5 @@
-import {Component, computed, inject, OnInit, signal} from '@angular/core';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {ChangeDetectionStrategy, Component, computed, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {ActivatedRoute, RouterLink} from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {ProductService} from '../../../services/product/product';
@@ -12,8 +12,9 @@ import {BookingCalendar} from '../booking-calendar/booking-calendar';
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterLink, NgOptimizedImage, BookingCalendar],
-  templateUrl: './product-detail.html'
+  imports: [CommonModule, MatIconModule, RouterLink, BookingCalendar],
+  templateUrl: './product-detail.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductDetail implements OnInit {
   private route = inject(ActivatedRoute);

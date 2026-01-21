@@ -70,6 +70,20 @@ export class ProfileComponent implements OnInit {
     });
   }
 
+  downloadInvoice(orderId: number, invoiceNumber?: string) {
+    this.orderService.downloadInvoice(orderId).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `facture-${invoiceNumber || orderId}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => this.toast.showError('Impossible de télécharger la facture')
+    });
+  }
+
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = {
       'PENDING': 'En attente',

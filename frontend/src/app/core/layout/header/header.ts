@@ -9,62 +9,7 @@ import {AuthService} from '../../auth/auth';
   selector: 'app-header',
   standalone: true,
   imports: [RouterLink, MatIconModule, MatButtonModule, MatMenuModule],
-  template: `
-    <header class="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-spirit-primary/5 transition-all duration-300">
-      <h1 routerLink="/" class="font-serif text-xl font-bold text-spirit-primary italic tracking-tight cursor-pointer select-none">
-        L'Univers des Âmes
-      </h1>
-
-      <div class="flex items-center gap-1">
-        <button mat-icon-button class="text-spirit-primary/70 hover:bg-spirit-primary/5 transition-colors">
-          <mat-icon>search</mat-icon>
-        </button>
-
-        <button mat-icon-button [matMenuTriggerFor]="profileMenu" class="text-spirit-primary/70 hover:bg-spirit-primary/5 transition-colors">
-          @if (auth.isAuthenticated()) {
-            <div class="h-6 w-6 rounded-full bg-spirit-primary text-white flex items-center justify-center text-xs font-bold">
-              {{ auth.currentUser()?.firstName?.charAt(0) }}
-            </div>
-          } @else {
-            <mat-icon>person_outline</mat-icon>
-          }
-        </button>
-
-        <mat-menu #profileMenu="matMenu" xPosition="before" class="spirit-menu">
-          @if (auth.isAuthenticated()) {
-            <div class="px-4 py-3 border-b border-gray-50 mb-1 bg-gray-50/50">
-              <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Mon Espace</p>
-              <p class="text-sm font-medium text-spirit-primary truncate max-w-[150px]">{{ auth.currentUser()?.firstName }}</p>
-            </div>
-
-            <button mat-menu-item routerLink="/mon-compte">
-              <mat-icon class="text-spirit-primary">person</mat-icon>
-              <span>Mon Profil</span>
-            </button>
-
-            <button mat-menu-item routerLink="/mon-compte/commandes">
-              <mat-icon class="text-spirit-primary">history</mat-icon>
-              <span>Mes commandes</span>
-            </button>
-
-            <button mat-menu-item (click)="logout()" class="!text-red-500 hover:!bg-red-50">
-              <mat-icon class="!text-red-500">logout</mat-icon>
-              <span>Déconnexion</span>
-            </button>
-          } @else {
-            <button mat-menu-item routerLink="/auth">
-              <mat-icon class="text-spirit-primary">login</mat-icon>
-              <span>Se connecter</span>
-            </button>
-            <button mat-menu-item routerLink="/auth">
-              <mat-icon class="text-spirit-primary">person_add</mat-icon>
-              <span>Créer un compte</span>
-            </button>
-          }
-        </mat-menu>
-      </div>
-    </header>
-  `
+  templateUrl: 'header.html'
 })
 export class HeaderComponent {
   auth = inject(AuthService);

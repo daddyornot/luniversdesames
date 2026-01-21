@@ -1,0 +1,73 @@
+<div class="flex justify-between items-center p-6 border-b border-gray-100">
+  <h2 class="text-xl font-bold text-gray-800 m-0">{{data ? 'Modifier' : 'Ajouter'}} un utilisateur</h2>
+  <button mat-icon-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col h-full">
+  <mat-dialog-content class="flex-1 p-6 overflow-y-auto max-h-[70vh]">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div class="col-span-1 md:col-span-2">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Informations personnelles</h3>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Prénom</mat-label>
+        <input matInput formControlName="firstName" placeholder="Ex: Jean">
+        <mat-error *ngIf="form.get('firstName')?.hasError('required')">Le prénom est requis</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nom</mat-label>
+        <input matInput formControlName="lastName" placeholder="Ex: Dupont">
+        <mat-error *ngIf="form.get('lastName')?.hasError('required')">Le nom est requis</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col-span-1 md:col-span-2 w-full">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" placeholder="Ex: jean@example.com" type="email">
+        <mat-error *ngIf="form.get('email')?.hasError('required')">L'email est requis</mat-error>
+        <mat-error *ngIf="form.get('email')?.hasError('email')">Email invalide</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Téléphone</mat-label>
+        <input matInput formControlName="phone" placeholder="Ex: 06 12 34 56 78">
+      </mat-form-field>
+
+      <div class="col-span-1 md:col-span-2 mt-4">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Adresse</h3>
+      </div>
+
+      <mat-form-field appearance="outline" class="col-span-1 md:col-span-2 w-full">
+        <mat-label>Adresse</mat-label>
+        <input matInput formControlName="address" placeholder="Ex: 12 rue de la Paix">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Code Postal</mat-label>
+        <input matInput formControlName="postalCode" placeholder="Ex: 75000">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Ville</mat-label>
+        <input matInput formControlName="city" placeholder="Ex: Paris">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Pays</mat-label>
+        <input matInput formControlName="country" placeholder="Ex: France">
+      </mat-form-field>
+
+    </div>
+  </mat-dialog-content>
+
+  <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
+    <button mat-button type="button" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+      {{data ? 'Enregistrer' : 'Créer'}}
+    </button>
+  </div>
+</form>

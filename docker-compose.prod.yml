@@ -1,0 +1,70 @@
+services:
+  # --- BACKEND ---
+  backend:
+    image: ${DOCKER_USERNAME}/universdesames-backend:latest
+    container_name: universdesames-backend
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      # Injection des secrets via variables d'environnement
+      - DB_URL=jdbc:postgresql://postgres:5432/universdesames
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      # Google Credentials (fichier monté)
+      - GOOGLE_CREDENTIALS_PATH=/app/secrets/google-credentials.json
+    volumes:
+      - ./secrets:/app/secrets # Montage des fichiers sensibles
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # --- DATABASE ---
+  postgres:
+    image: 'postgres:15-alpine'
+    container_name: universdesames-db
+    restart: always
+    environment:
+      POSTGRES_DB: universdesames
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${DB_USER}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+
+  # --- FRONTEND ---
+  frontend:
+    image: ${DOCKER_USERNAME}/universdesames-frontend:latest
+    container_name: universdesames-front
+    restart: always
+
+  # --- ADMIN ---
+  admin:
+    image: ${DOCKER_USERNAME}/universdesames-admin:latest
+    container_name: universdesames-admin
+    restart: always
+
+  # --- NGINX INTERNE ---
+  # Ce Nginx unifie les 3 services sur le port 8080 du serveur
+  # Votre Nginx Proxy Manager pointera vers CE conteneur sur le port 8080
+  nginx:
+    image: nginx:alpine
+    container_name: universdesames-internal-proxy
+    restart: always
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "8080:80" # Expose sur le port 8080 de l'hôte
+    depends_on:
+      - backend
+      - frontend
+      - admin
+
+volumes:
+  postgres_data_prod:

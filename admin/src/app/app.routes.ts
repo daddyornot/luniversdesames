@@ -32,11 +32,6 @@ export const routes: Routes = [
         path: 'users',
         loadComponent: () => import('./features/users/users').then(m => m.UsersComponent),
         title: 'Utilisateurs'
-      },
-      {
-        path: 'users/new',
-        loadComponent: () => import('./features/users/user-form/user-form').then(m => m.UserFormComponent),
-        title: 'Nouvel Utilisateur'
       }
     ]
   },

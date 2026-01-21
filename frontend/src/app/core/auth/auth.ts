@@ -21,7 +21,7 @@ export class AuthService {
       .pipe(
         tap(res => {
           this.localStorage.setItem('token', res.token);
-          const user: User = {email: res.email, firstName: res.firstName};
+          const user: User = {email: res.email, firstName: res.firstName, lastName: res.lastName};
           this.localStorage.setItem('user', user);
           this.currentUser.set(user);
         })

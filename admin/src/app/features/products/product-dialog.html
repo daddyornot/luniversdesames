@@ -1,0 +1,79 @@
+<div class="flex justify-between items-center p-6 border-b border-gray-100">
+  <h2 class="text-xl font-bold text-gray-800 m-0">{{data ? 'Modifier' : 'Ajouter'}} un produit</h2>
+  <button mat-icon-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col h-full">
+  <mat-dialog-content class="flex-1 p-6 overflow-y-auto max-h-[70vh]">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <!-- Basic Info -->
+      <div class="col-span-1 md:col-span-2">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Informations de base</h3>
+      </div>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Nom du produit</mat-label>
+        <input matInput formControlName="name" placeholder="Ex: Bracelet Améthyste">
+        <mat-error *ngIf="form.get('name')?.hasError('required')">Le nom est requis</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Type</mat-label>
+        <mat-select formControlName="type">
+          <mat-option value="PHYSICAL">Produit Physique</mat-option>
+          <mat-option value="SERVICE">Service</mat-option>
+          <mat-option value="SUBSCRIPTION">Abonnement</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col-span-1 md:col-span-2 w-full">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="3" placeholder="Description détaillée..."></textarea>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Prix (€)</mat-label>
+        <input matInput type="number" formControlName="price" min="0">
+        <mat-error *ngIf="form.get('price')?.hasError('required')">Le prix est requis</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Pierre associée</mat-label>
+        <input matInput formControlName="stone" placeholder="Ex: Améthyste">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="col-span-1 md:col-span-2 w-full">
+        <mat-label>URL de l'image</mat-label>
+        <input matInput formControlName="imageUrl" placeholder="https://...">
+      </mat-form-field>
+
+      <!-- Specific Fields based on Type -->
+      <ng-container *ngIf="form.get('type')?.value === 'SERVICE' || form.get('type')?.value === 'SUBSCRIPTION'">
+         <div class="col-span-1 md:col-span-2 mt-4">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Détails du service</h3>
+        </div>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nombre de séances</mat-label>
+          <input matInput type="number" formControlName="sessionCount" min="1">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Durée (mois)</mat-label>
+          <input matInput type="number" formControlName="durationMonths" min="1">
+        </mat-form-field>
+      </ng-container>
+
+    </div>
+  </mat-dialog-content>
+
+  <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
+    <button mat-button type="button" (click)="onCancel()">Annuler</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+      {{data ? 'Enregistrer' : 'Créer'}}
+    </button>
+  </div>
+</form>

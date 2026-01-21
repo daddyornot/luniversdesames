@@ -1,0 +1,42 @@
+services:
+  # --- INFRASTRUCTURE ---
+  
+  # Base de données
+  postgres:
+    image: 'postgres:latest'
+    container_name: universdesames-db
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Outil d'emailing
+  maildev:
+    image: maildev/maildev
+    container_name: universdesames-mail
+    ports:
+      - "1080:1080"
+      - "1025:1025"
+
+  # Reverse Proxy (Point d'entrée unique)
+  nginx:
+    image: nginx:alpine
+    container_name: universdesames-proxy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Permet à Nginx de voir votre PC
+
+volumes:
+  postgres_data:

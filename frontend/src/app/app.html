@@ -1,9 +1,11 @@
-<div class="min-h-screen bg-spirit-cream">
+<div class="min-h-screen bg-spirit-cream flex flex-col">
   <app-header></app-header>
 
-  <main>
+  <main class="flex-1">
     <router-outlet></router-outlet>
   </main>
 
+  <app-footer></app-footer>
   <app-bottom-nav></app-bottom-nav>
+  <app-cookie-banner></app-cookie-banner>
 </div>

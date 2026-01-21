@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, isDevMode} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
 export interface User {
@@ -16,7 +16,7 @@ export interface User {
 @Injectable({providedIn: 'root'})
 export class UserService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/users';
+  private apiUrl = isDevMode() ? 'http://localhost:8080/api/users' : '/api/users';
 
   getAllUsers() {
     return this.http.get<User[]>(this.apiUrl);

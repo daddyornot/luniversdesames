@@ -108,9 +108,17 @@
                   </div>
                   <p class="text-stone-600 text-sm mt-1 pl-4">{{ order.date | date:'dd MMMM yyyy à HH:mm' }}</p>
                 </div>
-                <span [class]="'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ' + getStatusColor(order.status)">
-                  {{ getStatusLabel(order.status) }}
-                </span>
+                <div class="flex flex-col items-end gap-2">
+                  <span [class]="'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ' + getStatusColor(order.status)">
+                    {{ getStatusLabel(order.status) }}
+                  </span>
+                  <!-- Bouton Facture -->
+                  <button (click)="downloadInvoice(order.id, order.invoiceNumber)"
+                          class="flex items-center gap-1 text-xs text-spirit-primary hover:underline font-medium bg-transparent border-none cursor-pointer">
+                    <mat-icon class="text-sm h-4 w-4">description</mat-icon>
+                    Facture
+                  </button>
+                </div>
               </div>
 
               <!-- Liste des articles -->
