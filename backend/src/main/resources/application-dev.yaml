@@ -19,4 +19,5 @@ spring:
 
 google:
   credentials:
-    path: "credentials.json" # Fichier local
+    # Chemin absolu pour être sûr en dev local
+    path: "C:/Users/damie/Documents/Developpement/universdesames/backend/credentials.json"

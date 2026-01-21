@@ -25,21 +25,28 @@
       Disponibilités pour le {{ selectedDate() | date:'dd MMMM' }}
     </p>
 
-    <div class="grid grid-cols-3 gap-3">
-      @for (slot of availableSlots(); track slot.start) {
-        <button (click)="slot.available && selectSlot(slot.start)"
-                [disabled]="!slot.available"
-                [class.bg-spirit-primary]="selectedSlot() === slot.start"
-                [class.text-white]="selectedSlot() === slot.start"
-                [class.bg-white]="selectedSlot() !== slot.start && slot.available"
-                [class.border-spirit-primary]="selectedSlot() === slot.start"
-                [class.border-stone-200]="selectedSlot() !== slot.start"
-                [class.opacity-40]="!slot.available"
-                [class.line-through]="!slot.available"
-                class="py-2 px-1 rounded-lg border text-sm font-medium transition-all hover:border-spirit-primary disabled:cursor-not-allowed">
-          {{ slot.start | date:'HH:mm' }}
-        </button>
-      }
-    </div>
+    @if (isLoading()) {
+      <div class="flex justify-center py-8">
+        <div class="h-6 w-6 border-2 border-spirit-primary border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    } @else if (availableSlots().length > 0) {
+      <div class="grid grid-cols-3 gap-3">
+        @for (slotIso of availableSlots(); track slotIso) {
+          <button (click)="selectSlot(slotIso)"
+                  [class.bg-spirit-primary]="selectedSlot() === slotIso"
+                  [class.text-white]="selectedSlot() === slotIso"
+                  [class.bg-white]="selectedSlot() !== slotIso"
+                  [class.border-spirit-primary]="selectedSlot() === slotIso"
+                  [class.border-stone-200]="selectedSlot() !== slotIso"
+                  class="py-2 px-1 rounded-lg border text-sm font-medium transition-all hover:border-spirit-primary active:scale-95">
+            {{ slotIso | date:'HH:mm' }}
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="text-center py-8 text-stone-400 text-sm italic bg-stone-50 rounded-xl border border-stone-100">
+        Aucun créneau disponible ce jour.
+      </div>
+    }
   </div>
 </div>

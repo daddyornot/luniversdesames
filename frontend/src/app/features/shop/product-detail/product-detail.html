@@ -2,11 +2,8 @@
   @if (product(); as p) {
     <!-- Image Header -->
     <div class="relative h-[50vh] w-full bg-spirit-background overflow-hidden rounded-b-[3rem] shadow-lg">
-      <!-- Remplacement de NgOptimizedImage par une balise img standard pour éviter les warnings de ratio -->
-      <!-- NgOptimizedImage est strict sur les ratios, ce qui est compliqué avec des images dynamiques de tailles variées -->
       <img [src]="p.imageUrl" class="h-full w-full object-cover" [alt]="p.name">
 
-      <!-- Bouton RETOUR amélioré -->
       <button routerLink="/boutique" class="absolute top-6 left-6 px-4 py-2 bg-white/90 backdrop-blur-md rounded-full flex items-center gap-2 text-spirit-primary shadow-md z-10 hover:bg-white transition-colors">
         <mat-icon class="text-sm">arrow_back</mat-icon>
         <span class="text-sm font-bold">Retour boutique</span>
@@ -25,7 +22,6 @@
             <h1 class="font-serif text-2xl text-spirit-primary">{{ p.name }}</h1>
             <p class="text-xs uppercase tracking-widest text-gray-400 font-bold mt-1">{{ p.stone }}</p>
           </div>
-          <!-- Prix dynamique -->
           <span class="text-2xl font-bold text-spirit-primary">{{ displayPrice() }}€</span>
         </div>
 
@@ -67,13 +63,18 @@
           </div>
         }
 
-        <!-- CALENDRIER DE RÉSERVATION (Pour tout ce qui n'est pas physique) -->
+        <!-- CALENDRIER DE RÉSERVATION -->
         @if (p.type !== 'PHYSICAL') {
           <div class="mb-8 animate-in fade-in slide-in-from-bottom-4">
             <h3 class="text-lg font-serif text-spirit-primary mb-2">
               {{ displaySessionCount() && displaySessionCount()! > 1 ? 'Réserver la 1ère séance' : 'Choisir un créneau' }}
             </h3>
-            <app-booking-calendar (slotSelected)="onSlotSelected($event)"></app-booking-calendar>
+            <!-- Passage du bufferTimeMinutes au composant -->
+            <app-booking-calendar
+                [bufferMinutes]="p.bufferTimeMinutes || 0"
+                (slotSelected)="onSlotSelected($event)">
+            </app-booking-calendar>
+
             @if (displaySessionCount() && displaySessionCount()! > 1) {
               <p class="text-xs text-gray-500 mt-2 italic">Les séances suivantes seront planifiées ultérieurement.</p>
             }

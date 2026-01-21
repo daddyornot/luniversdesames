@@ -19,4 +19,5 @@ export interface Product {
   sessionCount?: number;
   durationMonths?: number;
   variants?: ProductVariant[]; // Liste des variantes
+  bufferTimeMinutes?: number; // Temps de buffer en minutes
 }

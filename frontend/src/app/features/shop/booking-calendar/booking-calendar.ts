@@ -1,7 +1,7 @@
-import {Component, EventEmitter, inject, Output, signal} from '@angular/core';
+import {Component, EventEmitter, inject, Input, OnChanges, Output, signal, SimpleChanges} from '@angular/core';
 import {CommonModule, DatePipe} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
-import {BookingService, TimeSlot} from '../../../services/booking/booking';
+import {BookingService} from '../../../services/booking/booking.service';
 
 @Component({
   selector: 'app-booking-calendar',
@@ -9,38 +9,54 @@ import {BookingService, TimeSlot} from '../../../services/booking/booking';
   imports: [CommonModule, MatIconModule, DatePipe],
   templateUrl: './booking-calendar.html'
 })
-export class BookingCalendar {
+export class BookingCalendar implements OnChanges {
   private bookingService = inject(BookingService);
 
+  @Input() bufferMinutes: number = 0;
   @Output() slotSelected = new EventEmitter<string>();
 
   selectedDate = signal<Date>(new Date());
-  availableSlots = signal<TimeSlot[]>([]);
+  availableSlots = signal<string[]>([]);
   selectedSlot = signal<string | null>(null);
+  isLoading = signal(false);
 
   nextDays = signal<Date[]>(this.generateNextDays());
 
   constructor() {
-    // On charge les slots initiaux
     this.loadSlots(this.selectedDate());
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['bufferMinutes'] && !changes['bufferMinutes'].firstChange) {
+      this.loadSlots(this.selectedDate());
+    }
+  }
+
   selectDate(date: Date) {
-    console.log('Date sélectionnée:', date);
     this.selectedDate.set(date);
     this.selectedSlot.set(null);
     this.loadSlots(date);
   }
 
-  selectSlot(slotStart: string) {
-    this.selectedSlot.set(slotStart);
-    this.slotSelected.emit(slotStart);
+  selectSlot(slotIso: string) {
+    this.selectedSlot.set(slotIso);
+    this.slotSelected.emit(slotIso);
   }
 
   private loadSlots(date: Date) {
-    this.bookingService.getSlotsForDate(date).subscribe(slots => {
-      console.log('Créneaux reçus pour', date.toDateString(), slots);
-      this.availableSlots.set(slots);
+    this.isLoading.set(true);
+    const dateStr = date.toISOString().split('T')[0];
+
+    this.bookingService.getAvailableSlots(dateStr, this.bufferMinutes).subscribe({
+      next: (slots) => {
+        this.availableSlots.set(slots);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Erreur chargement créneaux', err);
+        this.availableSlots.set([]);
+        this.isLoading.set(false);
+      }
     });
   }
 

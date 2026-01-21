@@ -22,12 +22,12 @@ public class BookingController {
 
     @GetMapping("/slots")
     public ResponseEntity<List<String>> getAvailableSlots(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false, defaultValue = "0") Integer bufferMinutes) { // Nouveau paramètre
         
-        // On cherche les créneaux de 9h à 18h pour la date donnée
         LocalDateTime start = date.atTime(9, 0);
         LocalDateTime end = date.atTime(18, 0);
 
-        return ResponseEntity.ok(googleCalendarService.getAvailableSlots(start, end));
+        return ResponseEntity.ok(googleCalendarService.getAvailableSlots(start, end, bufferMinutes));
     }
 }

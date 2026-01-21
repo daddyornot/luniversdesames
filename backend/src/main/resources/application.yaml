@@ -2,7 +2,7 @@ spring:
   application:
     name: universdesames
   profiles:
-    active: dev # Profil par défaut = dev
+    active: dev
 
   jpa:
     hibernate:
@@ -14,8 +14,9 @@ spring:
 
 google:
   calendar:
-    id: "primary"
+    primary-id: ${GOOGLE_CALENDAR_PRIMARY_ID}
+    check-ids: ${GOOGLE_CALENDAR_CHECK_IDS}
 
 stripe:
-  secret-key: ${STRIPE_SECRET_KEY} # Sera injecté par variable d'env ou Docker Secret
+  secret-key: ${STRIPE_SECRET_KEY}
   public-key: ${STRIPE_PUBLIC_KEY}

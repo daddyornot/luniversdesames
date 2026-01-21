@@ -26,6 +26,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
+    private final GoogleCalendarService googleCalendarService;
 
     @Transactional
     public Order saveOrder(OrderRequest request, String userEmail) {
@@ -38,7 +39,6 @@ public class OrderService {
         order.setCustomerName(request.customerName());
         order.setInvoiceNumber(generateInvoiceReference());
         
-        // On fige l'adresse de facturation
         order.setBillingAddress(user.getAddress());
         order.setBillingCity(user.getCity());
         order.setBillingPostalCode(user.getPostalCode());
@@ -59,6 +59,19 @@ public class OrderService {
 
             order.getItems().add(orderItem);
             total += product.getPrice() * itemReq.quantity();
+
+            // Si c'est un service avec une date, on crée l'événement Google Calendar
+            if (itemReq.appointmentDate() != null) {
+                // On lance la création de l'événement de manière asynchrone (ou synchrone si on veut être sûr)
+                // Ici on le fait directement car createEvent gère ses exceptions
+                googleCalendarService.createEvent(
+                        "RDV : " + product.getName() + " - " + request.customerName(),
+                        "Réservation via Univers des Âmes.\nClient : " + request.customerName() + "\nEmail : " + request.customerEmail(),
+                        itemReq.appointmentDate(),
+                        itemReq.appointmentDate().plusHours(1), // Durée par défaut 1h, à affiner selon le produit
+                        request.customerEmail()
+                );
+            }
         }
 
         order.setTotalAmount(total);

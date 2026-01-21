@@ -13,6 +13,10 @@ services:
       - MAIL_USERNAME=${MAIL_USERNAME}
       - MAIL_PASSWORD=${MAIL_PASSWORD}
       - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
+      # Google Calendar IDs
+      - GOOGLE_CALENDAR_PRIMARY_ID=${GOOGLE_CALENDAR_PRIMARY_ID}
+      - GOOGLE_CALENDAR_CHECK_IDS=${GOOGLE_CALENDAR_CHECK_IDS}
       # Google Credentials (fichier monté)
       - GOOGLE_CREDENTIALS_PATH=/app/secrets/google-credentials.json
     volumes:
@@ -51,8 +55,6 @@ services:
     restart: always
 
   # --- NGINX INTERNE ---
-  # Ce Nginx unifie les 3 services sur le port 8080 du serveur
-  # Votre Nginx Proxy Manager pointera vers CE conteneur sur le port 8080
   nginx:
     image: nginx:alpine
     container_name: universdesames-internal-proxy
@@ -60,7 +62,7 @@ services:
     volumes:
       - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - "8080:80" # Expose sur le port 8080 de l'hôte
+      - "8080:80"
     depends_on:
       - backend
       - frontend
