@@ -1,0 +1,123 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ProductDialogComponent } from './product-dialog';
+import { Product, ProductService } from '../../core/services/product.service';
+
+@Component({
+  selector: 'app-products',
+  standalone: true,
+  imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatDialogModule],
+  template: `
+    <div class="p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Produits</h1>
+        <button mat-flat-button color="primary" (click)="openDialog()">
+          <mat-icon>add</mat-icon>
+          Ajouter un produit
+        </button>
+      </div>
+
+      <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <table mat-table [dataSource]="dataSource" class="w-full">
+
+          <!-- ID Column -->
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef> Ref. </th>
+            <td mat-cell *matCellDef="let element"> #{{element.id}} </td>
+          </ng-container>
+
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef> Nom </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="font-medium text-gray-900">{{element.name}}</div>
+              <div class="text-xs text-gray-500">{{element.type}}</div>
+            </td>
+          </ng-container>
+
+          <!-- Price Column -->
+          <ng-container matColumnDef="price">
+            <th mat-header-cell *matHeaderCellDef> Prix </th>
+            <td mat-cell *matCellDef="let element"> {{element.price | currency:'EUR'}} </td>
+          </ng-container>
+
+          <!-- Stone Column -->
+          <ng-container matColumnDef="stone">
+            <th mat-header-cell *matHeaderCellDef> Pierre </th>
+            <td mat-cell *matCellDef="let element"> {{element.stone || '-'}} </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Actions </th>
+            <td mat-cell *matCellDef="let element">
+              <button mat-icon-button color="primary" (click)="openDialog(element)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteProduct(element)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </div>
+  `
+})
+export class ProductsComponent implements OnInit {
+  displayedColumns: string[] = ['id', 'name', 'price', 'stone', 'actions'];
+  dataSource: Product[] = [];
+
+  constructor(
+    private dialog: MatDialog,
+    private productService: ProductService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  loadProducts(): void {
+    this.productService.getProducts().subscribe(products => {
+      this.dataSource = products;
+    });
+  }
+
+  openDialog(product?: Product): void {
+    const dialogRef = this.dialog.open(ProductDialogComponent, {
+      width: '600px',
+      data: product || null
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.id) {
+          this.productService.updateProduct(result.id, result).subscribe(() => {
+            this.loadProducts();
+          });
+        } else {
+          this.productService.createProduct(result).subscribe(() => {
+            this.loadProducts();
+          });
+        }
+      }
+    });
+  }
+
+  deleteProduct(product: Product): void {
+    if (confirm(`Êtes-vous sûr de vouloir supprimer ${product.name} ?`)) {
+      if (product.id) {
+        this.productService.deleteProduct(product.id).subscribe(() => {
+          this.loadProducts();
+        });
+      }
+    }
+  }
+}

@@ -1,11 +1,8 @@
 spring:
   application:
     name: universdesames
-  datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: postgres
-    driver-class-name: org.postgresql.Driver
+  profiles:
+    active: dev # Profil par défaut = dev
 
   jpa:
     hibernate:
@@ -17,6 +14,4 @@ spring:
 
 google:
   calendar:
-    id: "primary" # Ou l'ID spécifique de votre calendrier
-  credentials:
-    path: "credentials.json" # Chemin vers votre fichier JSON (à placer à la racine du projet ou dans resources)
+    id: "primary"

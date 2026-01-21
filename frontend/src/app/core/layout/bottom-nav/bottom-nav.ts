@@ -26,7 +26,14 @@ import {AuthService} from '../../auth/auth';
         <span class="text-[10px] font-medium uppercase tracking-tighter opacity-80">Bracelets</span>
       </a>
 
-      <!-- Lien Admin (visible uniquement si connecté, à affiner avec les rôles plus tard) -->
+      <a routerLink="/accompagnement"
+         routerLinkActive="text-spirit-primary scale-110"
+         class="group flex flex-col items-center transition-all duration-300 text-gray-400 hover:text-spirit-primary/70">
+        <mat-icon class="text-[28px] mb-0.5 transition-transform group-active:scale-90">self_improvement</mat-icon>
+        <span class="text-[10px] font-medium uppercase tracking-tighter opacity-80">Soins</span>
+      </a>
+
+      <!-- Lien Admin (visible uniquement si connecté) -->
       @if (auth.isAuthenticated()) {
         <a routerLink="/admin"
            routerLinkActive="text-spirit-primary scale-110"

@@ -10,4 +10,5 @@
     <include file="db/changelog/changes/20-01-change-category-to-enum.xml"/>
     <include file="db/changelog/changes/20-01-add-product-duration.xml"/>
     <include file="db/changelog/changes/20-01-add-product-variants.xml"/>
+    <include file="db/changelog/changes/20-01-add-user-details.xml"/>
 </databaseChangeLog>

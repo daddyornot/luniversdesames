@@ -9,6 +9,7 @@ import fr.daddyornot.universdesames.model.dto.OrderRequest;
 import fr.daddyornot.universdesames.repository.OrderRepository;
 import fr.daddyornot.universdesames.repository.ProductRepository;
 import fr.daddyornot.universdesames.repository.UserRepository;
+import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +25,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService; // Injection du service email
 
     @Transactional
     public Order saveOrder(OrderRequest request, String userEmail) {
@@ -45,15 +48,41 @@ public class OrderService {
             orderItem.setProductId(product.getId());
             orderItem.setProductName(product.getName());
             orderItem.setQuantity(itemReq.quantity());
-            orderItem.setPriceAtPurchase(product.getPrice()); // On prend le prix du Back
-            orderItem.setAppointmentDate(itemReq.appointmentDate()); // On sauvegarde la date du RDV
+            orderItem.setPriceAtPurchase(product.getPrice());
+            orderItem.setAppointmentDate(itemReq.appointmentDate());
 
             order.getItems().add(orderItem);
             total += product.getPrice() * itemReq.quantity();
         }
 
         order.setTotalAmount(total);
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        // Envoi de l'email de confirmation
+        try {
+            sendOrderConfirmationEmail(savedOrder);
+        } catch (MessagingException e) {
+            // Log l'erreur mais ne bloque pas la transaction
+            System.err.println("Erreur lors de l'envoi de l'email de confirmation : " + e.getMessage());
+        }
+
+        return savedOrder;
+    }
+
+    private void sendOrderConfirmationEmail(Order order) throws MessagingException {
+        Map<String, Object> templateModel = Map.of(
+                "customerName", order.getCustomerName(),
+                "orderNumber", order.getInvoiceNumber(),
+                "items", order.getItems(),
+                "totalAmount", String.format("%.2f", order.getTotalAmount())
+        );
+
+        emailService.sendHtmlEmail(
+                order.getCustomerEmail(),
+                "Confirmation de votre commande #" + order.getInvoiceNumber(),
+                "order-confirmation.html",
+                templateModel
+        );
     }
 
     public List<Order> getOrdersByUser(String userEmail) {
@@ -66,6 +95,5 @@ public class OrderService {
         LocalDateTime now = LocalDateTime.now();
         String datePart = now.format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
         return "INV-" + datePart;
-        // Résultat : INV-20260116-173522 (Unique et triable par date)
     }
 }

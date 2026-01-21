@@ -1,0 +1,88 @@
+import {Component, inject} from '@angular/core';
+import {RouterLink, RouterLinkActive, RouterOutlet} from '@angular/router';
+import {MatIconModule} from '@angular/material/icon';
+import {AuthService} from '../../core/auth/auth.service';
+
+@Component({
+  selector: 'app-layout',
+  standalone: true,
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule],
+  template: `
+    <div class="flex h-screen bg-admin-bg">
+      <!-- Sidebar -->
+      <aside class="w-64 bg-admin-dark text-white flex flex-col shadow-xl z-20">
+        <div class="p-6 border-b border-white/10">
+          <h1 class="text-xl font-bold tracking-tight flex items-center gap-2">
+            <mat-icon class="text-admin-primary">admin_panel_settings</mat-icon>
+            Admin Panel
+          </h1>
+        </div>
+
+        <nav class="flex-1 p-4 space-y-2">
+          <a routerLink="/"
+             routerLinkActive="bg-white/10 text-admin-primary border-r-4 border-admin-primary"
+             [routerLinkActiveOptions]="{exact: true}"
+             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-all">
+            <mat-icon>dashboard</mat-icon>
+            Dashboard
+          </a>
+
+          <a routerLink="/orders"
+             routerLinkActive="bg-white/10 text-admin-primary border-r-4 border-admin-primary"
+             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-all">
+            <mat-icon>shopping_cart</mat-icon>
+            Commandes
+          </a>
+
+          <a routerLink="/products"
+             routerLinkActive="bg-white/10 text-admin-primary border-r-4 border-admin-primary"
+             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-all">
+            <mat-icon>inventory_2</mat-icon>
+            Produits
+          </a>
+
+          <a routerLink="/users"
+             routerLinkActive="bg-white/10 text-admin-primary border-r-4 border-admin-primary"
+             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-all">
+            <mat-icon>people</mat-icon>
+            Utilisateurs
+          </a>
+
+          <a routerLink="/calendar"
+             routerLinkActive="bg-white/10 text-admin-primary border-r-4 border-admin-primary"
+             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5 hover:text-white transition-all">
+            <mat-icon>calendar_month</mat-icon>
+            Agenda
+          </a>
+        </nav>
+
+        <div class="p-4 border-t border-white/10">
+          <button (click)="auth.logout()" class="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-red-400 hover:bg-red-500/10 transition-all">
+            <mat-icon>logout</mat-icon>
+            Déconnexion
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 overflow-auto relative">
+        <!-- Header Mobile / Topbar (Optionnel) -->
+        <header class="bg-white h-16 shadow-sm flex items-center justify-between px-6 sticky top-0 z-10">
+          <h2 class="text-gray-500 font-medium">
+            {{ auth.currentUser()?.firstName }}
+          </h2>
+          <div class="h-8 w-8 rounded-full bg-admin-primary text-white flex items-center justify-center font-bold">
+            {{ auth.currentUser()?.firstName?.charAt(0) }}
+          </div>
+        </header>
+
+        <div class="p-8">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+    </div>
+  `
+})
+export class LayoutComponent {
+  auth = inject(AuthService);
+}

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.time.LocalDateTime;
 
@@ -41,14 +42,18 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    // Erreur générique (le "filet de sécurité")
+    // Pour éviter que Swagger ne soit bloqué par le handler générique s'il y a un souci interne mineur
+    // ou pour logger la vraie erreur
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, HttpServletRequest request) {
+        // Log de l'erreur pour le développeur (indispensable pour comprendre le 500 sur /v3/api-docs)
+        ex.printStackTrace();
+
         ErrorResponse error = new ErrorResponse(
             LocalDateTime.now(),
             HttpStatus.INTERNAL_SERVER_ERROR.value(),
             "Server Error",
-            "Une erreur inattendue est survenue",
+            "Une erreur inattendue est survenue : " + ex.getMessage(), // On affiche le message pour le debug
             request.getRequestURI()
         );
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);

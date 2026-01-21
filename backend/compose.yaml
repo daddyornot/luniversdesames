@@ -3,10 +3,9 @@ services:
     image: 'postgres:latest'
     container_name: bdd-udl
     environment:
-      POSTGRES_DB: jamify-uaa
+      POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 15s
@@ -16,6 +15,14 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  maildev:
+    image: maildev/maildev
+    container_name: maildev-udl
+    ports:
+      - "1080:1080" # Interface Web
+      - "1025:1025" # Serveur SMTP
+    restart: always
 
 volumes:
   postgres_data:

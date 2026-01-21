@@ -1,0 +1,72 @@
+import {Component, inject, signal} from '@angular/core';
+import {FormsModule} from '@angular/forms';
+import {AuthService} from '../../../core/auth/auth.service';
+import {MatIconModule} from '@angular/material/icon';
+
+@Component({
+  selector: 'app-login',
+  standalone: true,
+  imports: [FormsModule, MatIconModule],
+  template: `
+    <div class="min-h-screen flex items-center justify-center bg-admin-dark">
+      <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="text-center mb-8">
+          <div class="h-16 w-16 bg-admin-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <mat-icon class="text-3xl text-admin-primary scale-150">admin_panel_settings</mat-icon>
+          </div>
+          <h1 class="text-2xl font-bold text-gray-800">Administration</h1>
+          <p class="text-gray-500 text-sm">Connectez-vous pour gérer votre univers.</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="space-y-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input [(ngModel)]="email" name="email" type="email" required
+                   class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-admin-primary/20 focus:border-admin-primary outline-none transition-all">
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Mot de passe</label>
+            <input [(ngModel)]="password" name="password" type="password" required
+                   class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-admin-primary/20 focus:border-admin-primary outline-none transition-all">
+          </div>
+
+          @if (error()) {
+            <div class="p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2">
+              <mat-icon class="text-sm">error</mat-icon>
+              {{ error() }}
+            </div>
+          }
+
+          <button type="submit" [disabled]="isLoading()"
+                  class="w-full py-3 bg-admin-primary text-white rounded-lg font-bold shadow-lg shadow-admin-primary/30 hover:bg-blue-600 transition-all disabled:opacity-50 flex justify-center items-center gap-2">
+            @if (isLoading()) {
+              <div class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            }
+            Se connecter
+          </button>
+        </form>
+      </div>
+    </div>
+  `
+})
+export class LoginComponent {
+  private auth = inject(AuthService);
+
+  email = '';
+  password = '';
+  isLoading = signal(false);
+  error = signal('');
+
+  onSubmit() {
+    this.isLoading.set(true);
+    this.error.set('');
+
+    this.auth.login(this.email, this.password).subscribe({
+      error: () => {
+        this.error.set('Identifiants incorrects');
+        this.isLoading.set(false);
+      }
+    });
+  }
+}

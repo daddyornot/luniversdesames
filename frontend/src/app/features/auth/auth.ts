@@ -25,7 +25,12 @@ export class AuthComponent {
     email: '',
     password: '',
     firstName: '',
-    lastName: ''
+    lastName: '',
+    phone: '',
+    address: '',
+    city: '',
+    postalCode: '',
+    country: ''
   };
 
   toggleMode() {
@@ -60,7 +65,6 @@ export class AuthComponent {
       next: () => {
         this.toast.showSuccess('Compte créé avec succès. Vous pouvez vous connecter.');
         this.mode.set('login');
-        this.router.navigate(['/']);
         this.isLoading.set(false);
       },
       error: (err) => {

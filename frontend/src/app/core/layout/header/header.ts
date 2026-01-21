@@ -37,6 +37,11 @@ import {AuthService} from '../../auth/auth';
               <p class="text-sm font-medium text-spirit-primary truncate max-w-[150px]">{{ auth.currentUser()?.firstName }}</p>
             </div>
 
+            <button mat-menu-item routerLink="/mon-compte">
+              <mat-icon class="text-spirit-primary">person</mat-icon>
+              <span>Mon Profil</span>
+            </button>
+
             <button mat-menu-item routerLink="/mon-compte/commandes">
               <mat-icon class="text-spirit-primary">history</mat-icon>
               <span>Mes commandes</span>

@@ -34,10 +34,17 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     @JsonIgnore
-    private String password; // Sera stocké haché (BCrypt)
+    private String password;
 
     private String firstName;
     private String lastName;
+    
+    // Infos E-commerce
+    private String phone;
+    private String address;
+    private String city;
+    private String postalCode;
+    private String country;
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore

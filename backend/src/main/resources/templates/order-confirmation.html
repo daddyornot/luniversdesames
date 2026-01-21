@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Confirmation de commande</title>
+    <style>
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px; }
+        .header { text-align: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        .header h1 { color: #8b5cf6; margin: 0; font-family: 'Georgia', serif; font-style: italic; }
+        .order-details { background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0; }
+        .item { display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding: 10px 0; }
+        .item:last-child { border-bottom: none; }
+        .total { font-weight: bold; text-align: right; font-size: 1.2em; margin-top: 10px; color: #8b5cf6; }
+        .footer { text-align: center; font-size: 0.8em; color: #999; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>L'Univers des Âmes</h1>
+        <p>Merci pour votre commande !</p>
+    </div>
+
+    <p>Bonjour <strong th:text="${customerName}">Client</strong>,</p>
+    <p>Nous avons bien reçu votre commande <strong>#<span th:text="${orderNumber}">12345</span></strong>.</p>
+    <p>Voici le récapitulatif de vos achats :</p>
+
+    <div class="order-details">
+        <div class="item" th:each="item : ${items}">
+            <div>
+                <span th:text="${item.productName}">Produit</span>
+                <span style="font-size: 0.8em; color: #666;" th:if="${item.quantity > 1}"> (x<span th:text="${item.quantity}">1</span>)</span>
+            </div>
+            <span th:text="${item.priceAtPurchase} + '€'">25€</span>
+        </div>
+        <div class="total">
+            Total : <span th:text="${totalAmount}">50</span>€
+        </div>
+    </div>
+
+    <p>Nous préparons votre commande avec soin et amour. Vous recevrez un nouvel email dès son expédition.</p>
+
+    <div class="footer">
+        <p>L'Univers des Âmes - Soins & Créations Énergétiques</p>
+        <p>Si vous avez des questions, n'hésitez pas à nous répondre.</p>
+    </div>
+</div>
+</body>
+</html>
