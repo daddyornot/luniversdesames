@@ -10,11 +10,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
+
+google:
+  calendar:
+    id: "primary" # Ou l'ID spécifique de votre calendrier
+  credentials:
+    path: "credentials.json" # Chemin vers votre fichier JSON (à placer à la racine du projet ou dans resources)

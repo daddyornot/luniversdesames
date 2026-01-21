@@ -5,33 +5,7 @@
     <p class="text-sm text-gray-500 mt-2 font-light">Trouvez les réponses et la clarté dont vous avez besoin.</p>
   </header>
 
-  <section class="px-6">
-    <div class="flex items-center gap-3 mb-4">
-      <span class="p-2 bg-spirit-accent/10 rounded-lg text-spirit-accent">
-        <mat-icon>auto_stories</mat-icon>
-      </span>
-      <h3 class="font-serif text-xl">Tirages de Cartes</h3>
-    </div>
-
-<!--    <div class="grid gap-4">-->
-<!--      @for (tirage of tirages(); track tirage.id) {-->
-<!--        <div-->
-<!--          class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex justify-between items-center group active:scale-[0.98] transition-all">-->
-<!--          <div class="space-y-1">-->
-<!--            <h4 class="font-bold text-gray-800">{{ tirage.title }}</h4>-->
-<!--            <p class="text-xs text-gray-500">{{ tirage.duration }} • PDF ou Visio</p>-->
-<!--            <span class="inline-block text-spirit-primary font-semibold">{{ tirage.price }}€</span>-->
-<!--          </div>-->
-<!--          <button (click)="openBooking(tirage)"-->
-<!--                  class="bg-spirit-background p-3 rounded-full text-spirit-accent group-hover:bg-spirit-accent group-hover:text-white transition-colors">-->
-<!--            <mat-icon>calendar_month</mat-icon>-->
-<!--          </button>-->
-<!--        </div>-->
-<!--      }-->
-<!--    </div>-->
-  </section>
-
-  <section class="px-6 py-8 bg-spirit-primary/5">
+  <section class="px-6 py-8 bg-spirit-primary/5 rounded-3xl mx-4">
     <div class="flex items-center gap-3 mb-6">
       <span class="p-2 bg-spirit-primary/10 rounded-lg text-spirit-primary">
         <mat-icon>psychology_alt</mat-icon>
@@ -54,32 +28,49 @@
             <div class="mt-6 flex items-center justify-between">
               <div>
                 <span class="text-2xl font-serif text-spirit-primary">{{ coach.price }}€</span>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest">La séance d'1h30</p>
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest">La séance</p>
               </div>
               <button (click)="openBooking(coach)"
-                      class="px-6 py-3 bg-spirit-primary text-white rounded-xl text-sm font-medium shadow-lg">
+                      class="px-6 py-3 bg-spirit-primary text-white rounded-xl text-sm font-medium shadow-lg active:scale-95 transition-transform">
                 Réserver
               </button>
             </div>
           </div>
         </div>
+      } @empty {
+        <p class="text-center text-gray-400 italic py-8">Aucun soin disponible pour le moment.</p>
       }
     </div>
   </section>
 
+  <!-- MODALE DE RÉSERVATION -->
   @if (openCalendar()) {
-    <div class="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end">
-      <div class="w-full bg-white rounded-t-[32px] p-8 animate-slide-up">
-        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
-        <h3 class="font-serif text-xl text-center">Choisir votre moment</h3>
-        <p class="text-center text-xs text-gray-400 mb-6">Session : {{ selectedService()?.name }}</p>
+    <div class="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end sm:items-center sm:justify-center" (click)="closeBooking()">
+      <!-- Contenu Modale (stop propagation pour ne pas fermer au clic dedans) -->
+      <div class="w-full sm:w-[400px] bg-white rounded-t-[32px] sm:rounded-[32px] p-6 animate-slide-up sm:animate-in sm:zoom-in-95 shadow-2xl max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
 
-        <div class="bg-spirit-background rounded-2xl p-2 mb-6">
-          <mat-calendar [(selected)]="selectedDate"></mat-calendar>
+        <!-- Poignée mobile -->
+        <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 sm:hidden"></div>
+
+        <div class="flex justify-between items-center mb-4">
+          <div>
+            <h3 class="font-serif text-xl text-spirit-primary">Choisir un créneau</h3>
+            <p class="text-xs text-gray-400">{{ selectedService()?.name }}</p>
+          </div>
+          <button (click)="closeBooking()" class="p-2 bg-gray-50 rounded-full text-gray-400 hover:bg-gray-100">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
 
-        <button (click)="confirmDate()" class="w-full py-4 bg-spirit-accent text-white rounded-2xl font-bold shadow-xl">
-          Confirmer le rendez-vous
+        <!-- Calendrier -->
+        <div class="mb-6">
+          <app-booking-calendar (slotSelected)="onSlotSelected($event)"></app-booking-calendar>
+        </div>
+
+        <button (click)="confirmBooking()"
+                [disabled]="!selectedSlot()"
+                class="w-full py-4 bg-spirit-accent text-white rounded-2xl font-bold shadow-xl shadow-spirit-accent/20 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          {{ selectedSlot() ? 'Confirmer et ajouter au panier' : 'Veuillez choisir une heure' }}
         </button>
       </div>
     </div>

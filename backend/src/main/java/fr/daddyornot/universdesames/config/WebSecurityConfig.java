@@ -25,14 +25,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter jwtFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+            .cors(Customizer.withDefaults()) // Activation explicite de CORS dans Spring Security
             .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry
 //                                .requestMatchers(HttpMethod.DELETE).hasRole("ADMIN")
 //                                .requestMatchers("/admin/**").hasAnyRole("ADMIN")
 //                                .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
-                    .requestMatchers("/api/auth/**", "/api/products/**").permitAll()
+                    .requestMatchers("/api/auth/**", "/api/products/**", "/api/booking/**").permitAll()
                     .anyRequest().authenticated())
 //                                .anyRequest().permitAll())
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)

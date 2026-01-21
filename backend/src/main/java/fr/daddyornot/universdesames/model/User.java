@@ -1,5 +1,6 @@
 package fr.daddyornot.universdesames.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,12 +33,14 @@ public class User implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password; // Sera stocké haché (BCrypt)
 
     private String firstName;
     private String lastName;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
 
     @Override

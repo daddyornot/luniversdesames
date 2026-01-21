@@ -1,5 +1,8 @@
 package fr.daddyornot.universdesames.model.dto;
 
+import fr.daddyornot.universdesames.model.ProductType;
+import java.util.List;
+
 public record ProductDTO(
         Long id,
         String name,
@@ -7,5 +10,8 @@ public record ProductDTO(
         Double price,
         String stone,
         String imageUrl,
-        String category
+        ProductType type,
+        Integer sessionCount,
+        Integer durationMonths,
+        List<ProductVariantDTO> variants
 ) {}

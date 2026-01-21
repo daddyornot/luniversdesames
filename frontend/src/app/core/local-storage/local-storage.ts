@@ -8,37 +8,44 @@ export class LocalStorageService {
   private isBrowser: boolean;
 
   constructor(@Inject(PLATFORM_ID) platformId: Object) {
-    // On vérifie une seule fois au démarrage si on est côté client
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  // Stocker une donnée (convertit automatiquement les objets en JSON)
   setItem(key: string, value: any): void {
-    if (this.isBrowser) {
+    if (!this.isBrowser) return;
+    try {
       const serializedValue = typeof value === 'string' ? value : JSON.stringify(value);
       localStorage.setItem(key, serializedValue);
+    } catch (e) {
+      console.error('Error saving to localStorage', e);
     }
   }
 
-  // Récupérer une donnée
   getItem(key: string): string | null {
-    if (this.isBrowser) {
+    if (!this.isBrowser) return null;
+    try {
       return localStorage.getItem(key);
+    } catch (e) {
+      console.error('Error reading from localStorage', e);
+      return null;
     }
-    return null;
   }
 
-  // Supprimer une clé précise
   removeItem(key: string): void {
-    if (this.isBrowser) {
+    if (!this.isBrowser) return;
+    try {
       localStorage.removeItem(key);
+    } catch (e) {
+      console.error('Error removing from localStorage', e);
     }
   }
 
-  // Tout effacer
   clear(): void {
-    if (this.isBrowser) {
+    if (!this.isBrowser) return;
+    try {
       localStorage.clear();
+    } catch (e) {
+      console.error('Error clearing localStorage', e);
     }
   }
 }

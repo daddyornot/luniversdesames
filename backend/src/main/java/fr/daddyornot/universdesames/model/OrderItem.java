@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -19,4 +21,5 @@ public class OrderItem {
     private String productName;
     private Integer quantity;
     private Double priceAtPurchase; // Le prix figé au moment de la commande
+    private LocalDateTime appointmentDate; // Date du RDV si c'est un service
 }

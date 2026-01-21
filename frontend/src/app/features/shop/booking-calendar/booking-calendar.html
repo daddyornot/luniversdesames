@@ -1,0 +1,45 @@
+<div class="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
+  <h3 class="font-serif text-lg text-spirit-primary mb-4 flex items-center gap-2">
+    <mat-icon>calendar_today</mat-icon>
+    Choisir un créneau
+  </h3>
+
+  <!-- Sélecteur de jours (Scroll horizontal) -->
+  <div class="flex gap-3 overflow-x-auto pb-4 no-scrollbar -mx-2 px-2">
+    @for (date of nextDays(); track date) {
+      <button (click)="selectDate(date)"
+              [class.bg-spirit-primary]="date.toDateString() === selectedDate().toDateString()"
+              [class.text-white]="date.toDateString() === selectedDate().toDateString()"
+              [class.bg-stone-50]="date.toDateString() !== selectedDate().toDateString()"
+              [class.text-stone-600]="date.toDateString() !== selectedDate().toDateString()"
+              class="flex flex-col items-center justify-center min-w-[60px] h-16 rounded-xl border border-transparent transition-all active:scale-95">
+        <span class="text-[10px] uppercase font-bold opacity-70">{{ date | date:'EEE' }}</span>
+        <span class="text-lg font-bold">{{ date | date:'dd' }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- Liste des créneaux -->
+  <div class="mt-4">
+    <p class="text-xs text-stone-500 mb-3 font-medium uppercase tracking-wider">
+      Disponibilités pour le {{ selectedDate() | date:'dd MMMM' }}
+    </p>
+
+    <div class="grid grid-cols-3 gap-3">
+      @for (slot of availableSlots(); track slot.start) {
+        <button (click)="slot.available && selectSlot(slot.start)"
+                [disabled]="!slot.available"
+                [class.bg-spirit-primary]="selectedSlot() === slot.start"
+                [class.text-white]="selectedSlot() === slot.start"
+                [class.bg-white]="selectedSlot() !== slot.start && slot.available"
+                [class.border-spirit-primary]="selectedSlot() === slot.start"
+                [class.border-stone-200]="selectedSlot() !== slot.start"
+                [class.opacity-40]="!slot.available"
+                [class.line-through]="!slot.available"
+                class="py-2 px-1 rounded-lg border text-sm font-medium transition-all hover:border-spirit-primary disabled:cursor-not-allowed">
+          {{ slot.start | date:'HH:mm' }}
+        </button>
+      }
+    </div>
+  </div>
+</div>

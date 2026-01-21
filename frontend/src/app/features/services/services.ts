@@ -1,44 +1,66 @@
-import {Component, inject, Signal, signal, WritableSignal} from '@angular/core';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import {Component, inject, Signal, signal} from '@angular/core';
 import {MatIconModule} from '@angular/material/icon';
-import {MatNativeDateModule} from '@angular/material/core';
 import {ProductService} from '../../services/product/product';
 import {Product} from '../../core/models/product';
+import {BookingCalendar} from '../shop/booking-calendar/booking-calendar';
+import {CartService} from '../../services/cart/cart';
+import {ToastService} from '../../services/toast/toast';
+import {CartItem} from '../../core/models/cart';
 
 @Component({
   selector: 'app-services',
   standalone: true,
-  imports: [MatIconModule, MatDatepickerModule, MatNativeDateModule],
+  imports: [MatIconModule, BookingCalendar],
   templateUrl: './services.html',
   styleUrl: 'services.css'
 })
 export class Services {
-  private readonly service = inject(ProductService)
-
-  // Données des Tirages
-  // tirages = signal([
-  //   {id: 1, title: 'Tirage Flash (3 cartes)', price: 25, duration: '20 min'},
-  //   {id: 2, title: 'Grand Tirage Roue de l\'Année', price: 60, duration: '1h'}
-  // ]);
+  private readonly service = inject(ProductService);
+  private cartService = inject(CartService);
+  private toast = inject(ToastService);
 
   // Données Coaching
-  coachingPack: Signal<Product[]> = this.service.services
+  coachingPack: Signal<Product[]> = this.service.services;
 
   // Gestion de la sélection pour le RDV
   selectedService = signal<Product | null>(null);
-  selectedDate = signal<Date | null>(null);
+  selectedSlot = signal<string | null>(null); // Date ISO complète avec heure
 
   openCalendar = signal(false);
 
   openBooking(service: Product) {
-    this.selectedService.set(service)
+    this.selectedService.set(service);
+    this.selectedSlot.set(null);
     this.openCalendar.set(true);
   }
 
-  confirmDate() {
-    console.log(`RDV confirmé pour ${this.selectedService()?.name} le ${this.selectedDate()}`);
-    // Ici, tu pourras envoyer les infos vers Spring Boot plus tard
+  closeBooking() {
     this.openCalendar.set(false);
-    this.selectedService.set(null)
+    this.selectedService.set(null);
+  }
+
+  onSlotSelected(dateIso: string) {
+    this.selectedSlot.set(dateIso);
+  }
+
+  confirmBooking() {
+    const service = this.selectedService();
+    const slot = this.selectedSlot();
+
+    if (!service || !slot) return;
+
+    const item: CartItem = {
+      id: service.id,
+      name: service.name,
+      price: service.price,
+      image: service.imageUrl,
+      quantity: 1,
+      type: 'session',
+      appointmentDate: slot
+    };
+
+    this.cartService.addToCart(item);
+    this.toast.showSuccess('Séance ajoutée au panier');
+    this.closeBooking();
   }
 }

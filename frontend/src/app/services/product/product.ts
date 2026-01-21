@@ -1,25 +1,50 @@
 import {computed, inject, Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {Product} from '../../core/models/product';
+import {BehaviorSubject, switchMap, tap} from 'rxjs';
+import {ApiService} from '../../core/services/api.service';
 
 @Injectable({providedIn: 'root'})
 export class ProductService {
-  private http = inject(HttpClient);
-  private apiUrl = 'http://localhost:8080/api/products';
+  private api = inject(ApiService);
+  private refreshTrigger = new BehaviorSubject<void>(undefined);
 
-  // 1. On récupère les données du Back (Observable -> Signal)
-  // On met une valeur initiale [] pour éviter que le signal soit 'undefined' au début
-  private productsSource = toSignal(this.http.get<Product[]>(this.apiUrl), {initialValue: []});
+  private productsSource = toSignal(
+    this.refreshTrigger.pipe(
+      switchMap(() => this.api.get<Product[]>('products'))
+    ),
+    {initialValue: []}
+  );
 
-  // 2. On expose des signaux calculés (très performant)
   readonly allProducts = computed(() => this.productsSource());
 
   readonly bracelets = computed(() =>
-    this.productsSource().filter(p => p.category === 'bracelet')
+    this.productsSource().filter(p => p.type === 'PHYSICAL')
   );
 
   readonly services = computed(() =>
-    this.productsSource().filter(p => p.category === 'service')
+    this.productsSource().filter(p => p.type !== 'PHYSICAL')
   );
+
+  getProductById(id: string | number) {
+    return computed(() =>
+      this.productsSource().find(p => p.id.toString() === id.toString())
+    );
+  }
+
+  refresh() {
+    this.refreshTrigger.next();
+  }
+
+  createProduct(product: any) {
+    return this.api.post('products', product).pipe(tap(() => this.refresh()));
+  }
+
+  updateProduct(id: number, product: any) {
+    return this.api.put(`products/${id}`, product).pipe(tap(() => this.refresh()));
+  }
+
+  deleteProduct(id: number) {
+    return this.api.delete(`products/${id}`).pipe(tap(() => this.refresh()));
+  }
 }

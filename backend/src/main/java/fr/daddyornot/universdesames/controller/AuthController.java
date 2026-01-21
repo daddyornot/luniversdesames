@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -28,7 +30,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
         userService.register(registerRequest);
-        return ResponseEntity.ok().body("Utilisateur enregistré avec succès !");
+        // Le front s'attend potentiellement à un JSON, même simple
+        return ResponseEntity.ok().body(Map.of("message", "Utilisateur enregistré avec succès !"));
     }
 
     @PostMapping("/login")

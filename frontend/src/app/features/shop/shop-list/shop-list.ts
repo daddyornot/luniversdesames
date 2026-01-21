@@ -1,5 +1,6 @@
-import {Component, signal} from '@angular/core';
+import {Component, computed, inject, signal} from '@angular/core';
 import {ShopItem} from '../shop-item/shop-item';
+import {ProductService} from '../../../services/product/product';
 
 @Component({
   selector: 'app-shop-list',
@@ -8,13 +9,17 @@ import {ShopItem} from '../shop-item/shop-item';
   template: `
     <div class="min-h-screen pb-24">
       <div class="px-6 py-8">
-        <h2 class="font-serif text-3xl text-spirit-primary">Nos Créations</h2>
-        <p class="text-gray-500 text-sm mt-1">Bracelets infusés d'intentions positives.</p>
+        <h2 class="font-serif text-3xl text-spirit-primary">Boutique</h2>
+        <p class="text-gray-500 text-sm mt-1">Soins, Guidances et Créations artisanales.</p>
 
         <div class="flex gap-3 mt-6 overflow-x-auto no-scrollbar">
           @for (filter of categories(); track filter) {
             <button
-              class="px-5 py-2 rounded-full border border-gray-100 bg-white text-xs font-medium whitespace-nowrap active:bg-spirit-primary active:text-white transition-colors">
+              (click)="activeFilter.set(filter)"
+              [class.bg-spirit-primary]="activeFilter() === filter"
+              [class.text-white]="activeFilter() === filter"
+              [class.bg-white]="activeFilter() !== filter"
+              class="px-5 py-2 rounded-full border border-gray-100 text-xs font-medium whitespace-nowrap transition-colors">
               {{ filter }}
             </button>
           }
@@ -22,22 +27,39 @@ import {ShopItem} from '../shop-item/shop-item';
       </div>
 
       <div class="grid grid-cols-2 gap-4 px-4">
-        @for (item of bracelets(); track item.id) {
+        @for (item of filteredProducts(); track item.id) {
           <app-shop-item [product]="item"></app-shop-item>
         } @empty {
-          <p class="col-span-2 text-center py-20 text-gray-400 italic">Aucun bracelet trouvé...</p>
+          <p class="col-span-2 text-center py-20 text-gray-400 italic">Aucun produit trouvé...</p>
         }
       </div>
     </div>
   `
 })
 export class ShopList {
-  categories = signal(['Tous', 'Protection', 'Amour', 'Énergie', 'Sommeil']);
+  private productService = inject(ProductService);
 
-  bracelets = signal([
-    {id: '1', name: 'Aura de Quartz', price: 45, stone: 'Quartz Rose', image: 'assets/images/hoylee-song-TsbJvGJ0RwY-unsplash.jpg', type: 'bracelet'},
-    {id: '2', name: 'Bouclier Noir', price: 49, stone: 'Obsidienne', image: 'assets/images/alexey-demidov-WTKBeM7rGQE-unsplash.jpg', type: 'bracelet'},
-    {id: '3', name: 'Sagesse Bleue', price: 55, stone: 'Lapis Lazuli', image: 'assets/images/alexey-demidov-QRnUMyfhpgA-unsplash.jpg', type: 'bracelet'},
-    {id: '4', name: 'Feu Intérieur', price: 42, stone: 'Cornaline', image: 'assets/images/hoylee-song-TsbJvGJ0RwY-unsplash.jpg', type: 'bracelet'},
-  ]);
+  // Filtres
+  categories = signal(['Tous', 'Bracelets', 'Services', 'Coaching']);
+  activeFilter = signal('Tous');
+
+  // Produits filtrés
+  filteredProducts = computed(() => {
+    const all = this.productService.allProducts(); // On prend TOUS les produits
+    const filter = this.activeFilter();
+
+    if (filter === 'Tous') return all;
+
+    if (filter === 'Bracelets') {
+      return all.filter(p => p.type === 'PHYSICAL');
+    }
+    if (filter === 'Services') {
+      return all.filter(p => p.type === 'ENERGY_CARE' || p.type === 'CARD_READING');
+    }
+    if (filter === 'Coaching') {
+      return all.filter(p => p.type === 'COACHING');
+    }
+
+    return all;
+  });
 }

@@ -6,4 +6,8 @@
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
     <include file="db/changelog/changes/16-01-changelog.xml"/>
+    <include file="db/changelog/changes/20-01-add-appointment-date.xml"/>
+    <include file="db/changelog/changes/20-01-change-category-to-enum.xml"/>
+    <include file="db/changelog/changes/20-01-add-product-duration.xml"/>
+    <include file="db/changelog/changes/20-01-add-product-variants.xml"/>
 </databaseChangeLog>

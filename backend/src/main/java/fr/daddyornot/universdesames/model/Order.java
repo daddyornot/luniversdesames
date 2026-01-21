@@ -1,5 +1,6 @@
 package fr.daddyornot.universdesames.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,6 +31,7 @@ public class Order {
     @Column(unique = true)
     private String invoiceNumber;
     @ManyToOne
+    @JsonIgnore
     private User user;
     private String customerEmail;
     private String customerName;
@@ -37,6 +39,6 @@ public class Order {
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "order_id")
+    @JoinColumn(name = "order_id", nullable = false)
     private List<OrderItem> items = new ArrayList<>();
 }

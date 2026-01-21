@@ -1,45 +1,69 @@
-import {Component, inject, input} from '@angular/core';
+import {Component, computed, inject, input, OnInit, signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {CartService} from '../../../services/cart/cart';
-import {HttpClient} from '@angular/common/http';
+import {CartItem} from '../../../core/models/cart';
+import {Product, ProductVariant} from '../../../core/models/product';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-shop-item',
   standalone: true,
-  imports: [RouterLink, MatIconModule],
+  imports: [RouterLink, MatIconModule, CommonModule],
   templateUrl: 'shop-item.html'
 })
-export class ShopItem {
-  private http = inject(HttpClient);
-  // Déclaration du signal d'entrée
-  product = input.required<any>();
+export class ShopItem implements OnInit {
+  product = input.required<Product>();
   private cartService = inject(CartService);
 
-  protected addToCart(event: Event) {
-    event.stopPropagation(); // Évite de naviguer vers le détail au clic sur le bouton
-    this.cartService.addToCart({...this.product(), quantity: 1});
+  // État local pour la variante sélectionnée
+  selectedVariant = signal<ProductVariant | null>(null);
+
+  // Prix affiché dynamique
+  displayPrice = computed(() => {
+    const v = this.selectedVariant();
+    return v ? v.price : this.product().price;
+  });
+
+  ngOnInit() {
+    // Si le produit a des variantes, on sélectionne la première par défaut pour l'affichage
+    const p = this.product();
+    if (p.variants && p.variants.length > 0) {
+      this.selectedVariant.set(p.variants[0]);
+    }
   }
 
-  checkout() {
-    const cartItems = this.cartService.items(); // Récupère le signal
+  selectVariant(event: Event, variant: ProductVariant) {
+    event.stopPropagation(); // Empêche d'ouvrir le détail du produit
+    this.selectedVariant.set(variant);
+  }
 
-    const payload = {
-      customerName: "Jean Zen", // À lier à un formulaire
-      customerEmail: "jean@zen.com",
-      items: cartItems.map(item => ({
-        productId: item.id,
-        quantity: item.quantity
-      }))
+  protected addToCart(event: Event) {
+    event.stopPropagation();
+    const p = this.product();
+
+    // Si c'est un service qui nécessite une date (Coaching, Soin...), on redirige vers le détail
+    // SAUF si c'est un produit physique
+    if (p.type !== 'PHYSICAL') {
+      // On ne peut pas ajouter au panier directement depuis la liste car il faut choisir une date
+      // On pourrait rediriger vers le détail ici, ou afficher un toast "Veuillez choisir une date"
+      // Pour l'instant, le bouton "+" servira de lien vers le détail pour ces produits
+      return;
+    }
+
+    const variant = this.selectedVariant();
+    const finalPrice = variant ? variant.price : p.price;
+    const finalName = variant ? `${p.name} - ${variant.label}` : p.name;
+
+    const item: CartItem = {
+      id: p.id,
+      name: finalName,
+      price: finalPrice,
+      image: p.imageUrl,
+      quantity: 1,
+      type: 'bracelet' // Par défaut ici car on a filtré les services au dessus
     };
 
-    this.http.post('http://localhost:8080/api/orders', payload).subscribe({
-      next: (res) => {
-        console.log('Commande réussie !', res);
-        this.cartService.clearCart();
-        // Redirection vers page succès
-      },
-      error: (err) => alert("Erreur lors de la commande")
-    });
+    this.cartService.addToCart(item);
   }
 }
