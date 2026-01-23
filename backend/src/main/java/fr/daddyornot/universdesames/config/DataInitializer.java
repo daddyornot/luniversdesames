@@ -7,6 +7,8 @@ import fr.daddyornot.universdesames.model.User;
 import fr.daddyornot.universdesames.repository.ProductRepository;
 import fr.daddyornot.universdesames.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
+    private final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;

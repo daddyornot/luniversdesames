@@ -55,6 +55,16 @@ public class OrderController {
                 .body(pdfBytes);
     }
 
+    @PostMapping("/generate")
+    public ResponseEntity<byte[]> downloadInvoice(@RequestBody Order order) {
+        byte[] pdfContent = invoiceService.generateInvoice(order);
+
+        return ResponseEntity.ok()
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=facture_" + order.getInvoiceNumber() + ".pdf")
+            .contentType(MediaType.APPLICATION_PDF)
+            .body(pdfContent);
+    }
+
     @PostMapping("/{id}/ship")
     // @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> createShippingLabel(@PathVariable Long id) {

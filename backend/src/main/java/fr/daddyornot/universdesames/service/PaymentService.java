@@ -35,35 +35,35 @@ public class PaymentService {
 
         for (var item : orderRequest.items()) {
             Product product = productRepository.findById(item.productId())
-                    .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+                .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
             lineItems.add(
-                    SessionCreateParams.LineItem.builder()
-                            .setQuantity(Long.valueOf(item.quantity()))
-                            .setPriceData(
-                                    SessionCreateParams.LineItem.PriceData.builder()
-                                            .setCurrency("eur")
-                                            .setUnitAmount((long) (product.getPrice() * 100))
-                                            .setProductData(
-                                                    SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                            .setName(product.getName())
-                                                            .setDescription(product.getDescription())
-                                                            // .addImage(product.getImageUrl()) // Optionnel si URL publique
-                                                            .build()
-                                            )
-                                            .build()
+                SessionCreateParams.LineItem.builder()
+                    .setQuantity(Long.valueOf(item.quantity()))
+                    .setPriceData(
+                        SessionCreateParams.LineItem.PriceData.builder()
+                            .setCurrency("eur")
+                            .setUnitAmount((long) (product.getPrice() * 100))
+                            .setProductData(
+                                SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                    .setName(product.getName())
+                                    .setDescription(product.getDescription())
+                                    // .addImage(product.getImageUrl()) // Optionnel si URL publique
+                                    .build()
                             )
                             .build()
+                    )
+                    .build()
             );
         }
 
         SessionCreateParams params = SessionCreateParams.builder()
-                .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:4200/checkout/success?session_id={CHECKOUT_SESSION_ID}")
-                .setCancelUrl("http://localhost:4200/panier")
-                .setCustomerEmail(orderRequest.customerEmail())
-                .addAllLineItem(lineItems)
-                .build();
+            .setMode(SessionCreateParams.Mode.PAYMENT)
+            .setSuccessUrl("http://localhost:4200/checkout/success?session_id={CHECKOUT_SESSION_ID}")
+            .setCancelUrl("http://localhost:4200/panier")
+            .setCustomerEmail(orderRequest.customerEmail())
+            .addAllLineItem(lineItems)
+            .build();
 
         Session session = Session.create(params);
 

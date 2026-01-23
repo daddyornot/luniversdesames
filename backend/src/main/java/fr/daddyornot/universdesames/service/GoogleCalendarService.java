@@ -7,8 +7,15 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.Calendar;
-import com.google.api.services.calendar.model.*;
-import jakarta.annotation.PostConstruct;
+import com.google.api.services.calendar.model.Event;
+import com.google.api.services.calendar.model.EventAttendee;
+import com.google.api.services.calendar.model.EventDateTime;
+import com.google.api.services.calendar.model.FreeBusyRequest;
+import com.google.api.services.calendar.model.FreeBusyRequestItem;
+import com.google.api.services.calendar.model.FreeBusyResponse;
+import com.google.api.services.calendar.model.TimePeriod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -27,6 +34,7 @@ import java.util.List;
 
 @Service
 public class GoogleCalendarService {
+    private static final Logger log = LoggerFactory.getLogger(GoogleCalendarService.class);
 
     private static final String APPLICATION_NAME = "Univers des Ames";
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
@@ -35,69 +43,28 @@ public class GoogleCalendarService {
     @Value("${google.calendar.primary-id}")
     private String primaryCalendarId;
 
-    @Value("#{'${google.calendar.check-ids}'.split(',')}") 
+    @Value("#{'${google.calendar.check-ids}'.split(',')}")
     private List<String> calendarsToCheck;
 
     @Value("${google.credentials.path}")
     private String credentialsPath;
 
-    @PostConstruct
-    public void debugCalendars() {
-        try {
-            System.out.println("=== DEBUG GOOGLE CALENDAR ACCESS ===");
-            Calendar service = getCalendarService();
-            
-            CalendarList calendarList = service.calendarList().list().execute();
-            List<CalendarListEntry> items = calendarList.getItems();
-
-            if (items.isEmpty()) {
-                System.out.println("⚠️ AUCUN calendrier trouvé ! Le robot n'a accès à rien.");
-            } else {
-                System.out.println("✅ Calendriers accessibles par le robot :");
-                for (CalendarListEntry calendar : items) {
-                    System.out.println("- " + calendar.getSummary() + " (ID: " + calendar.getId() + ")");
-                }
-            }
-            
-            System.out.println("--- Vérification des calendriers configurés ---");
-            if (calendarsToCheck != null) {
-                for (String calId : calendarsToCheck) {
-                    checkAccess(service, calId.trim());
-                }
-            }
-            
-            System.out.println("====================================");
-        } catch (Exception e) {
-            System.err.println("❌ Erreur critique lors du test d'accès : " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    private void checkAccess(Calendar service, String calendarId) {
-        try {
-            service.calendars().get(calendarId).execute();
-            System.out.println("✅ Accès OK : " + calendarId);
-        } catch (Exception e) {
-            System.err.println("❌ ÉCHEC d'accès : " + calendarId + " (" + e.getMessage() + ")");
-        }
-    }
-
     private Calendar getCalendarService() throws GeneralSecurityException, IOException {
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        
+
         List<String> scopes = List.of(
-                "https://www.googleapis.com/auth/calendar",
-                "https://www.googleapis.com/auth/calendar.events"
+            "https://www.googleapis.com/auth/calendar",
+            "https://www.googleapis.com/auth/calendar.events"
         );
 
         InputStream credentialStream = getCredentialInputStream();
-        
+
         GoogleCredential credential = GoogleCredential.fromStream(credentialStream)
-                .createScoped(scopes);
+            .createScoped(scopes);
 
         return new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+            .setApplicationName(APPLICATION_NAME)
+            .build();
     }
 
     private InputStream getCredentialInputStream() throws IOException {
@@ -127,7 +94,7 @@ public class GoogleCalendarService {
             request.setTimeMin(new DateTime(zonedStart.toInstant().toEpochMilli()));
             request.setTimeMax(new DateTime(zonedEnd.toInstant().toEpochMilli()));
             request.setTimeZone(TIMEZONE);
-            
+
             List<FreeBusyRequestItem> items = new ArrayList<>();
             if (calendarsToCheck != null) {
                 for (String calId : calendarsToCheck) {
@@ -137,9 +104,9 @@ public class GoogleCalendarService {
             request.setItems(items);
 
             FreeBusyResponse response = service.freebusy().query(request).execute();
-            
+
             List<TimePeriod> allBusyPeriods = new ArrayList<>();
-            
+
             if (calendarsToCheck != null) {
                 for (String calId : calendarsToCheck) {
                     String cleanId = calId.trim();
@@ -165,34 +132,34 @@ public class GoogleCalendarService {
             Calendar service = getCalendarService();
 
             Event event = new Event()
-                    .setSummary(summary)
-                    .setDescription(description);
+                .setSummary(summary)
+                .setDescription(description);
 
             ZonedDateTime zonedStart = start.atZone(ZoneId.of(TIMEZONE));
             ZonedDateTime zonedEnd = end.atZone(ZoneId.of(TIMEZONE));
 
             EventDateTime startEvent = new EventDateTime()
-                    .setDateTime(new DateTime(zonedStart.toInstant().toEpochMilli()))
-                    .setTimeZone(TIMEZONE);
+                .setDateTime(new DateTime(zonedStart.toInstant().toEpochMilli()))
+                .setTimeZone(TIMEZONE);
             event.setStart(startEvent);
 
             EventDateTime endEvent = new EventDateTime()
-                    .setDateTime(new DateTime(zonedEnd.toInstant().toEpochMilli()))
-                    .setTimeZone(TIMEZONE);
+                .setDateTime(new DateTime(zonedEnd.toInstant().toEpochMilli()))
+                .setTimeZone(TIMEZONE);
             event.setEnd(endEvent);
 
             if (attendeeEmail != null && !attendeeEmail.isEmpty()) {
-                EventAttendee[] attendees = new EventAttendee[] {
+                EventAttendee[] attendees = new EventAttendee[]{
                     new EventAttendee().setEmail(attendeeEmail)
                 };
                 event.setAttendees(List.of(attendees));
             }
 
             service.events().insert(primaryCalendarId, event).execute();
-            System.out.println("Événement créé sur le calendrier : " + primaryCalendarId);
+            log.info("Événement créé sur le calendrier : {}", primaryCalendarId);
 
         } catch (Exception e) {
-            System.err.println("Erreur lors de la création de l'événement Google Calendar : " + e.getMessage());
+            log.error("Erreur lors de la création de l'événement Google Calendar : {}", e.getMessage());
         }
     }
 
@@ -227,7 +194,7 @@ public class GoogleCalendarService {
             long requiredEnd = currentSlot.plusHours(1).plusMinutes(bufferMinutes).atZone(zone).toInstant().toEpochMilli();
 
             boolean isBusy = false;
-            
+
             if (busyPeriods != null) {
                 for (TimePeriod busy : busyPeriods) {
                     long busyStart = busy.getStart().getValue();

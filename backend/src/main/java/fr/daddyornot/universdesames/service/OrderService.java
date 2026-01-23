@@ -12,6 +12,8 @@ import fr.daddyornot.universdesames.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,6 +24,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
+    private static final Logger log = LoggerFactory.getLogger(OrderService.class);
+
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -35,14 +39,14 @@ public class OrderService {
     @Transactional
     public Order saveOrder(OrderRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
 
         Order order = new Order();
         order.setUser(user);
         order.setCustomerEmail(request.customerEmail());
         order.setCustomerName(request.customerName());
         order.setInvoiceNumber(generateInvoiceReference());
-        
+
         order.setBillingAddress(user.getAddress());
         order.setBillingCity(user.getCity());
         order.setBillingPostalCode(user.getPostalCode());
@@ -69,11 +73,11 @@ public class OrderService {
                 // On lance la création de l'événement de manière asynchrone (ou synchrone si on veut être sûr)
                 // Ici on le fait directement car createEvent gère ses exceptions
                 googleCalendarService.createEvent(
-                        "RDV : " + product.getName() + " - " + request.customerName(),
-                        "Réservation via Univers des Âmes.\nClient : " + request.customerName() + "\nEmail : " + request.customerEmail(),
-                        itemReq.appointmentDate(),
-                        itemReq.appointmentDate().plusHours(1), // Durée par défaut 1h, à affiner selon le produit
-                        request.customerEmail()
+                    "RDV : " + product.getName() + " - " + request.customerName(),
+                    "Réservation via Univers des Âmes.\nClient : " + request.customerName() + "\nEmail : " + request.customerEmail(),
+                    itemReq.appointmentDate(),
+                    itemReq.appointmentDate().plusHours(1), // Durée par défaut 1h, à affiner selon le produit
+                    request.customerEmail()
                 );
             }
         }
@@ -84,7 +88,7 @@ public class OrderService {
         try {
             sendOrderConfirmationEmail(savedOrder);
         } catch (MessagingException e) {
-            System.err.println("Erreur lors de l'envoi de l'email de confirmation : " + e.getMessage());
+            log.error("Erreur lors de l'envoi de l'email de confirmation : {}", e.getMessage());
         }
 
         return savedOrder;
@@ -92,28 +96,28 @@ public class OrderService {
 
     public Order getOrderById(Long id) {
         return orderRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
+            .orElseThrow(() -> new RuntimeException("Commande non trouvée"));
     }
 
     private void sendOrderConfirmationEmail(Order order) throws MessagingException {
         Map<String, Object> templateModel = Map.of(
-                "customerName", order.getCustomerName(),
-                "orderNumber", order.getInvoiceNumber(),
-                "items", order.getItems(),
-                "totalAmount", String.format("%.2f", order.getTotalAmount())
+            "customerName", order.getCustomerName(),
+            "orderNumber", order.getInvoiceNumber(),
+            "items", order.getItems(),
+            "totalAmount", String.format("%.2f", order.getTotalAmount())
         );
 
         emailService.sendHtmlEmail(
-                order.getCustomerEmail(),
-                "Confirmation de votre commande #" + order.getInvoiceNumber(),
-                "order-confirmation.html",
-                templateModel
+            order.getCustomerEmail(),
+            "Confirmation de votre commande #" + order.getInvoiceNumber(),
+            "order-confirmation.html",
+            templateModel
         );
     }
 
     public List<Order> getOrdersByUser(String userEmail) {
         User user = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+            .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         return orderRepository.findByUser(user);
     }
 
