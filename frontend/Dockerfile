@@ -14,7 +14,7 @@ RUN pnpm install --frozen-lockfile
 # Copie du code source
 COPY . .
 
-# Build de l'application (ng build utilise la prod par défaut)
+# Build de l'application
 RUN pnpm run build
 
 # Stage 2: Serve
@@ -23,9 +23,9 @@ FROM nginx:alpine
 # Nettoyage du dossier par défaut
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copie des fichiers buildés depuis l'étape précédente
-# Assurez-vous que le chemin dist/... correspond à votre angular.json
-COPY --from=build-stage /app/dist/universdesames-front/browser /usr/share/nginx/html
+# Copie des fichiers buildés
+# Le chemin dépend du nom du projet dans angular.json (ici "frontend")
+COPY --from=build-stage /app/dist/frontend/browser /usr/share/nginx/html
 
 # Copie de la configuration Nginx
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf

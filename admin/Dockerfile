@@ -23,8 +23,9 @@ FROM nginx:alpine
 # Nettoyage du dossier par défaut
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copie des fichiers buildés depuis l'étape précédente
-COPY --from=build-stage /app/dist/universdesames-admin/browser /usr/share/nginx/html
+# Copie des fichiers buildés
+# Le chemin dépend du nom du projet dans angular.json (ici "admin")
+COPY --from=build-stage /app/dist/admin/browser /usr/share/nginx/html
 
 # Copie de la configuration Nginx
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
