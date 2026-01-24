@@ -31,7 +31,7 @@ public class WebSecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Endpoints publics
                 .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
-                .requestMatchers("/api/products/**", "/api/booking/**").permitAll()
+                .requestMatchers("/api/products/**", "/api/orders/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
                 // Endpoints protégés (Admin, Users, Orders...)

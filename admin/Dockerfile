@@ -1,14 +1,17 @@
-# Stage 1: Build
-FROM node:20-alpine AS build
+# --- Stage 1: Build ---
+FROM node:20-alpine AS builder
 WORKDIR /app
+
 COPY package*.json ./
 RUN npm ci
 COPY . .
-# On build avec le base-href pour que l'admin fonctionne sous /admin/
-RUN npm run build -- --configuration production --base-href /admin/
+# Build standard (racine) car on utilisera un sous-domaine admin.domaine.com
+RUN npm run build -- --configuration production
 
-# Stage 2: Serve with Nginx
+# --- Stage 2: Serve ---
 FROM nginx:alpine
-COPY --from=build /app/dist/universdesames-admin/browser /usr/share/nginx/html
+RUN rm -rf /usr/share/nginx/html/*
+COPY --from=builder /app/dist/universdesames-admin/browser /usr/share/nginx/html
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

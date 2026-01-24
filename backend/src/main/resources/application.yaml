@@ -14,9 +14,9 @@ spring:
 
 google:
   calendar:
-    primary-id: ${GOOGLE_CALENDAR_PRIMARY_ID}
-    check-ids: ${GOOGLE_CALENDAR_CHECK_IDS}
+    primary-id: ${GOOGLE_CALENDAR_PRIMARY_ID:0000}
+    check-ids: ${GOOGLE_CALENDAR_CHECK_IDS:0000}
 
 stripe:
-  secret-key: ${STRIPE_SECRET_KEY}
-  public-key: ${STRIPE_PUBLIC_KEY}
+  secret-key: ${STRIPE_SECRET_KEY:0000}
+  public-key: ${STRIPE_PUBLIC_KEY:0000}
