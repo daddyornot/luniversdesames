@@ -1,61 +1,107 @@
 <div class="space-y-8">
-  <!-- KPIs -->
-  <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-      <div class="h-12 w-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
-        <mat-icon>euro</mat-icon>
-      </div>
-      <div>
-        <p class="text-sm text-gray-500 font-medium">Chiffre d'affaires</p>
-        <p class="text-2xl font-bold text-gray-800">12 450 €</p>
-      </div>
-    </div>
+  <!-- Header & Filtres -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <h2 class="text-xl font-bold text-gray-800">Tableau de bord</h2>
 
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-      <div class="h-12 w-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
-        <mat-icon>shopping_bag</mat-icon>
-      </div>
-      <div>
-        <p class="text-sm text-gray-500 font-medium">Commandes</p>
-        <p class="text-2xl font-bold text-gray-800">45</p>
-      </div>
-    </div>
+    <div class="flex flex-wrap items-center gap-4">
+      <select [(ngModel)]="selectedPeriod" (change)="loadStats()" class="bg-white border border-gray-200 rounded-lg px-4 py-2 text-sm font-medium text-gray-600 focus:outline-none focus:ring-2 focus:ring-admin-primary/20 h-[42px]">
+        <option value="CURRENT_MONTH">Ce mois-ci</option>
+        <option value="LAST_MONTH">Mois dernier</option>
+        <option value="LAST_3_MONTHS">3 derniers mois</option>
+        <option value="LAST_6_MONTHS">6 derniers mois</option>
+        <option value="CURRENT_YEAR">Cette année</option>
+        <option value="CUSTOM">Période personnalisée</option>
+      </select>
 
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-      <div class="h-12 w-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
-        <mat-icon>event</mat-icon>
-      </div>
-      <div>
-        <p class="text-sm text-gray-500 font-medium">RDV à venir</p>
-        <p class="text-2xl font-bold text-gray-800">8</p>
-      </div>
-    </div>
-
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
-      <div class="h-12 w-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center">
-        <mat-icon>group</mat-icon>
-      </div>
-      <div>
-        <p class="text-sm text-gray-500 font-medium">Nouveaux Clients</p>
-        <p class="text-2xl font-bold text-gray-800">12</p>
-      </div>
+      @if (selectedPeriod === 'CUSTOM') {
+        <mat-form-field appearance="outline" class="w-64 !mb-[-1.25em]">
+          <mat-label>Choisir une période</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate placeholder="Début" [(ngModel)]="startDate" (dateChange)="loadStats()">
+            <input matEndDate placeholder="Fin" [(ngModel)]="endDate" (dateChange)="loadStats()">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      }
     </div>
   </div>
 
-  <!-- Graphique -->
-  <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-[400px]">
-    <h3 class="text-lg font-bold text-gray-800 mb-6">Évolution des ventes</h3>
-    <ngx-charts-area-chart
-      [view]="[1000, 300]"
-      [scheme]="colorScheme"
-      [results]="salesData"
-      [gradient]="true"
-      [xAxis]="true"
-      [yAxis]="true"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      xAxisLabel="Mois"
-      yAxisLabel="Ventes (€)">
-    </ngx-charts-area-chart>
-  </div>
+  @if (stats(); as s) {
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div class="h-12 w-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
+          <mat-icon>euro</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 font-medium">Chiffre d'affaires</p>
+          <p class="text-2xl font-bold text-gray-800">{{ s.totalRevenue | number:'1.2-2' }} €</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div class="h-12 w-12 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center">
+          <mat-icon>shopping_bag</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 font-medium">Commandes</p>
+          <p class="text-2xl font-bold text-gray-800">{{ s.totalOrders }}</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div class="h-12 w-12 rounded-full bg-green-50 text-green-600 flex items-center justify-center">
+          <mat-icon>event</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 font-medium">RDV à venir</p>
+          <p class="text-2xl font-bold text-gray-800">{{ s.totalAppointments }}</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div class="h-12 w-12 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center">
+          <mat-icon>group</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 font-medium">Nouveaux Clients</p>
+          <p class="text-2xl font-bold text-gray-800">{{ s.newCustomers }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphique -->
+    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-[400px] flex flex-col">
+      <h3 class="text-lg font-bold text-gray-800 mb-6">Évolution des ventes</h3>
+      @if (hasSales()) {
+        <div class="flex-1 w-full min-h-0 overflow-hidden relative">
+          <ngx-charts-area-chart
+            [scheme]="colorScheme"
+            [results]="salesData()"
+            [gradient]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [yScaleMin]="0"
+            [yScaleMax]="yScaleMax()"
+            [autoScale]="false"
+            [curve]="curve"
+            xAxisLabel="Période"
+            yAxisLabel="Ventes (€)">
+          </ngx-charts-area-chart>
+        </div>
+      } @else {
+        <div class="h-full flex flex-col items-center justify-center text-gray-400 italic gap-2">
+          <mat-icon class="text-4xl opacity-20">bar_chart</mat-icon>
+          <p>Aucune vente enregistrée sur cette période.</p>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="flex justify-center py-20">
+      <div class="h-8 w-8 border-2 border-admin-primary border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  }
 </div>

@@ -28,6 +28,10 @@ public class OrderService {
     private final EmailService emailService;
     private final GoogleCalendarService googleCalendarService;
 
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+
     @Transactional
     public Order saveOrder(OrderRequest request, String userEmail) {
         User user = userRepository.findByEmail(userEmail)

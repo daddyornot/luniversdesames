@@ -196,6 +196,26 @@ public class GoogleCalendarService {
         }
     }
 
+    public List<Event> getEvents(LocalDateTime start, LocalDateTime end) {
+        try {
+            Calendar service = getCalendarService();
+            ZonedDateTime zonedStart = start.atZone(ZoneId.of(TIMEZONE));
+            ZonedDateTime zonedEnd = end.atZone(ZoneId.of(TIMEZONE));
+
+            Events events = service.events().list(primaryCalendarId)
+                    .setTimeMin(new DateTime(zonedStart.toInstant().toEpochMilli()))
+                    .setTimeMax(new DateTime(zonedEnd.toInstant().toEpochMilli()))
+                    .setOrderBy("startTime")
+                    .setSingleEvents(true)
+                    .execute();
+
+            return events.getItems();
+        } catch (Exception e) {
+            System.err.println("Erreur lors de la récupération des événements : " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
     private List<String> calculateFreeSlots(LocalDateTime start, LocalDateTime end, List<TimePeriod> busyPeriods, Integer bufferMinutes) {
         List<String> freeSlots = new ArrayList<>();
         LocalDateTime currentSlot = start;

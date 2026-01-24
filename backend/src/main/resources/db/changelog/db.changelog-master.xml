@@ -13,4 +13,6 @@
     <include file="db/changelog/changes/20-01-add-user-details.xml"/>
     <include file="db/changelog/changes/20-01-add-order-billing-address.xml"/>
     <include file="db/changelog/changes/20-01-add-product-buffer-time.xml"/>
+    <include file="db/changelog/changes/20-01-add-user-role.xml"/>
+    <include file="db/changelog/changes/20-01-add-shipping-fields.xml"/>
 </databaseChangeLog>

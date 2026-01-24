@@ -4,11 +4,13 @@ import fr.daddyornot.universdesames.model.Order;
 import fr.daddyornot.universdesames.model.dto.OrderRequest;
 import fr.daddyornot.universdesames.service.InvoiceService;
 import fr.daddyornot.universdesames.service.OrderService;
+import fr.daddyornot.universdesames.service.ShippingService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,13 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final InvoiceService invoiceService;
+    private final ShippingService shippingService;
+
+    @GetMapping
+    // @Secured("ROLE_ADMIN")
+    public ResponseEntity<List<Order>> getAllOrders() {
+        return ResponseEntity.ok(orderService.getAllOrders());
+    }
 
     @PostMapping
     public ResponseEntity<Order> createOrder(@Valid @RequestBody OrderRequest request, Authentication authentication) {
@@ -44,5 +53,12 @@ public class OrderController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=facture-" + order.getInvoiceNumber() + ".pdf")
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdfBytes);
+    }
+
+    @PostMapping("/{id}/ship")
+    // @Secured("ROLE_ADMIN")
+    public ResponseEntity<Void> createShippingLabel(@PathVariable Long id) {
+        shippingService.createParcel(id);
+        return ResponseEntity.ok().build();
     }
 }

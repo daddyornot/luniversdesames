@@ -3,9 +3,12 @@ package fr.daddyornot.universdesames.config;
 import fr.daddyornot.universdesames.model.Product;
 import fr.daddyornot.universdesames.model.ProductType;
 import fr.daddyornot.universdesames.model.ProductVariant;
+import fr.daddyornot.universdesames.model.User;
 import fr.daddyornot.universdesames.repository.ProductRepository;
+import fr.daddyornot.universdesames.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,9 +18,12 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+        // Initialisation Produits
         if (productRepository.count() == 0) {
             Product p1 = new Product();
             p1.setName("Bracelet Améthyste");
@@ -68,7 +74,19 @@ public class DataInitializer implements CommandLineRunner {
             p4.setVariants(List.of(v1, v2));
 
             productRepository.saveAll(List.of(p1, p2, p3, p4));
-            System.out.println("Données initiales insérées !");
+            System.out.println("Données produits insérées !");
+        }
+
+        // Initialisation Admin
+        if (userRepository.findByEmail("admin@universdesames.com").isEmpty()) {
+            User admin = new User();
+            admin.setEmail("admin@universdesames.com");
+            admin.setPassword(passwordEncoder.encode("admin123")); // Mot de passe par défaut
+            admin.setFirstName("Admin");
+            admin.setLastName("System");
+            admin.setRole("ADMIN");
+            userRepository.save(admin);
+            System.out.println("Compte Admin créé : admin@universdesames.com / admin123");
         }
     }
 }

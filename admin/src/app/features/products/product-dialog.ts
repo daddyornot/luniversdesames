@@ -1,13 +1,13 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { Product } from '../../core/services/product.service';
+import { Product, ProductType } from '../../core/services/product.service';
 
 @Component({
   selector: 'app-product-dialog',
@@ -26,6 +26,7 @@ import { Product } from '../../core/services/product.service';
 })
 export class ProductDialogComponent {
   form: FormGroup;
+  productTypes: ProductType[] = ['PHYSICAL', 'ENERGY_CARE', 'CARD_READING', 'COACHING', 'SUBSCRIPTION'];
 
   constructor(
     private fb: FormBuilder,
@@ -41,8 +42,32 @@ export class ProductDialogComponent {
       imageUrl: [data?.imageUrl || ''],
       type: [data?.type || 'PHYSICAL', Validators.required],
       sessionCount: [data?.sessionCount || null],
+      durationMonths: [data?.durationMonths || null],
+      variants: this.fb.array([])
+    });
+
+    if (data?.variants) {
+      data.variants.forEach(v => this.addVariant(v));
+    }
+  }
+
+  get variants() {
+    return this.form.get('variants') as FormArray;
+  }
+
+  addVariant(data?: any) {
+    const variantGroup = this.fb.group({
+      id: [data?.id || null],
+      label: [data?.label || '', Validators.required],
+      price: [data?.price || 0, Validators.required],
+      sessionCount: [data?.sessionCount || null],
       durationMonths: [data?.durationMonths || null]
     });
+    this.variants.push(variantGroup);
+  }
+
+  removeVariant(index: number) {
+    this.variants.removeAt(index);
   }
 
   onSubmit() {

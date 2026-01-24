@@ -1,6 +1,5 @@
 package fr.daddyornot.universdesames.controller;
 
-import fr.daddyornot.universdesames.model.ProductType;
 import fr.daddyornot.universdesames.model.dto.ProductDTO;
 import fr.daddyornot.universdesames.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -17,16 +16,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts(@RequestParam(required = false) ProductType type) {
-        if (type != null) {
-            return ResponseEntity.ok(productService.getProductsByType(type));
-        }
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
-    }
-
-    @GetMapping("/services")
-    public ResponseEntity<List<ProductDTO>> getAllServices() {
-        return ResponseEntity.ok(productService.getServices());
     }
 
     @GetMapping("/{id}")
@@ -35,15 +26,14 @@ public class ProductController {
     }
 
     @PostMapping
-    // @Secured("ROLE_ADMIN") // À décommenter quand vous aurez géré les rôles
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
         return ResponseEntity.ok(productService.saveProduct(productDTO));
     }
 
     @PutMapping("/{id}")
-    // @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        // On s'assure que l'ID du DTO correspond à l'URL
         ProductDTO toSave = new ProductDTO(
                 id,
                 productDTO.name(),
@@ -60,7 +50,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    // @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

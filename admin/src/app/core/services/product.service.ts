@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export type ProductType = 'PHYSICAL' | 'ENERGY_CARE' | 'CARD_READING' | 'COACHING' | 'SUBSCRIPTION';
+
 export interface ProductVariant {
   id?: number;
   label: string;
@@ -17,7 +19,7 @@ export interface Product {
   price: number;
   stone?: string;
   imageUrl?: string;
-  type: 'PHYSICAL' | 'SERVICE' | 'SUBSCRIPTION';
+  type: ProductType;
   sessionCount?: number;
   durationMonths?: number;
   variants?: ProductVariant[];

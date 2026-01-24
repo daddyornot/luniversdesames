@@ -1,5 +1,6 @@
-import {inject, Injectable, isDevMode} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
 
 export interface User {
   id: number;
@@ -16,17 +17,21 @@ export interface User {
 @Injectable({providedIn: 'root'})
 export class UserService {
   private http = inject(HttpClient);
-  private apiUrl = isDevMode() ? 'http://localhost:8080/api/users' : '/api/users';
+  private apiUrl = '/api/users';
 
-  getAllUsers() {
+  getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);
   }
 
-  createUser(user: any) {
+  createUser(user: any): Observable<any> {
     return this.http.post(this.apiUrl, user);
   }
 
-  deleteUser(id: number) {
+  updateUser(id: number, user: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, user);
+  }
+
+  deleteUser(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 }

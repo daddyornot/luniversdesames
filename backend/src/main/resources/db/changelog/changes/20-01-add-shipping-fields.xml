@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.24.xsd">
+
+    <changeSet id="1705790000000-1" author="daddyornot">
+        <addColumn tableName="orders">
+            <column name="send_cloud_parcel_id" type="VARCHAR(255)"/>
+            <column name="tracking_number" type="VARCHAR(255)"/>
+            <column name="tracking_url" type="VARCHAR(255)"/>
+            <column name="shipping_status" type="VARCHAR(50)"/>
+            <column name="shipping_label_url" type="VARCHAR(255)"/>
+        </addColumn>
+    </changeSet>
+
+</databaseChangeLog>

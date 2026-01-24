@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { ProductDialogComponent } from './product-dialog';
-import { Product, ProductService } from '../../core/services/product.service';
+import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {MatTableModule} from '@angular/material/table';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonModule} from '@angular/material/button';
+import {MatDialog, MatDialogModule} from '@angular/material/dialog';
+import {ProductDialogComponent} from './product-dialog';
+import {Product, ProductService} from '../../core/services/product.service';
 
 @Component({
   selector: 'app-products',
@@ -34,6 +34,7 @@ export class ProductsComponent implements OnInit {
   openDialog(product?: Product): void {
     const dialogRef = this.dialog.open(ProductDialogComponent, {
       width: '600px',
+      maxHeight: '90vh',
       data: product || null
     });
 

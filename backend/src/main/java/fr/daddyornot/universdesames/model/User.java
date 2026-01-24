@@ -39,12 +39,13 @@ public class User implements UserDetails {
     private String firstName;
     private String lastName;
     
-    // Infos E-commerce
     private String phone;
     private String address;
     private String city;
     private String postalCode;
     private String country;
+    
+    private String role = "USER"; // Par défaut USER
 
     @OneToMany(mappedBy = "user")
     @JsonIgnore
@@ -52,7 +53,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     @Override

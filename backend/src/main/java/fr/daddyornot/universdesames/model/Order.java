@@ -49,4 +49,11 @@ public class Order {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id", nullable = false)
     private List<OrderItem> items = new ArrayList<>();
+
+    // Shipping (SendCloud)
+    private String sendCloudParcelId;
+    private String trackingNumber;
+    private String trackingUrl;
+    private String shippingStatus; // Created, Announced, Shipped, Delivered
+    private String shippingLabelUrl;
 }

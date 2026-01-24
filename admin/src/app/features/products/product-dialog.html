@@ -7,67 +7,119 @@
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col h-full">
   <mat-dialog-content class="flex-1 p-6 overflow-y-auto max-h-[70vh]">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-      <!-- Basic Info -->
-      <div class="col-span-1 md:col-span-2">
-        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Informations de base</h3>
+    <!-- Informations Générales -->
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4 mb-4">
+      <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b pb-2 mb-2">Informations de base</h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nom du produit</mat-label>
+          <input matInput formControlName="name" placeholder="Ex: Bracelet Améthyste">
+          <mat-error *ngIf="form.get('name')?.hasError('required')">Le nom est requis</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Type</mat-label>
+          <mat-select formControlName="type">
+            @for (type of productTypes; track type) {
+              <mat-option [value]="type">{{ type }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Nom du produit</mat-label>
-        <input matInput formControlName="name" placeholder="Ex: Bracelet Améthyste">
-        <mat-error *ngIf="form.get('name')?.hasError('required')">Le nom est requis</mat-error>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Type</mat-label>
-        <mat-select formControlName="type">
-          <mat-option value="PHYSICAL">Produit Physique</mat-option>
-          <mat-option value="SERVICE">Service</mat-option>
-          <mat-option value="SUBSCRIPTION">Abonnement</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="col-span-1 md:col-span-2 w-full">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="3" placeholder="Description détaillée..."></textarea>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Prix (€)</mat-label>
-        <input matInput type="number" formControlName="price" min="0">
-        <mat-error *ngIf="form.get('price')?.hasError('required')">Le prix est requis</mat-error>
-      </mat-form-field>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Prix (€)</mat-label>
+          <input matInput type="number" formControlName="price" min="0">
+          <mat-error *ngIf="form.get('price')?.hasError('required')">Le prix est requis</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Pierre associée</mat-label>
+          <input matInput formControlName="stone" placeholder="Ex: Améthyste">
+        </mat-form-field>
+      </div>
 
       <mat-form-field appearance="outline" class="w-full">
-        <mat-label>Pierre associée</mat-label>
-        <input matInput formControlName="stone" placeholder="Ex: Améthyste">
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="col-span-1 md:col-span-2 w-full">
         <mat-label>URL de l'image</mat-label>
         <input matInput formControlName="imageUrl" placeholder="https://...">
       </mat-form-field>
+      @if (form.get('imageUrl')?.value) {
+        <img [src]="form.get('imageUrl')?.value" class="mt-2 h-24 w-24 object-cover rounded-lg border border-gray-200">
+      }
+    </div>
 
-      <!-- Specific Fields based on Type -->
-      <ng-container *ngIf="form.get('type')?.value === 'SERVICE' || form.get('type')?.value === 'SUBSCRIPTION'">
-         <div class="col-span-1 md:col-span-2 mt-4">
-          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Détails du service</h3>
+    <!-- Détails Service (Conditionnel) -->
+    @if (form.get('type')?.value !== 'PHYSICAL') {
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4 mb-4 animate-in fade-in">
+        <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider border-b pb-2 mb-2">Détails du service</h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nombre de séances</mat-label>
+            <input matInput type="number" formControlName="sessionCount" min="1">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Durée (mois)</mat-label>
+            <input matInput type="number" formControlName="durationMonths" min="1">
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Variantes -->
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 space-y-4 animate-in fade-in">
+        <div class="flex justify-between items-center border-b pb-2 mb-2">
+          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Variantes / Formules</h3>
+          <button type="button" mat-button color="primary" (click)="addVariant()">
+            <mat-icon>add</mat-icon> Ajouter
+          </button>
         </div>
 
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Nombre de séances</mat-label>
-          <input matInput type="number" formControlName="sessionCount" min="1">
-        </mat-form-field>
+        <div formArrayName="variants" class="space-y-4">
+          @for (variant of variants.controls; track $index) {
+            <div [formGroupName]="$index" class="p-4 bg-gray-50 rounded-lg border border-gray-200 relative">
+              <button type="button" mat-icon-button color="warn" (click)="removeVariant($index)" class="absolute top-0 right-0">
+                <mat-icon>close</mat-icon>
+              </button>
 
-        <mat-form-field appearance="outline" class="w-full">
-          <mat-label>Durée (mois)</mat-label>
-          <input matInput type="number" formControlName="durationMonths" min="1">
-        </mat-form-field>
-      </ng-container>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <mat-form-field appearance="outline" class="col-span-2 w-full">
+                  <mat-label>Nom de la formule</mat-label>
+                  <input matInput formControlName="label" placeholder="Ex: Formule Découverte">
+                </mat-form-field>
 
-    </div>
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Prix (€)</mat-label>
+                  <input matInput type="number" formControlName="price">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Séances</mat-label>
+                  <input matInput type="number" formControlName="sessionCount">
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="w-full">
+                  <mat-label>Durée (Mois)</mat-label>
+                  <input matInput type="number" formControlName="durationMonths">
+                </mat-form-field>
+              </div>
+            </div>
+          }
+          @if (variants.length === 0) {
+            <p class="text-sm text-gray-400 italic text-center py-4">Aucune variante définie.</p>
+          }
+        </div>
+      </div>
+    }
+
   </mat-dialog-content>
 
   <div class="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">

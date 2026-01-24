@@ -1,0 +1,102 @@
+<div class="flex justify-between items-center p-6 border-b border-gray-100">
+  <h2 class="text-xl font-bold text-gray-800 m-0">Commande {{ data.invoiceNumber }}</h2>
+  <button mat-icon-button (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="p-6">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+    <!-- Client Info -->
+    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+      <h3 class="text-sm font-bold text-gray-500 uppercase mb-3">Client</h3>
+      <p class="font-medium text-gray-900">{{ data.customerName }}</p>
+      <p class="text-sm text-gray-600">{{ data.customerEmail }}</p>
+      <div class="mt-4 text-sm text-gray-600">
+        <p>{{ data.billingAddress }}</p>
+        <p>{{ data.billingPostalCode }} {{ data.billingCity }}</p>
+        <p>{{ data.billingCountry }}</p>
+      </div>
+    </div>
+
+    <!-- Order Info -->
+    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
+      <h3 class="text-sm font-bold text-gray-500 uppercase mb-3">Détails</h3>
+      <div class="flex justify-between py-1 border-b border-gray-200">
+        <span class="text-sm text-gray-600">Date</span>
+        <span class="text-sm font-medium">{{ data.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="flex justify-between py-1 border-b border-gray-200 mt-2">
+        <span class="text-sm text-gray-600">Statut</span>
+        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Payé</span>
+      </div>
+      <div class="flex justify-between py-1 mt-2">
+        <span class="text-sm text-gray-600">Total</span>
+        <span class="text-lg font-bold text-admin-primary">{{ data.totalAmount | currency:'EUR' }}</span>
+      </div>
+
+      <!-- Shipping Info -->
+      @if (data.trackingNumber) {
+        <div class="mt-4 pt-4 border-t border-gray-200">
+          <h4 class="text-xs font-bold text-gray-500 uppercase mb-2">Expédition</h4>
+          <p class="text-sm text-gray-800 font-medium">Suivi : {{ data.trackingNumber }}</p>
+          <p class="text-xs text-gray-500">Statut : {{ data.shippingStatus }}</p>
+          @if (data.trackingUrl) {
+            <a [href]="data.trackingUrl" target="_blank" class="text-xs text-blue-600 hover:underline mt-1 block">Suivre le colis</a>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Items -->
+  <h3 class="text-sm font-bold text-gray-500 uppercase mb-3">Articles</h3>
+  <div class="border border-gray-100 rounded-xl overflow-hidden">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="p-3 font-medium text-gray-600">Produit</th>
+          <th class="p-3 font-medium text-gray-600 text-center">Qté</th>
+          <th class="p-3 font-medium text-gray-600 text-right">Prix Unit.</th>
+          <th class="p-3 font-medium text-gray-600 text-right">Total</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-100">
+        @for (item of data.items; track item.id) {
+          <tr>
+            <td class="p-3">
+              <div class="font-medium text-gray-900">{{ item.productName }}</div>
+              @if (item.appointmentDate) {
+                <div class="text-xs text-blue-600">RDV : {{ item.appointmentDate | date:'dd/MM/yyyy HH:mm' }}</div>
+              }
+            </td>
+            <td class="p-3 text-center">{{ item.quantity }}</td>
+            <td class="p-3 text-right">{{ item.priceAtPurchase | currency:'EUR' }}</td>
+            <td class="p-3 text-right font-medium">{{ (item.priceAtPurchase * item.quantity) | currency:'EUR' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="p-6 border-t border-gray-100 gap-2">
+  <button mat-button (click)="onClose()">Fermer</button>
+
+  @if (!data.trackingNumber) {
+    <button mat-stroked-button color="accent" (click)="createShipping()">
+      <mat-icon>local_shipping</mat-icon>
+      Créer étiquette
+    </button>
+  } @else {
+    <a mat-stroked-button color="accent" [href]="data.shippingLabelUrl" target="_blank" *ngIf="data.shippingLabelUrl">
+      <mat-icon>print</mat-icon>
+      Imprimer étiquette
+    </a>
+  }
+
+  <button mat-flat-button color="primary" (click)="downloadInvoice()">
+    <mat-icon>receipt</mat-icon>
+    Télécharger Facture
+  </button>
+</mat-dialog-actions>

@@ -7,6 +7,7 @@ import fr.daddyornot.universdesames.model.dto.RegisterRequest;
 import fr.daddyornot.universdesames.model.dto.UserDTO;
 import fr.daddyornot.universdesames.service.JwtUtils;
 import fr.daddyornot.universdesames.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,7 +27,7 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         userService.register(registerRequest);
         return ResponseEntity.ok().body(Map.of("message", "Utilisateur enregistré avec succès !"));
     }
@@ -40,7 +41,7 @@ public class AuthController {
         String jwt = jwtUtils.generateToken(authentication.getName());
         User user = (User) authentication.getPrincipal();
 
-        return ResponseEntity.ok(new AuthResponse(jwt, user.getEmail(), user.getFirstName(), user.getLastName()));
+        return ResponseEntity.ok(new AuthResponse(jwt, user.getEmail(), user.getFirstName(), user.getLastName(), user.getRole()));
     }
 
     @GetMapping("/profile")
