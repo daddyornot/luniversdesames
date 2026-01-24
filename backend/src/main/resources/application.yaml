@@ -12,6 +12,10 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
+jwt:
+  secret: ${JWT_SECRET} # Injection via variable d'environnement
+  expiration: 86400000 # 24h
+
 google:
   calendar:
     primary-id: ${GOOGLE_CALENDAR_PRIMARY_ID:0000}

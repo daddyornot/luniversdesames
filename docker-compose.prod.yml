@@ -63,6 +63,7 @@ services:
       - GOOGLE_CALENDAR_PRIMARY_ID=${GOOGLE_CALENDAR_PRIMARY_ID}
       - GOOGLE_CALENDAR_CHECK_IDS=${GOOGLE_CALENDAR_CHECK_IDS}
       - GOOGLE_CREDENTIALS_PATH=/app/secrets/google-credentials.json
+      - JWT_SECRET=${JWT_SECRET} # Injection de la clé secrète
     volumes:
       - ./secrets:/app/secrets
     depends_on:

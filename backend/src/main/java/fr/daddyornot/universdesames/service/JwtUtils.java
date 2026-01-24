@@ -2,26 +2,38 @@ package fr.daddyornot.universdesames.service;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtils {
 
-    // On génère une clé sécurisée pour HS256
-    private final SecretKey key = Keys.hmacShaKeyFor(
-        "ta_cle_secrete_tres_longue_de_32_caracteres_minimum".getBytes()
-    );
+    @Value("${jwt.secret}")
+    private String secretKey;
 
-    private final long jwtExpirationMs = 86400000;
+    @Value("${jwt.expiration:86400000}") // Par défaut 24h
+    private long expirationTime;
+
+    private SecretKey key;
+
+    @PostConstruct
+    public void init() {
+        if (secretKey.length() < 32) {
+            throw new IllegalArgumentException("La clé secrète JWT doit faire au moins 32 caractères !");
+        }
+        this.key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String generateToken(String email) {
         return Jwts.builder()
             .subject(email)
             .issuedAt(new Date())
-            .expiration(new Date((new Date()).getTime() + jwtExpirationMs))
+            .expiration(new Date((new Date()).getTime() + expirationTime))
             .signWith(key)
             .compact();
     }

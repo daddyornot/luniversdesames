@@ -1,0 +1,41 @@
+spring:
+  datasource:
+    # Testcontainers va surcharger ça dynamiquement, mais on met une valeur par défaut propre
+    url: jdbc:tc:postgresql:15-alpine:///testdb
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop # Recrée la base à chaque test pour être propre
+    show-sql: true # Utile pour debugger les tests
+
+  # Désactivation de MailDev pour les tests (on mocke ou on ignore)
+  mail:
+    host: localhost
+    port: 3025 # Port bidon pour éviter de taper sur le vrai MailDev
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+# Clés factices pour les tests (évite les erreurs au démarrage du contexte)
+jwt:
+  secret: "cle_secrete_de_test_tres_longue_pour_valider_les_signatures_jwt_dans_les_tests_unitaires"
+  expiration: 3600000
+
+stripe:
+  secret-key: "sk_test_fake"
+  public-key: "pk_test_fake"
+
+google:
+  calendar:
+    primary-id: "primary-test"
+    check-ids: "primary-test,secondary-test"
+  credentials:
+    path: "classpath:credentials-test.json" # Fichier bidon ou inexistant (on mockera le service)

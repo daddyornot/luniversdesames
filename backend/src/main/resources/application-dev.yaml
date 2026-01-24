@@ -17,6 +17,9 @@ spring:
           starttls:
             enable: false
 
+jwt:
+  secret: "ma_cle_secrete_de_developpement_tres_longue_et_securisee_pour_les_tests_locaux"
+
 google:
   credentials:
     # Chemin absolu pour être sûr en dev local
