@@ -7,6 +7,11 @@ import {provideHttpClient, withFetch, withInterceptors} from '@angular/common/ht
 import {authInterceptor} from './core/interceptors/auth.interceptor';
 import {provideNgxStripe} from 'ngx-stripe';
 
+console.log('Routes configuration:', routes);
+routes.forEach((r, i) => {
+  if (!r) console.error(`Route at index ${i} is undefined!`);
+});
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
