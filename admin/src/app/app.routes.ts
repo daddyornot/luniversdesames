@@ -37,6 +37,11 @@ export const routes: Routes = [
         path: 'calendar',
         loadComponent: () => import('./features/calendar/calendar').then(m => m.CalendarComponent),
         title: 'Agenda'
+      },
+      {
+        path: 'media',
+        loadComponent: () => import('./features/media/media-library/media-library').then(m => m.MediaLibraryComponent),
+        title: 'Médiathèque'
       }
     ]
   },

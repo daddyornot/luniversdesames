@@ -1,0 +1,50 @@
+<div class="min-h-screen bg-gray-50 p-6 pb-24" [class.min-h-0]="isSelectionMode" [class.p-0]="isSelectionMode" [class.pb-0]="isSelectionMode">
+  <div class="flex justify-between items-center mb-8" *ngIf="!isSelectionMode">
+    <h1 class="text-2xl font-serif text-admin-dark">Médiathèque</h1>
+
+    <div>
+      <input type="file" #fileInput hidden (change)="onFileSelected($event)" accept="image/*">
+      <button mat-flat-button color="primary" (click)="fileInput.click()" [disabled]="isUploading()">
+        <mat-icon>cloud_upload</mat-icon>
+        {{ isUploading() ? 'Envoi...' : 'Uploader une image' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="flex justify-between items-center mb-4" *ngIf="isSelectionMode">
+    <h2 class="text-lg font-bold text-gray-700">Choisir une image</h2>
+    <div>
+      <input type="file" #fileInputModal hidden (change)="onFileSelected($event)" accept="image/*">
+      <button mat-stroked-button color="primary" (click)="fileInputModal.click()" [disabled]="isUploading()">
+        <mat-icon>cloud_upload</mat-icon>
+        Uploader
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+    @for (url of images(); track url) {
+      <div class="group relative aspect-square bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden cursor-pointer"
+           (click)="selectImage(url)">
+        <img [src]="url" class="w-full h-full object-cover transition-transform group-hover:scale-105">
+
+        <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+          @if (!isSelectionMode) {
+            <button mat-icon-button class="text-white hover:bg-white/20" (click)="$event.stopPropagation(); copyUrl(url)" title="Copier URL">
+              <mat-icon>content_copy</mat-icon>
+            </button>
+            <button mat-icon-button class="text-red-400 hover:bg-white/20" (click)="$event.stopPropagation(); deleteImage(url)" title="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+          } @else {
+            <span class="text-white font-bold">Choisir</span>
+          }
+        </div>
+      </div>
+    } @empty {
+      <div class="col-span-full py-20 text-center text-gray-400 italic">
+        Aucune image dans la médiathèque.
+      </div>
+    }
+  </div>
+</div>

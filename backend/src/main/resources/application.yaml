@@ -13,8 +13,8 @@ spring:
     enabled: true
 
 jwt:
-  secret: ${JWT_SECRET} # Injection via variable d'environnement
-  expiration: 86400000 # 24h
+  secret: ${JWT_SECRET}
+  expiration: 86400000
 
 google:
   calendar:
@@ -24,3 +24,12 @@ google:
 stripe:
   secret-key: ${STRIPE_SECRET_KEY:0000}
   public-key: ${STRIPE_PUBLIC_KEY:0000}
+
+aws:
+  s3:
+    endpoint: ${S3_ENDPOINT}
+    public-url: ${S3_PUBLIC_URL}
+    access-key: ${S3_ACCESS_KEY}
+    secret-key: ${S3_SECRET_KEY}
+    bucket: ${S3_BUCKET}
+    region: ${S3_REGION:eu-west-1} # Par défaut us-east-1 pour MinIO

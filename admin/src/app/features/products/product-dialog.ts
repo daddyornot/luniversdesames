@@ -1,13 +1,14 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { Product, ProductType } from '../../core/services/product.service';
+import { MediaSelectorDialogComponent } from '../media/media-selector-dialog/media-selector-dialog';
 
 @Component({
   selector: 'app-product-dialog',
@@ -27,6 +28,8 @@ import { Product, ProductType } from '../../core/services/product.service';
 export class ProductDialogComponent {
   form: FormGroup;
   productTypes: ProductType[] = ['PHYSICAL', 'ENERGY_CARE', 'CARD_READING', 'COACHING', 'SUBSCRIPTION'];
+
+  private dialog = inject(MatDialog);
 
   constructor(
     private fb: FormBuilder,
@@ -68,6 +71,19 @@ export class ProductDialogComponent {
 
   removeVariant(index: number) {
     this.variants.removeAt(index);
+  }
+
+  openMediaLibrary() {
+    const dialogRef = this.dialog.open(MediaSelectorDialogComponent, {
+      width: '800px',
+      height: '600px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.form.patchValue({ imageUrl: result });
+      }
+    });
   }
 
   onSubmit() {

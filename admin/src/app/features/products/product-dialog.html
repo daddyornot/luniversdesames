@@ -47,10 +47,17 @@
         </mat-form-field>
       </div>
 
-      <mat-form-field appearance="outline" class="w-full">
-        <mat-label>URL de l'image</mat-label>
-        <input matInput formControlName="imageUrl" placeholder="https://...">
-      </mat-form-field>
+      <div class="flex gap-2 items-start">
+        <mat-form-field appearance="outline" class="flex-1">
+          <mat-label>URL de l'image</mat-label>
+          <input matInput formControlName="imageUrl" placeholder="https://...">
+        </mat-form-field>
+        <button type="button" mat-stroked-button class="h-[56px]" (click)="openMediaLibrary()">
+          <mat-icon>perm_media</mat-icon>
+          Médiathèque
+        </button>
+      </div>
+
       @if (form.get('imageUrl')?.value) {
         <img [src]="form.get('imageUrl')?.value" class="mt-2 h-24 w-24 object-cover rounded-lg border border-gray-200">
       }

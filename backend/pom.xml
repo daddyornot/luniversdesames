@@ -36,6 +36,8 @@
         <h2.version>2.3.232</h2.version>
         <openpdf.version>1.3.30</openpdf.version>
         <stripe.version>24.1.0</stripe.version>
+        <aws-java-sdk.version>1.12.638</aws-java-sdk.version>
+        <lombok.version>1.18.42</lombok.version>
     </properties>
     <dependencies>
         <dependency>
@@ -77,6 +79,13 @@
             <groupId>com.stripe</groupId>
             <artifactId>stripe-java</artifactId>
             <version>${stripe.version}</version>
+        </dependency>
+
+        <!-- AWS S3 -->
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-s3</artifactId>
+            <version>${aws-java-sdk.version}</version>
         </dependency>
 
         <!-- PDF Generation -->
@@ -192,6 +201,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>1.18.42</version>
                         </path>
                         <path>
                             <groupId>org.springframework.boot</groupId>
