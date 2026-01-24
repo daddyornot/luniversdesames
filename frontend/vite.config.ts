@@ -1,9 +1,9 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
 
+import {defineConfig} from 'vite';
 import angular from '@analogjs/vite-plugin-angular';
 
-export default defineConfig(({ mode }) => ({
+export default defineConfig(({mode}) => ({
   plugins: [angular()],
   test: {
     globals: true,

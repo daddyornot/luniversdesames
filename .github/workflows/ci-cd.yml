@@ -38,5 +38,5 @@ jobs:
       - name: Install Frontend Deps
         run: cd frontend && pnpm install --frozen-lockfile
 
-      - name: Test Frontend
-        run: cd frontend && pnpm test -- --no-watch --no-progress --browsers=ChromeHeadless
+      - name: Test Frontend (Vitest)
+        run: cd frontend && pnpm test -- --run # --run pour ne pas être en mode watch
