@@ -11,6 +11,7 @@ interface CalendarEvent {
   start: Date;
   end: Date;
   description?: string;
+  customer?: string;
   type: 'GOOGLE';
 }
 
@@ -39,21 +40,44 @@ export class CalendarComponent implements OnInit {
     const year = this.viewDate().getFullYear();
     const month = this.viewDate().getMonth();
 
-    // On charge du 1er jour du mois précédent au dernier jour du mois suivant pour couvrir la grille
     const start = new Date(year, month - 1, 1).toISOString().split('T')[0];
     const end = new Date(year, month + 2, 0).toISOString().split('T')[0];
 
-    this.calendarService.getEvents(start, end).subscribe(googleEvents => {
-      const loadedEvents: CalendarEvent[] = googleEvents.map(ev => ({
-        id: ev.id,
-        title: ev.summary,
-        start: new Date(ev.start.dateTime),
-        end: new Date(ev.end.dateTime),
-        description: ev.description,
-        type: 'GOOGLE'
-      }));
+    this.calendarService.getEvents(start, end).subscribe({
+      next: (googleEvents) => {
+        const loadedEvents: CalendarEvent[] = googleEvents.map(ev => {
+          let customer = '';
+          if (ev.description) {
+            const match = ev.description.match(/Client : (.*?)(\n|$)/);
+            if (match) {
+              customer = match[1].trim();
+            }
+          }
 
-      this.events.set(loadedEvents);
+          const parseDate = (val: any): Date => {
+            if (!val) return new Date();
+            if (typeof val === 'string') return new Date(val);
+            if (typeof val === 'object' && val.value) return new Date(val.value);
+            return new Date(val);
+          };
+
+          const startDt = parseDate(ev.start.dateTime || ev.start.date);
+          const endDt = parseDate(ev.end.dateTime || ev.end.date);
+
+          return {
+            id: ev.id,
+            title: ev.summary,
+            start: startDt,
+            end: endDt,
+            description: ev.description,
+            customer: customer,
+            type: 'GOOGLE'
+          };
+        });
+
+        this.events.set(loadedEvents);
+      },
+      error: (err) => console.error('Error loading events', err)
     });
   }
 

@@ -1,35 +1,37 @@
 services:
-  # --- BACKEND ---
-  backend:
-    image: ${DOCKER_USERNAME}/universdesames-backend:latest
-    container_name: universdesames-backend
-    restart: always
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      # Injection des secrets via variables d'environnement
-      - DB_URL=jdbc:postgresql://postgres:5432/universdesames
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - MAIL_USERNAME=${MAIL_USERNAME}
-      - MAIL_PASSWORD=${MAIL_PASSWORD}
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
-      # Google Calendar IDs
-      - GOOGLE_CALENDAR_PRIMARY_ID=${GOOGLE_CALENDAR_PRIMARY_ID}
-      - GOOGLE_CALENDAR_CHECK_IDS=${GOOGLE_CALENDAR_CHECK_IDS}
-      # Google Credentials (fichier monté)
-      - GOOGLE_CREDENTIALS_PATH=/app/secrets/google-credentials.json
+  # --- TRAEFIK (Reverse Proxy & SSL) ---
+  traefik:
+    image: traefik:v3.0
+    container_name: traefik
+    restart: unless-stopped
+    command:
+      - "--api.insecure=false" # Dashboard désactivé en public
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # Redirection HTTP -> HTTPS
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      # Let's Encrypt (HTTP Challenge)
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./secrets:/app/secrets # Montage des fichiers sensibles
-    depends_on:
-      postgres:
-        condition: service_healthy
+      - "./letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - app-network
 
   # --- DATABASE ---
   postgres:
     image: 'postgres:15-alpine'
     container_name: universdesames-db
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_DB: universdesames
       POSTGRES_USER: ${DB_USER}
@@ -41,32 +43,69 @@ services:
       retries: 5
     volumes:
       - postgres_data_prod:/var/lib/postgresql/data
+    networks:
+      - app-network
 
-  # --- FRONTEND ---
-  frontend:
-    image: ${DOCKER_USERNAME}/universdesames-frontend:latest
-    container_name: universdesames-front
-    restart: always
-
-  # --- ADMIN ---
-  admin:
-    image: ${DOCKER_USERNAME}/universdesames-admin:latest
-    container_name: universdesames-admin
-    restart: always
-
-  # --- NGINX INTERNE ---
-  nginx:
-    image: nginx:alpine
-    container_name: universdesames-internal-proxy
-    restart: always
+  # --- BACKEND ---
+  backend:
+    image: ${DOCKER_USERNAME}/universdesames-backend:${TAG_BACKEND:-latest}
+    container_name: backend
+    restart: unless-stopped
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - DB_URL=jdbc:postgresql://postgres:5432/universdesames
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PUBLIC_KEY=${STRIPE_PUBLIC_KEY}
+      - GOOGLE_CALENDAR_PRIMARY_ID=${GOOGLE_CALENDAR_PRIMARY_ID}
+      - GOOGLE_CALENDAR_CHECK_IDS=${GOOGLE_CALENDAR_CHECK_IDS}
+      - GOOGLE_CREDENTIALS_PATH=/app/secrets/google-credentials.json
     volumes:
-      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
-    ports:
-      - "8080:80"
+      - ./secrets:/app/secrets
     depends_on:
-      - backend
-      - frontend
-      - admin
+      postgres:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`api.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls.certresolver=myresolver"
+    networks:
+      - app-network
+
+  # --- FRONTEND (Boutique) ---
+  frontend:
+    image: ${DOCKER_USERNAME}/universdesames-frontend:${TAG_SHOP:-latest}
+    container_name: frontend-shop
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.shop.rule=Host(`${DOMAIN_NAME}`) || Host(`www.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.shop.entrypoints=websecure"
+      - "traefik.http.routers.shop.tls.certresolver=myresolver"
+    networks:
+      - app-network
+
+  # --- ADMIN (Dashboard) ---
+  admin:
+    image: ${DOCKER_USERNAME}/universdesames-admin:${TAG_ADMIN:-latest}
+    container_name: frontend-admin
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=Host(`admin.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.admin.entrypoints=websecure"
+      - "traefik.http.routers.admin.tls.certresolver=myresolver"
+    networks:
+      - app-network
 
 volumes:
   postgres_data_prod:
+  letsencrypt:
+
+networks:
+  app-network:
+    driver: bridge
