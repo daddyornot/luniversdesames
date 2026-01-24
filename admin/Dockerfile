@@ -1,11 +1,6 @@
 # Stage 1: Build
-FROM node:20-alpine AS build
+FROM node:20-alpine AS build-stage
 WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-# On build avec le base-href pour que l'admin fonctionne sous /admin/
-RUN npm run build -- --configuration production --base-href /admin/
 
 # Installation de pnpm
 RUN npm install -g pnpm
@@ -13,15 +8,26 @@ RUN npm install -g pnpm
 # Copie des fichiers de dépendances
 COPY package.json pnpm-lock.yaml ./
 
-# Installation des dépendances avec pnpm
+# Installation des dépendances
 RUN pnpm install --frozen-lockfile
 
-# Build
+# Copie du code source
 COPY . .
+
+# Build de l'application
 RUN pnpm run build -- --configuration production
 
-# Stage 2: Serve with Nginx
+# Stage 2: Serve
 FROM nginx:alpine
-COPY --from=build /app/dist/universdesames-admin/browser /usr/share/nginx/html
+
+# Nettoyage du dossier par défaut
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copie des fichiers buildés depuis l'étape précédente
+COPY --from=build-stage /app/dist/universdesames-admin/browser /usr/share/nginx/html
+
+# Copie de la configuration Nginx
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
+
 EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
