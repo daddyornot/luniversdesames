@@ -1,10 +1,11 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
-import {provideRouter} from '@angular/router';
 
 import {ShopItem} from './shop-item';
 import {Product} from '../../../core/models/product';
+import {provideRouter} from '@angular/router';
+import {ShopList} from '../shop-list/shop-list';
 
 describe('ShopItem', () => {
   let component: ShopItem;
@@ -26,7 +27,9 @@ describe('ShopItem', () => {
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideRouter([])
+        provideRouter([
+          {path: 'boutique/:id', component: ShopList}
+        ])
       ]
     })
       .compileComponents();
