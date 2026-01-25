@@ -24,8 +24,10 @@ FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copie des fichiers buildés
-# Le chemin dépend du nom du projet dans angular.json (ici "frontend")
 COPY --from=build-stage /app/dist/frontend/browser /usr/share/nginx/html
+
+# Renommage de index.csr.html en index.html si nécessaire (Fix pour Angular 17+ SSR build)
+RUN if [ -f /usr/share/nginx/html/index.csr.html ]; then mv /usr/share/nginx/html/index.csr.html /usr/share/nginx/html/index.html; fi
 
 # Copie de la configuration Nginx
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf

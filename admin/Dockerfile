@@ -24,8 +24,10 @@ FROM nginx:alpine
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copie des fichiers buildés
-# Le chemin dépend du nom du projet dans angular.json (ici "admin")
 COPY --from=build-stage /app/dist/admin/browser /usr/share/nginx/html
+
+# Renommage de index.csr.html en index.html si nécessaire
+RUN if [ -f /usr/share/nginx/html/index.csr.html ]; then mv /usr/share/nginx/html/index.csr.html /usr/share/nginx/html/index.html; fi
 
 # Copie de la configuration Nginx
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
