@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api'
+  apiUrl: '/api' // URL relative pour passer par le proxy Nginx de l'Admin
 };
