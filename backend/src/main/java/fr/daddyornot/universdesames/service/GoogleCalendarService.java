@@ -116,7 +116,7 @@ public class GoogleCalendarService {
                 if (credentialFile.canRead()) {
                     log.info("Le fichier est lisible. Tentative de lecture du contenu...");
                     try (InputStream is = new FileInputStream(credentialFile)) {
-                        byte[] buffer = new byte[100]; // Lire les 100 premiers octets
+                        byte[] buffer = new byte[100];
                         int bytesRead = is.read(buffer);
                         log.info("Contenu lu ({} octets) : {}", bytesRead, new String(buffer, 0, bytesRead));
                     } catch (IOException e) {
@@ -240,6 +240,26 @@ public class GoogleCalendarService {
 
         } catch (Exception e) {
             log.error("Erreur lors de la création de l'événement Google Calendar : {}", e.getMessage(), e);
+        }
+    }
+
+    public List<Event> getEvents(LocalDateTime start, LocalDateTime end) {
+        try {
+            Calendar service = getCalendarService();
+            ZonedDateTime zonedStart = start.atZone(ZoneId.of(TIMEZONE));
+            ZonedDateTime zonedEnd = end.atZone(ZoneId.of(TIMEZONE));
+
+            Events events = service.events().list(primaryCalendarId)
+                    .setTimeMin(new DateTime(zonedStart.toInstant().toEpochMilli()))
+                    .setTimeMax(new DateTime(zonedEnd.toInstant().toEpochMilli()))
+                    .setOrderBy("startTime")
+                    .setSingleEvents(true)
+                    .execute();
+
+            return events.getItems();
+        } catch (Exception e) {
+            log.error("Erreur lors de la récupération des événements : {}", e.getMessage(), e);
+            return Collections.emptyList();
         }
     }
 
