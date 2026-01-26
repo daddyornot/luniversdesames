@@ -23,11 +23,14 @@ FROM nginx:alpine
 # Nettoyage du dossier par défaut
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copie des fichiers buildés
-COPY --from=build-stage /app/dist/admin/browser /usr/share/nginx/html
+# Création du dossier admin
+RUN mkdir -p /usr/share/nginx/html/admin
 
-# Renommage de index.csr.html en index.html si nécessaire
-RUN if [ -f /usr/share/nginx/html/index.csr.html ]; then mv /usr/share/nginx/html/index.csr.html /usr/share/nginx/html/index.html; fi
+# Copie des fichiers buildés dans le sous-dossier admin
+COPY --from=build-stage /app/dist/admin/browser /usr/share/nginx/html/admin
+
+# Renommage de index.csr.html en index.html si nécessaire (dans le sous-dossier)
+RUN if [ -f /usr/share/nginx/html/admin/index.csr.html ]; then mv /usr/share/nginx/html/admin/index.csr.html /usr/share/nginx/html/admin/index.html; fi
 
 # Correction des permissions
 RUN chmod -R 755 /usr/share/nginx/html
