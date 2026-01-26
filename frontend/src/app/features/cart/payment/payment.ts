@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
 import {CartService} from '../../../services/cart/cart';
@@ -34,7 +34,7 @@ export class PaymentComponent implements OnInit {
       }))
     };
 
-    this.http.post<{url: string}>(`${API_CONFIG.baseUrl}/payment/create-session`, orderPayload)
+    this.http.post<{ url: string }>(`${API_CONFIG.baseUrl}/payment/create-session`, orderPayload)
       .subscribe({
         next: (res) => {
           // Redirection vers Stripe Checkout

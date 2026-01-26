@@ -45,9 +45,12 @@
 
   <!-- MODALE DE RÉSERVATION -->
   @if (openCalendar()) {
-    <div class="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end sm:items-center sm:justify-center" (click)="closeBooking()">
+    <div class="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-end sm:items-center sm:justify-center"
+         (click)="closeBooking()">
       <!-- Contenu Modale (stop propagation pour ne pas fermer au clic dedans) -->
-      <div class="w-full sm:w-[400px] bg-white rounded-t-[32px] sm:rounded-[32px] p-6 animate-slide-up sm:animate-in sm:zoom-in-95 shadow-2xl max-h-[90vh] overflow-y-auto" (click)="$event.stopPropagation()">
+      <div
+        class="w-full sm:w-[400px] bg-white rounded-t-[32px] sm:rounded-[32px] p-6 animate-slide-up sm:animate-in sm:zoom-in-95 shadow-2xl max-h-[90vh] overflow-y-auto"
+        (click)="$event.stopPropagation()">
 
         <!-- Poignée mobile -->
         <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6 sm:hidden"></div>

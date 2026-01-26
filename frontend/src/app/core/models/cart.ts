@@ -1,9 +1,14 @@
+import {ProductVariant} from './product-variant';
+import {ProductSize, ProductType} from './product';
+
 export interface CartItem {
-  id: string | number;
+  id: number;
   name: string;
   price: number;
-  image: string;
   quantity: number;
-  type: 'bracelet' | 'session';
-  appointmentDate?: string; // Nouveau : Date ISO du RDV (ex: 2024-05-20T14:00:00)
+  imageUrl: string;
+  type: ProductType;
+  selectedVariant?: ProductVariant;
+  appointmentDate?: string;
+  selectedSize?: ProductSize;
 }

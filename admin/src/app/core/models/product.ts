@@ -15,7 +15,7 @@ export interface Product {
   price: number;
   stones: string[];
   imageUrl: string;
-  type: ProductType;
+  type: ProductType
   sessionCount?: number;
   durationMonths?: number;
   variants?: ProductVariant[];

@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
-import {CommonModule, NgOptimizedImage} from '@angular/common';
+import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {CartService} from '../../services/cart/cart';
 import {Router, RouterLink} from '@angular/router';
@@ -9,7 +9,7 @@ import {ToastService} from '../../services/toast/toast';
 @Component({
   selector: 'app-cart',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterLink, NgOptimizedImage],
+  imports: [CommonModule, MatIconModule, RouterLink],
   templateUrl: './cart.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -21,14 +21,12 @@ export class Cart {
 
   items = this.cartService.items;
   total = this.cartService.totalPrice;
-  count = this.cartService.count;
-  isProcessing = signal(false);
 
-  updateQty(id: string | number, delta: number) {
+  updateQty(id: number, delta: number) {
     this.cartService.updateQuantity(id, delta);
   }
 
-  remove(id: string | number) {
+  remove(id: number) {
     this.cartService.removeItem(id);
   }
 

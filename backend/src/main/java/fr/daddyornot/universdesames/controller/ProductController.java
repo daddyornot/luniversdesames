@@ -44,12 +44,13 @@ public class ProductController {
                 productDTO.name(),
                 productDTO.description(),
                 productDTO.price(),
-                productDTO.stone(),
+                productDTO.stones(),
                 productDTO.imageUrl(),
                 productDTO.type(),
                 productDTO.sessionCount(),
                 productDTO.durationMonths(),
-                productDTO.variants()
+                productDTO.variants(),
+                productDTO.sizes()
         );
         return ResponseEntity.ok(productService.saveProduct(toSave));
     }

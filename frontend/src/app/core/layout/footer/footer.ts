@@ -22,10 +22,12 @@ import {MatIconModule} from '@angular/material/icon';
         <div class="space-y-4">
           <h4 class="font-bold text-gray-800 text-sm uppercase tracking-wider">Suivez-nous</h4>
           <div class="flex gap-4">
-            <a href="https://www.instagram.com/universdesames" target="_blank" class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-spirit-primary shadow-sm hover:bg-spirit-primary hover:text-white transition-all">
+            <a href="https://www.instagram.com/universdesames" target="_blank"
+               class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-spirit-primary shadow-sm hover:bg-spirit-primary hover:text-white transition-all">
               <span class="font-bold">IG</span>
             </a>
-            <a href="https://www.tiktok.com/@universdesames" target="_blank" class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-spirit-primary shadow-sm hover:bg-spirit-primary hover:text-white transition-all">
+            <a href="https://www.tiktok.com/@universdesames" target="_blank"
+               class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-spirit-primary shadow-sm hover:bg-spirit-primary hover:text-white transition-all">
               <span class="font-bold">TK</span>
             </a>
           </div>
@@ -35,7 +37,8 @@ import {MatIconModule} from '@angular/material/icon';
         <div class="space-y-4">
           <h4 class="font-bold text-gray-800 text-sm uppercase tracking-wider">Informations</h4>
           <ul class="space-y-2 text-sm text-gray-600">
-            <li><a routerLink="/mentions-legales" class="hover:text-spirit-primary transition-colors">Mentions Légales</a></li>
+            <li><a routerLink="/mentions-legales" class="hover:text-spirit-primary transition-colors">Mentions
+              Légales</a></li>
             <li><a routerLink="/cgv" class="hover:text-spirit-primary transition-colors">CGV</a></li>
             <li><a routerLink="/contact" class="hover:text-spirit-primary transition-colors">Contact</a></li>
           </ul>

@@ -1,74 +1,74 @@
-import {computed, effect, inject, Injectable, signal, Signal, WritableSignal} from '@angular/core';
-import {LocalStorageService} from '../../core/local-storage/local-storage';
+import {computed, inject, Injectable, signal} from '@angular/core';
+import {ToastService} from '../toast/toast';
 import {CartItem} from '../../core/models/cart';
+import {LocalStorageService} from '../../core/local-storage/local-storage';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private readonly localStorageService = inject(LocalStorageService);
+  private readonly localStorageService = inject(LocalStorageService)
+  private toast = inject(ToastService);
+  items = signal<CartItem[]>([]);
 
-  // 1. L'état du panier (Privé pour ne pas le modifier directement de l'extérieur)
-  private cartItems: WritableSignal<CartItem[]> = signal<CartItem[]>([]);
-
-  // 2. Sélecteurs calculés (Mis à jour automatiquement)
-  items = this.cartItems.asReadonly();
-
-  count = computed(() =>
-    this.cartItems().reduce((acc, item) => acc + item.quantity, 0)
-  );
-
-  totalPrice = computed(() =>
-    this.cartItems().reduce((acc, item) => acc + (item.price * item.quantity), 0)
-  );
+  totalPrice = computed(() => this.items().reduce((total, item) => total + (item.price * item.quantity), 0));
+  count = computed(() => this.items().reduce((count, item) => count + item.quantity, 0));
 
   constructor() {
-    // 3. Persistance : Sauvegarde automatique en LocalStorage dès que le signal change
-    effect(() => {
-      this.localStorageService.setItem('spirit_cart', JSON.stringify(this.cartItems()));
-    });
+    this.loadCart();
   }
-
-  // --- ACTIONS ---
 
   addToCart(product: CartItem) {
-    this.cartItems.update(currentItems => {
-      const existingItem = currentItems.find(item => item.id === product.id);
+    const currentItems = this.items();
+    const existingItem = currentItems.find(item =>
+      item.id === product.id &&
+      item.selectedVariant?.id === product.selectedVariant?.id &&
+      item.selectedSize?.id === product.selectedSize?.id
+    );
 
-      if (existingItem) {
-        // Si l'article existe, on crée un nouveau tableau avec la quantité mise à jour
-        return currentItems.map(item =>
-          item.id === product.id
-            ? {...item, quantity: item.quantity + product.quantity}
-            : item
-        );
-      }
-      // Sinon on ajoute le nouvel article
-      return [...currentItems, product];
+    if (existingItem) {
+      this.items.update(items => items.map(i =>
+        i === existingItem ? {...i, quantity: i.quantity + product.quantity} : i
+      ));
+    } else {
+      this.items.update(items => [...items, product]);
+    }
+    this.saveCart();
+    this.toast.showSuccess(`${product.name} ajouté au panier !`);
+  }
+
+  updateQuantity(id: number, delta: number) {
+    this.items.update(items => {
+      return items.map(item => {
+        if (item.id === id) {
+          const newQty = item.quantity + delta;
+          return newQty > 0 ? {...item, quantity: newQty} : item;
+        }
+        return item;
+      });
     });
+    this.saveCart();
   }
 
-  removeItem(id: string | number) {
-    this.cartItems.update(items => items.filter(i => i.id !== id));
-  }
-
-  updateQuantity(id: string | number, delta: number) {
-    this.cartItems.update(items => items.map(item => {
-      if (item.id === id) {
-        const newQty = item.quantity + delta;
-        return {...item, quantity: newQty > 0 ? newQty : 1};
-      }
-      return item;
-    }));
+  removeItem(id: number) {
+    this.items.update(items => items.filter(item => item.id !== id));
+    this.saveCart();
   }
 
   clearCart() {
-    this.cartItems.set([]);
+    this.items.set([]);
+    this.saveCart();
   }
 
+  private saveCart() {
+    this.localStorageService.setItem('cart', JSON.stringify(this.items()));
+  }
 
-  private loadFromStorage(): CartItem[] {
-    const saved = this.localStorageService.getItem('spirit_cart');
-    return saved ? JSON.parse(saved) : [];
+  private loadCart() {
+    const saved = this.localStorageService.getItem('cart');
+    if (saved) {
+      this.items.set(JSON.parse(saved));
+    }
   }
 }

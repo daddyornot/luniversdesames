@@ -59,9 +59,9 @@ export class Services implements OnInit {
       id: service.id,
       name: service.name,
       price: service.price,
-      image: service.imageUrl,
+      imageUrl: service.imageUrl,
       quantity: 1,
-      type: 'session',
+      type: service.type, // Utilise le type du service
       appointmentDate: slot
     };
 

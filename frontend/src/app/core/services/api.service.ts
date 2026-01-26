@@ -1,14 +1,29 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Injectable, PLATFORM_ID} from '@angular/core';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {API_CONFIG} from '../config/api.config';
+import {isPlatformBrowser} from '@angular/common'; // Import isPlatformBrowser
+import {environment} from '../../../environments/environment'; // Import environment
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
   private http = inject(HttpClient);
-  private baseUrl = API_CONFIG.baseUrl;
+  private platformId = inject(PLATFORM_ID); // Inject PLATFORM_ID
+  private readonly _baseUrl: string;
+
+  constructor() {
+    if (isPlatformBrowser(this.platformId)) {
+      // In the browser, use the apiUrl from the environment (can be relative or absolute)
+      this._baseUrl = environment.apiUrl;
+    } else {
+      // On the server (SSR), we need an absolute URL for the backend
+      // In production, environment.apiUrl should already be absolute (e.g., https://api.universdesames.fr/api)
+      // In development (ng serve --ssr), environment.apiUrl is '/api', which is relative.
+      // So, for development SSR, we explicitly point to the local backend.
+      this._baseUrl = environment.production ? environment.apiUrl : 'http://localhost:8080/api';
+    }
+  }
 
   get<T>(path: string, params?: any): Observable<T> {
     let httpParams = new HttpParams();
@@ -19,18 +34,18 @@ export class ApiService {
         }
       });
     }
-    return this.http.get<T>(`${this.baseUrl}/${path}`, {params: httpParams});
+    return this.http.get<T>(`${this._baseUrl}/${path}`, {params: httpParams});
   }
 
   post<T>(path: string, body: any): Observable<T> {
-    return this.http.post<T>(`${this.baseUrl}/${path}`, body);
+    return this.http.post<T>(`${this._baseUrl}/${path}`, body);
   }
 
   put<T>(path: string, body: any): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}/${path}`, body);
+    return this.http.put<T>(`${this._baseUrl}/${path}`, body);
   }
 
   delete<T>(path: string): Observable<T> {
-    return this.http.delete<T>(`${this.baseUrl}/${path}`);
+    return this.http.delete<T>(`${this._baseUrl}/${path}`);
   }
 }

@@ -1,0 +1,229 @@
+<div class="flex flex-col h-full max-h-[90vh]">
+  <!-- Header -->
+  <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
+    <h2 class="text-xl font-serif font-bold text-gray-800 flex items-center gap-2">
+      <mat-icon class="text-admin-primary">{{ isEditMode() ? 'edit' : 'add_circle' }}</mat-icon>
+      {{ isEditMode() ? 'Modifier le produit' : 'Nouveau produit' }}
+    </h2>
+    <button (click)="onCancel()" class="text-gray-400 hover:text-gray-600 transition-colors">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content (Scrollable) -->
+  <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+    <form [formGroup]="productForm" class="space-y-8">
+
+      <!-- Section 1: Informations Générales -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <mat-icon class="text-sm">info</mat-icon> Informations
+        </h3>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Nom -->
+          <div class="col-span-2 md:col-span-1">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nom du produit</label>
+            <input type="text" formControlName="name"
+                   class="w-full rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary transition-shadow"
+                   placeholder="Ex: Bracelet Améthyste">
+            @if (productForm.get('name')?.invalid && productForm.get('name')?.touched) {
+              <p class="mt-1 text-xs text-red-500 flex items-center gap-1"><mat-icon class="text-[10px] h-3 w-3">error</mat-icon> Requis</p>
+            }
+          </div>
+
+          <!-- Prix -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Prix de base (€)</label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">€</span>
+              <input type="number" formControlName="price"
+                     class="w-full pl-8 rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary transition-shadow"
+                     placeholder="0.00">
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <textarea formControlName="description" rows="3"
+                      class="w-full rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary transition-shadow"
+                      placeholder="Description détaillée du produit..."></textarea>
+          </div>
+
+          <!-- Type -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Type de produit</label>
+            <select formControlName="type"
+                    class="w-full rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary bg-white">
+              <option value="PHYSICAL">💎 Produit Physique</option>
+              <option value="ENERGY_CARE">✨ Soin Énergétique</option>
+              <option value="COACHING">🧘‍♀️ Coaching</option>
+            </select>
+          </div>
+
+          <!-- Image Selection (Nouveau) -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Image</label>
+            <div class="relative group cursor-pointer border-2 border-dashed border-gray-300 rounded-lg hover:border-admin-primary transition-colors overflow-hidden h-32 flex items-center justify-center bg-gray-50"
+                 (click)="openMediaLibrary()">
+
+              @if (productForm.get('imageUrl')?.value) {
+                <img [src]="productForm.get('imageUrl')?.value" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span class="text-white font-medium flex items-center gap-2">
+                    <mat-icon>edit</mat-icon> Changer
+                  </span>
+                </div>
+              } @else {
+                <div class="text-gray-400 flex flex-col items-center gap-1">
+                  <mat-icon>add_photo_alternate</mat-icon>
+                  <span class="text-xs font-medium">Choisir une image</span>
+                </div>
+              }
+
+              <!-- Input caché pour la valeur -->
+              <input type="hidden" formControlName="imageUrl">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Détails Spécifiques -->
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+          <mat-icon class="text-sm">tune</mat-icon> Configuration
+        </h3>
+
+        <!-- Pierres (Pour tous) -->
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-1">Pierres / Matériaux</label>
+          <input type="text" formControlName="stones"
+                 class="w-full rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary"
+                 placeholder="Séparez par des virgules (ex: Améthyste, Quartz)">
+        </div>
+
+        <!-- Champs Services -->
+        @if (productForm.get('type')?.value !== 'PHYSICAL') {
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in fade-in slide-in-from-top-2">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nb Séances</label>
+              <input type="number" formControlName="sessionCount" class="w-full rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Durée (mois)</label>
+              <input type="number" formControlName="durationMonths" class="w-full rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Buffer (min)</label>
+              <input type="number" formControlName="bufferTimeMinutes" class="w-full rounded-lg border-gray-300 focus:border-admin-primary focus:ring-admin-primary"
+                     matTooltip="Temps de pause nécessaire avant/après le RDV">
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Section 3: Variantes & Tailles -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Variantes -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+              <mat-icon class="text-sm">layers</mat-icon> Variantes
+            </h3>
+            <button type="button" (click)="addVariant()" class="text-xs font-bold text-admin-primary hover:bg-admin-primary/10 px-2 py-1 rounded transition-colors">
+              + Ajouter
+            </button>
+          </div>
+
+          <div formArrayName="variants" class="space-y-3 flex-1">
+            @for (variantGroup of variants.controls; track $index) {
+              <div [formGroupName]="$index" class="p-3 bg-gray-50 rounded-lg border border-gray-200 relative group hover:border-admin-primary/30 transition-colors">
+                <button type="button" (click)="removeVariant($index)" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <mat-icon class="text-sm">delete</mat-icon>
+                </button>
+
+                <div class="grid grid-cols-2 gap-3 pr-6">
+                  <div class="col-span-2">
+                    <input type="text" formControlName="label" placeholder="Nom (ex: Formule Premium)"
+                           class="w-full text-sm border-none bg-transparent p-0 focus:ring-0 font-bold placeholder-gray-400">
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-gray-400 uppercase">Prix</label>
+                    <input type="number" formControlName="price" class="w-full text-sm rounded border-gray-200 py-1 px-2">
+                  </div>
+                  <div>
+                    <label class="text-[10px] text-gray-400 uppercase">Sessions</label>
+                    <input type="number" formControlName="sessionCount" class="w-full text-sm rounded border-gray-200 py-1 px-2">
+                  </div>
+                </div>
+              </div>
+            }
+            @if (variants.controls.length === 0) {
+              <div class="text-center py-8 text-gray-400 text-sm italic border-2 border-dashed border-gray-100 rounded-lg">
+                Aucune variante définie
+              </div>
+            }
+          </div>
+        </div>
+
+        <!-- Tailles (Uniquement Physique) -->
+        @if (productForm.get('type')?.value === 'PHYSICAL') {
+          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full animate-in fade-in slide-in-from-right-4">
+            <div class="flex justify-between items-center mb-4">
+              <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+                <mat-icon class="text-sm">straighten</mat-icon> Tailles
+              </h3>
+              <button type="button" (click)="addSize()" class="text-xs font-bold text-admin-primary hover:bg-admin-primary/10 px-2 py-1 rounded transition-colors">
+                + Ajouter
+              </button>
+            </div>
+
+            <div formArrayName="sizes" class="space-y-3 flex-1">
+              @for (sizeGroup of sizes.controls; track $index) {
+                <div [formGroupName]="$index" class="p-3 bg-gray-50 rounded-lg border border-gray-200 relative group hover:border-admin-primary/30 transition-colors">
+                  <button type="button" (click)="removeSize($index)" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <mat-icon class="text-sm">delete</mat-icon>
+                  </button>
+
+                  <div class="grid grid-cols-3 gap-3 pr-6">
+                    <div class="col-span-1">
+                      <label class="text-[10px] text-gray-400 uppercase">Label</label>
+                      <input type="text" formControlName="label" placeholder="S, M..."
+                             class="w-full text-sm font-bold rounded border-gray-200 py-1 px-2">
+                    </div>
+                    <div class="col-span-2">
+                      <label class="text-[10px] text-gray-400 uppercase">Description</label>
+                      <input type="text" formControlName="description" placeholder="16cm..."
+                             class="w-full text-sm rounded border-gray-200 py-1 px-2">
+                    </div>
+                  </div>
+                </div>
+              }
+              @if (sizes.controls.length === 0) {
+                <div class="text-center py-8 text-gray-400 text-sm italic border-2 border-dashed border-gray-100 rounded-lg">
+                  Aucune taille définie
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Footer (Actions) -->
+  <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 sticky bottom-0 z-10">
+    <button type="button" (click)="onCancel()"
+            class="px-5 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-200 transition-colors">
+      Annuler
+    </button>
+    <button type="button" (click)="onSubmit()"
+            class="px-5 py-2.5 rounded-lg text-sm font-medium text-white bg-admin-primary shadow-lg shadow-admin-primary/20 hover:bg-admin-primary/90 active:scale-95 transition-all flex items-center gap-2">
+      <mat-icon class="text-sm">save</mat-icon>
+      Enregistrer
+    </button>
+  </div>
+</div>

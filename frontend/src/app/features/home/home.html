@@ -1,66 +1,113 @@
-<div class="space-y-12 pb-12">
+<div class="space-y-16 pb-24">
 
-    <section class="relative h-[80vh] w-full flex items-center justify-center overflow-hidden">
-        <div class="absolute inset-0 z-0">
-            <!-- Remplacement de ngSrc par src standard pour éviter les warnings de ratio -->
-            <img src="assets/images/viva-luna-studios-mnf5Q9nTkhs-unsplash.jpg"
-                 class="h-full w-full object-cover scale-105 animate-slow-zoom"
-                 alt="Zen Background">
-            <div class="absolute inset-0 bg-black/20"></div>
+  <!-- HERO SECTION -->
+  <section class="relative h-[85vh] w-full flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 z-0">
+      <img src="assets/images/viva-luna-studios-mnf5Q9nTkhs-unsplash.jpg"
+           class="h-full w-full object-cover scale-105 animate-slow-zoom"
+           alt="Zen Background">
+      <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
+    </div>
+
+    <div class="relative z-10 text-center px-6 max-w-2xl mx-auto">
+      <h1 class="font-serif text-5xl md:text-7xl text-white drop-shadow-lg mb-6 leading-tight">
+        L'Univers des <span class="italic text-spirit-accent">Âmes</span>
+      </h1>
+      <p class="text-lg md:text-xl text-white/90 font-light tracking-wide mb-10">
+        Harmonisez votre énergie avec nos créations en pierres naturelles et nos soins spirituels.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button routerLink="/boutique"
+                class="px-8 py-4 bg-white text-spirit-primary rounded-full font-bold shadow-xl hover:bg-spirit-cream transition-all active:scale-95">
+          Découvrir la Boutique
+        </button>
+        <button routerLink="/accompagnement"
+                class="px-8 py-4 bg-spirit-primary/80 backdrop-blur-md text-white border border-white/20 rounded-full font-bold shadow-xl hover:bg-spirit-primary transition-all active:scale-95">
+          Mes Services
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- BRACELETS (Horizontal Scroll) -->
+  <section class="pl-6">
+    <div class="flex justify-between items-end pr-6 mb-8">
+      <div>
+        <h2 class="font-serif text-3xl text-spirit-primary mb-2">Nos Créations</h2>
+        <p class="text-gray-500 text-sm">Bracelets énergétiques faits main</p>
+      </div>
+      <a routerLink="/boutique" class="text-sm font-bold text-spirit-accent hover:text-spirit-primary transition-colors flex items-center gap-1">
+        Voir tout <mat-icon class="text-sm h-4 w-4">arrow_forward</mat-icon>
+      </a>
+    </div>
+
+    <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-8 pr-6">
+      @for (product of bracelets(); track product.id) {
+        <div class="snap-center shrink-0 w-[280px] md:w-[320px]">
+          <app-shop-item [product]="product"></app-shop-item>
         </div>
+      } @empty {
+        <div class="w-full text-center py-10 text-gray-400 italic">
+          Chargement des créations...
+        </div>
+      }
+    </div>
+  </section>
 
-        <div class="relative z-10 text-center px-6">
-            <h2 class="font-serif text-4xl md:text-6xl text-white drop-shadow-lg">
-                Alignez votre <span class="italic">énergie</span>
-            </h2>
-            <p class="mt-4 text-white/90 font-light tracking-wide">Bracelets en pierres naturelles & Soins
-                énergétiques</p>
-            <div class="flex flex-col">
-                <button routerLink="/boutique"
-                        class="mt-8 px-8 py-3 bg-white text-spirit-primary rounded-full font-medium shadow-xl active:scale-95 transition-transform">
-                    Explorer la collection
-                </button>
-                <button routerLink="/accompagnement"
-                        class="mt-8 px-8 py-3 bg-white text-spirit-primary rounded-full font-medium shadow-xl active:scale-95 transition-transform">
-                    Découvrir les soins
-                </button>
+  <!-- SERVICES (Grid) -->
+  <section class="px-6">
+    <div class="max-w-7xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="font-serif text-3xl text-spirit-primary mb-3">Accompagnement & Soins</h2>
+        <p class="text-gray-500">Retrouvez votre équilibre intérieur grâce à nos prestations</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        @for (service of services(); track service.id) {
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition-all group cursor-pointer"
+               [routerLink]="['/boutique', service.id]">
+            <div class="h-12 w-12 rounded-2xl bg-spirit-primary/5 text-spirit-primary flex items-center justify-center mb-4 group-hover:bg-spirit-primary group-hover:text-white transition-colors">
+              <mat-icon class="scale-125">
+                {{ service.type === 'ENERGY_CARE' ? 'self_improvement' : (service.type === 'CARD_READING' ? 'style' : 'psychology') }}
+              </mat-icon>
             </div>
-        </div>
-    </section>
-
-    <section class="pl-6">
-        <div class="flex justify-between items-end pr-6 mb-6">
-            <h3 class="font-serif text-2xl text-spirit-primary">Les Essentiels</h3>
-            <a routerLink="/boutique" class="text-sm text-spirit-accent border-b border-spirit-accent">Voir tout</a>
-        </div>
-
-        <div class="flex gap-6 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4">
-            @for (product of bracelets(); track product.id) {
-                <div class="snap-center shrink-0 w-[70vw]">
-                    <app-shop-item [product]="product"></app-shop-item>
-                </div>
-            }
-        </div>
-    </section>
-
-    <section class="px-6 py-10 bg-spirit-primary/5 rounded-3xl mx-4">
-        <div class="text-center mb-8">
-            <h3 class="font-serif text-2xl text-spirit-primary">Accompagnement Spirituel</h3>
-            <p class="text-sm text-gray-500 mt-2">Retrouvez votre équilibre intérieur</p>
-        </div>
-
-        <div class="space-y-4">
-            <div class="bg-white p-4 rounded-2xl flex items-center gap-4 shadow-sm border border-spirit-leaf/10">
-                <div class="text-3xl">🧘‍♀️</div>
-                <div class="flex-1">
-                    <h4 class="font-bold text-gray-800">Soin Reiki à distance</h4>
-                    <p class="text-xs text-gray-500">1h de rééquilibrage énergétique</p>
-                </div>
-                <button mat-icon-button class="text-spirit-accent" routerLink="/accompagnement">
-                    <mat-icon>arrow_forward</mat-icon>
-                </button>
+            <h3 class="font-bold text-xl text-gray-800 mb-2">{{ service.name }}</h3>
+            <p class="text-gray-500 text-sm line-clamp-2 mb-4">{{ service.description }}</p>
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-spirit-accent">{{ service.price }}€</span>
+              <span class="text-xs font-medium bg-gray-100 px-3 py-1 rounded-full text-gray-600">
+                {{ service.durationMonths ? service.durationMonths + ' mois' : (service.sessionCount ? service.sessionCount + ' séance(s)' : 'Sur RDV') }}
+              </span>
             </div>
-        </div>
-    </section>
+          </div>
+        } @empty {
+          <div class="col-span-full text-center py-10 text-gray-400 italic">
+            Chargement des services...
+          </div>
+        }
+      </div>
+
+      <div class="text-center mt-8">
+        <a routerLink="/accompagnement" class="inline-flex items-center gap-2 px-6 py-3 border border-spirit-primary text-spirit-primary rounded-full font-bold hover:bg-spirit-primary hover:text-white transition-all">
+          Voir tous les services
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PHILOSOPHY -->
+  <section class="px-6 py-16 bg-spirit-cream/50">
+    <div class="max-w-4xl mx-auto text-center">
+      <mat-icon class="text-4xl text-spirit-accent mb-4">spa</mat-icon>
+      <h2 class="font-serif text-3xl md:text-4xl text-spirit-primary mb-6">Une approche holistique</h2>
+      <p class="text-gray-600 leading-relaxed text-lg">
+        "L'Univers des Âmes est né de la volonté d'accompagner chacun vers son épanouissement personnel.
+        Que ce soit par la lithothérapie ou les soins énergétiques, chaque démarche est réalisée avec bienveillance et amour."
+      </p>
+      <div class="mt-8">
+        <img src="assets/images/signature.png" alt="Signature" class="h-12 mx-auto opacity-60" onerror="this.style.display='none'">
+      </div>
+    </div>
+  </section>
 
 </div>

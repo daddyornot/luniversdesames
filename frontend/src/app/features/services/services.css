@@ -8,11 +8,4 @@
     to { transform: translateY(0); }
   }
 
-  /* Personnalisation du calendrier Material pour qu'il soit "Spirit" */
-  /*.mat-calendar {*/
-  /*  @apply font-sans;*/
-  /*}*/
-  /*.mat-calendar-body-selected {*/
-  /*  @apply bg-spirit-accent text-white !important;*/
-  /*}*/
 }

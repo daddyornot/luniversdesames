@@ -6,35 +6,13 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () => import('./features/home/home').then(m => m.Home),
-    title: 'L\'Âme Zen - Accueil'
+    title: 'Accueil'
   },
   {
     path: 'auth',
     loadComponent: () => import('./features/auth/auth').then(m => m.AuthComponent),
     title: 'S\'authentifer'
   },
-
-  // Administration
-  // {
-  //   path: 'admin',
-  //   children: [
-  //     {
-  //       path: '',
-  //       loadComponent: () => import('./features/admin/dashboard/admin-dashboard').then(m => m.AdminDashboard),
-  //       title: 'Administration'
-  //     },
-  //     {
-  //       path: 'product/new',
-  //       loadComponent: () => import('./features/admin/product-form/product-form').then(m => m.ProductForm),
-  //       title: 'Nouveau Produit'
-  //     },
-  //     {
-  //       path: 'product/:id',
-  //       loadComponent: () => import('./features/admin/product-form/product-form').then(m => m.ProductForm),
-  //       title: 'Modifier Produit'
-  //     }
-  //   ]
-  // },
 
   // Espace Client
   {

@@ -1,14 +1,13 @@
 package fr.daddyornot.universdesames.config;
 
 import fr.daddyornot.universdesames.model.Product;
+import fr.daddyornot.universdesames.model.ProductSize;
 import fr.daddyornot.universdesames.model.ProductType;
 import fr.daddyornot.universdesames.model.ProductVariant;
 import fr.daddyornot.universdesames.model.User;
 import fr.daddyornot.universdesames.repository.ProductRepository;
 import fr.daddyornot.universdesames.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
-    private final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
@@ -32,17 +30,24 @@ public class DataInitializer implements CommandLineRunner {
             p1.setName("Bracelet Améthyste");
             p1.setDescription("Pierre de la sagesse et de l'humilité. Favorise l'élévation spirituelle, la concentration et la méditation.");
             p1.setPrice(25.0);
-            p1.setStone("Améthyste");
+            p1.setStones(List.of("Améthyste", "Quartz"));
             p1.setType(ProductType.PHYSICAL);
             p1.setImageUrl("assets/images/alexey-demidov-QRnUMyfhpgA-unsplash.jpg");
+            
+            ProductSize s1_p1 = new ProductSize(); s1_p1.setLabel("S"); s1_p1.setDescription("16cm, poignet fin"); s1_p1.setProduct(p1);
+            ProductSize s2_p1 = new ProductSize(); s2_p1.setLabel("M"); s2_p1.setDescription("18cm, poignet standard"); s2_p1.setProduct(p1);
+            p1.setSizes(List.of(s1_p1, s2_p1));
 
             Product p2 = new Product();
             p2.setName("Bracelet Œil de Tigre");
             p2.setDescription("Pierre de protection. Renvoie les énergies négatives vers son émetteur.");
             p2.setPrice(22.0);
-            p2.setStone("Œil de Tigre");
+            p2.setStones(List.of("Œil de Tigre"));
             p2.setType(ProductType.PHYSICAL);
             p2.setImageUrl("assets/images/alexey-demidov-WTKBeM7rGQE-unsplash.jpg");
+            
+            ProductSize s1_p2 = new ProductSize(); s1_p2.setLabel("Unique"); s1_p2.setDescription("Taille ajustable"); s1_p2.setProduct(p2);
+            p2.setSizes(List.of(s1_p2));
 
             Product p3 = new Product();
             p3.setName("Guidance Spirituelle");
@@ -51,6 +56,7 @@ public class DataInitializer implements CommandLineRunner {
             p3.setType(ProductType.ENERGY_CARE);
             p3.setSessionCount(1);
             p3.setImageUrl("assets/images/wellness-285590_1280.jpg");
+            p3.setBufferTimeMinutes(15);
 
             // Produit avec variantes
             Product p4 = new Product();
@@ -59,6 +65,7 @@ public class DataInitializer implements CommandLineRunner {
             p4.setPrice(150.0); // Prix "à partir de"
             p4.setType(ProductType.COACHING);
             p4.setImageUrl("assets/images/hoylee-song-TsbJvGJ0RwY-unsplash.jpg");
+            p4.setBufferTimeMinutes(30);
 
             ProductVariant v1 = new ProductVariant();
             v1.setLabel("Découverte (1 mois)");
@@ -84,7 +91,7 @@ public class DataInitializer implements CommandLineRunner {
         if (userRepository.findByEmail("admin@universdesames.com").isEmpty()) {
             User admin = new User();
             admin.setEmail("admin@universdesames.com");
-            admin.setPassword(passwordEncoder.encode("admin123")); // Mot de passe par défaut
+            admin.setPassword(passwordEncoder.encode("admin123"));
             admin.setFirstName("Admin");
             admin.setLastName("System");
             admin.setRole("ADMIN");

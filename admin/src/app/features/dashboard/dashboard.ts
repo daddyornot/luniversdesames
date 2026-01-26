@@ -9,6 +9,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
+import {MatDialog} from '@angular/material/dialog'; // Import MatDialog
+import {ProductForm} from '../product-form/product-form'; // Import ProductForm
 
 @Component({
   selector: 'app-dashboard',
@@ -28,6 +30,7 @@ import {MatInputModule} from '@angular/material/input';
 })
 export class DashboardComponent implements OnInit {
   private statsService = inject(StatsService);
+  private dialog = inject(MatDialog); // Inject MatDialog
 
   selectedPeriod = 'CURRENT_MONTH';
   startDate: Date | null = null;
@@ -93,4 +96,6 @@ export class DashboardComponent implements OnInit {
       error: (err) => console.error('Error loading stats', err)
     });
   }
+
+
 }

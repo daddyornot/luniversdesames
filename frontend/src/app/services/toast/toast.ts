@@ -1,12 +1,9 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {inject, Injectable} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({providedIn: 'root'})
 export class ToastService {
   private readonly snackBar = inject(MatSnackBar);
-
-  // Un signal pour suivre si une opération est en cours (optionnel mais utile)
-  loading = signal(false);
 
   showSuccess(message: string) {
     this.snackBar.open(message, 'Fermer', {

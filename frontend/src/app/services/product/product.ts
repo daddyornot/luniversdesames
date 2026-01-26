@@ -19,16 +19,16 @@ export class ProductService {
   readonly allProducts = computed(() => this.productsSource());
 
   readonly bracelets = computed(() =>
-    this.productsSource().filter(p => p.type === 'PHYSICAL')
+    this.allProducts().filter(p => p.type === 'PHYSICAL')
   );
 
   readonly services = computed(() =>
-    this.productsSource().filter(p => p.type !== 'PHYSICAL')
+    this.allProducts().filter(p => p.type !== 'PHYSICAL')
   );
 
   getProductById(id: string | number) {
     return computed(() =>
-      this.productsSource().find(p => p.id.toString() === id.toString())
+      this.allProducts().find(p => p.id.toString() === id.toString())
     );
   }
 

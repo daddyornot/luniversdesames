@@ -4,8 +4,9 @@ import {MatTableModule} from '@angular/material/table';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
-import {ProductDialogComponent} from './product-dialog';
-import {Product, ProductService} from '../../core/services/product.service';
+import {Product} from '../../core/models/product';
+import {ProductService} from '../../core/services/product.service';
+import {ProductForm} from '../product-form/product-form';
 
 @Component({
   selector: 'app-products',
@@ -31,24 +32,26 @@ export class ProductsComponent implements OnInit {
     });
   }
 
-  openDialog(product?: Product): void {
-    const dialogRef = this.dialog.open(ProductDialogComponent, {
-      width: '600px',
-      maxHeight: '90vh',
-      data: product || null
+  // openDialog(product?: Product): void {
+  //   const dialogRef = this.dialog.open(ProductDialogComponent, {
+  //     width: '800px',
+  //     maxHeight: '90vh',
+  //     data: product || null
+  //   });
+  //
+
+  //   });
+  // }
+  openProductForm(productId?: number) {
+    const dialogRef = this.dialog.open(ProductForm, {
+      width: '800px',
+      data: { id: productId } // Passe l'ID au dialog
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (result.id) {
-          this.productService.updateProduct(result.id, result).subscribe(() => {
-            this.loadProducts();
-          });
-        } else {
-          this.productService.createProduct(result).subscribe(() => {
-            this.loadProducts();
-          });
-        }
+        // Si le dialog a renvoyé true (produit modifié/créé), rafraîchir la liste des produits
+        this.loadProducts(); // Assurez-vous d'avoir une méthode pour recharger les produits
       }
     });
   }

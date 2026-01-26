@@ -3,8 +3,9 @@ import {RouterLink} from '@angular/router';
 import {MatIconModule} from '@angular/material/icon';
 import {CartService} from '../../../services/cart/cart';
 import {CartItem} from '../../../core/models/cart';
-import {Product, ProductVariant} from '../../../core/models/product';
 import {CommonModule} from '@angular/common';
+import {Product} from '../../../core/models/product';
+import {ProductVariant} from '../../../core/models/product-variant';
 
 @Component({
   selector: 'app-shop-item',
@@ -59,9 +60,9 @@ export class ShopItem implements OnInit {
       id: p.id,
       name: finalName,
       price: finalPrice,
-      image: p.imageUrl,
+      imageUrl: p.imageUrl,
       quantity: 1,
-      type: 'bracelet' // Par défaut ici car on a filtré les services au dessus
+      type: p.type // Utilise le type du produit
     };
 
     this.cartService.addToCart(item);

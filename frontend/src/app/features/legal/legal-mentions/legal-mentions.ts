@@ -51,20 +51,27 @@ import {CommonModule} from '@angular/common';
           <section>
             <h2 class="font-bold text-gray-800 mb-2">4. Propriété intellectuelle</h2>
             <p>
-              L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle.
-              Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations iconographiques et photographiques.
-              Toute reproduction ou représentation intégrale ou partielle de ce site, par quelque procédé que ce soit, sans l'autorisation expresse de l'éditeur est interdite et constituerait une contrefaçon sanctionnée par le Code de la propriété intellectuelle.
+              L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la
+              propriété intellectuelle.
+              Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les
+              représentations iconographiques et photographiques.
+              Toute reproduction ou représentation intégrale ou partielle de ce site, par quelque procédé que ce soit,
+              sans l'autorisation expresse de l'éditeur est interdite et constituerait une contrefaçon sanctionnée par
+              le Code de la propriété intellectuelle.
             </p>
           </section>
 
           <section>
             <h2 class="font-bold text-gray-800 mb-2">5. Données personnelles</h2>
             <p>
-              Les informations recueillies sur ce site sont enregistrées dans un fichier informatisé par <strong>[Nom de votre compagne]</strong> pour la gestion des commandes et de la relation client.
-              Elles sont conservées pendant la durée nécessaire à la gestion de la relation commerciale et sont destinées à l'usage exclusif de L'Univers des Âmes.
+              Les informations recueillies sur ce site sont enregistrées dans un fichier informatisé par <strong>[Nom de
+              votre compagne]</strong> pour la gestion des commandes et de la relation client.
+              Elles sont conservées pendant la durée nécessaire à la gestion de la relation commerciale et sont
+              destinées à l'usage exclusif de L'Univers des Âmes.
             </p>
             <p class="mt-2">
-              Conformément à la loi « Informatique et Libertés », vous disposez d'un droit d'accès, de modification et de suppression des données vous concernant.
+              Conformément à la loi « Informatique et Libertés », vous disposez d'un droit d'accès, de modification et
+              de suppression des données vous concernant.
               Pour l'exercer, vous pouvez nous contacter à l'adresse suivante : [Email de contact].
             </p>
           </section>
@@ -75,11 +82,16 @@ import {CommonModule} from '@angular/common';
               Ce site utilise des cookies pour assurer son bon fonctionnement et améliorer votre expérience utilisateur.
             </p>
             <ul class="list-disc pl-5 mt-2 space-y-1">
-              <li><strong>Cookies essentiels :</strong> Ces cookies sont nécessaires au fonctionnement du site (gestion du panier, authentification). Ils ne nécessitent pas de consentement préalable.</li>
-              <li><strong>Cookies de mesure d'audience (si applicable) :</strong> Nous n'utilisons pas actuellement de cookies de suivi publicitaire intrusifs.</li>
+              <li><strong>Cookies essentiels :</strong> Ces cookies sont nécessaires au fonctionnement du site (gestion
+                du panier, authentification). Ils ne nécessitent pas de consentement préalable.
+              </li>
+              <li><strong>Cookies de mesure d'audience (si applicable) :</strong> Nous n'utilisons pas actuellement de
+                cookies de suivi publicitaire intrusifs.
+              </li>
             </ul>
             <p class="mt-2">
-              Vous pouvez à tout moment configurer votre navigateur pour refuser les cookies, mais cela pourrait altérer le fonctionnement du site (ex: perte du panier).
+              Vous pouvez à tout moment configurer votre navigateur pour refuser les cookies, mais cela pourrait altérer
+              le fonctionnement du site (ex: perte du panier).
             </p>
           </section>
         </div>

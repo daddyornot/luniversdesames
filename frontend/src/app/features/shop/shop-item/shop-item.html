@@ -1,4 +1,5 @@
-<div class="group relative flex flex-col bg-white rounded-[2rem] p-3 shadow-sm border border-spirit-primary/5 transition-all hover:shadow-xl h-full">
+<div
+  class="group relative flex flex-col bg-white rounded-[2rem] p-3 shadow-sm border border-spirit-primary/5 transition-all hover:shadow-xl h-full">
   <div class="relative aspect-square overflow-hidden rounded-[1.5rem] bg-spirit-background">
     <img [src]="product().imageUrl"
          [routerLink]="['/boutique', product().id]"
@@ -7,20 +8,20 @@
 
     <!-- Badge Type -->
     @if (product().type !== 'PHYSICAL') {
-      <div class="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[10px] font-bold text-spirit-primary uppercase tracking-wider shadow-sm">
+      <div
+        class="absolute top-3 left-3 px-2 py-1 bg-white/90 backdrop-blur-sm rounded-lg text-[10px] font-bold text-spirit-primary uppercase tracking-wider shadow-sm">
         {{ product().type === 'COACHING' ? 'Coaching' : 'Service' }}
       </div>
     }
 
-    <button class="absolute top-3 right-3 h-8 w-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-md text-spirit-primary">
-      <mat-icon class="scale-75">favorite_border</mat-icon>
-    </button>
   </div>
 
   <div class="p-3 space-y-2 flex flex-col flex-grow">
     <div>
-      <h3 class="font-serif text-lg text-spirit-primary leading-tight line-clamp-2 min-h-[3.5rem] cursor-pointer" [routerLink]="['/boutique', product().id]">{{ product().name }}</h3>
-      <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">{{ product().stone || 'Bien-être' }}</p>
+      <h3 class="font-serif text-lg text-spirit-primary leading-tight line-clamp-2 min-h-[3.5rem] cursor-pointer"
+          [routerLink]="['/boutique', product().id]">{{ product().name }}</h3>
+      <p
+        class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">{{ product().stones.join(', ') }}</p>
     </div>
 
     <!-- VARIANTES (Chips) -->

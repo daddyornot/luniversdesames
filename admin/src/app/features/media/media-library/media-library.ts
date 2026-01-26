@@ -1,10 +1,11 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, inject, Input, OnInit, Output, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MediaService} from '../../../core/services/media.service';
-import {ToastService} from '../../../services/toast/toast';
 import {Clipboard} from '@angular/cdk/clipboard';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
+import {ToastService} from '../../../services/toast/toast';
 
 @Component({
   selector: 'app-media-library',
@@ -18,8 +19,9 @@ export class MediaLibraryComponent implements OnInit {
   private toast = inject(ToastService);
   private clipboard = inject(Clipboard);
 
-  @Input() isSelectionMode = false;
-  @Output() imageSelected = new EventEmitter<string>();
+  // Injection pour le Dialog (optionnel si utilisé hors dialog, mais ici on l'utilise en dialog)
+  private dialogRef = inject(MatDialogRef<MediaLibraryComponent>, { optional: true });
+  private data = inject(MAT_DIALOG_DATA, { optional: true });
 
   images = signal<string[]>([]);
   isUploading = signal(false);
@@ -69,16 +71,18 @@ export class MediaLibraryComponent implements OnInit {
     }
   }
 
-  copyUrl(url: string) {
-    this.clipboard.copy(url);
-    this.toast.showSuccess('URL copiée !');
+  selectImage(url: string) {
+    if (this.dialogRef) {
+      this.dialogRef.close(url); // Ferme le dialog et renvoie l'URL
+    } else {
+      this.clipboard.copy(url);
+      this.toast.showSuccess('URL copiée !');
+    }
   }
 
-  selectImage(url: string) {
-    if (this.isSelectionMode) {
-      this.imageSelected.emit(url);
-    } else {
-      this.copyUrl(url);
+  onCancel() {
+    if (this.dialogRef) {
+      this.dialogRef.close();
     }
   }
 }
