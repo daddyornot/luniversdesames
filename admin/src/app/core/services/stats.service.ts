@@ -1,5 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {environment} from '../../../environments/environment';
 
 export interface DashboardStats {
   totalRevenue: number;
@@ -12,7 +13,7 @@ export interface DashboardStats {
 @Injectable({providedIn: 'root'})
 export class StatsService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/dashboard';
+  private apiUrl = `${environment.apiUrl}/dashboard`;
 
   getDashboardStats(period: string, startDate?: string, endDate?: string) {
     const params: any = { period };

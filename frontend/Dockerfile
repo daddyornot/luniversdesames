@@ -26,8 +26,11 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copie des fichiers buildés
 COPY --from=build-stage /app/dist/frontend/browser /usr/share/nginx/html
 
-# Renommage de index.csr.html en index.html si nécessaire (Fix pour Angular 17+ SSR build)
+# Renommage de index.csr.html en index.html si nécessaire
 RUN if [ -f /usr/share/nginx/html/index.csr.html ]; then mv /usr/share/nginx/html/index.csr.html /usr/share/nginx/html/index.html; fi
+
+# Correction des permissions (Lecture pour tous)
+RUN chmod -R 755 /usr/share/nginx/html
 
 # Copie de la configuration Nginx
 COPY nginx-custom.conf /etc/nginx/conf.d/default.conf
