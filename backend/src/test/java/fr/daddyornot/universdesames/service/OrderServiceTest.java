@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -91,7 +92,7 @@ class OrderServiceTest {
         product.setPrice(50.0);
         product.setName("Guidance");
 
-        LocalDateTime rdvDate = LocalDateTime.now().plusDays(1);
+        ZonedDateTime rdvDate = ZonedDateTime.now().plusDays(1);
 
         OrderRequest request = new OrderRequest(
                 userEmail,
@@ -111,7 +112,7 @@ class OrderServiceTest {
         verify(googleCalendarService, times(1)).createEvent(
                 contains("RDV : Guidance"), // Vérifie le titre
                 any(),
-                eq(rdvDate),
+                eq(rdvDate.toLocalDateTime()),
                 any(),
                 eq(userEmail)
         );
