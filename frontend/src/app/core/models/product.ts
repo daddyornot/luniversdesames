@@ -21,4 +21,6 @@ export interface Product {
   variants?: ProductVariant[];
   sizes?: ProductSize[];
   bufferTimeMinutes?: number;
+  isSubscription?: boolean;
+  recurringInterval?: string;
 }

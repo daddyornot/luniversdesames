@@ -15,4 +15,5 @@
     <include file="db/changelog/changes/20-01-add-product-buffer-time.xml"/>
     <include file="db/changelog/changes/20-01-add-user-role.xml"/>
     <include file="db/changelog/changes/20-01-add-product-stones-and-sizes.xml"/>
+    <include file="db/changelog/changes/20-01-add-product-subscription.xml"/>
 </databaseChangeLog>

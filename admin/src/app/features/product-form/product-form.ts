@@ -48,7 +48,9 @@ export class ProductForm implements OnInit {
       durationMonths: [null],
       bufferTimeMinutes: [0],
       variants: this.fb.array([]),
-      sizes: this.fb.array([])
+      sizes: this.fb.array([]),
+      isSubscription: [null],
+      recurringInterval: ['']
     });
   }
 

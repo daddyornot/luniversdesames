@@ -63,7 +63,9 @@ public class OrderService {
             orderItem.setProductName(product.getName());
             orderItem.setQuantity(itemReq.quantity());
             orderItem.setPriceAtPurchase(product.getPrice());
-            orderItem.setAppointmentDate(itemReq.appointmentDate());
+            orderItem.setAppointmentDate(itemReq.appointmentDate() != null ?
+                    itemReq.appointmentDate().toLocalDateTime() : null
+            );
 
             order.getItems().add(orderItem);
             total += product.getPrice() * itemReq.quantity();
@@ -75,8 +77,8 @@ public class OrderService {
                 googleCalendarService.createEvent(
                     "RDV : " + product.getName() + " - " + request.customerName(),
                     "Réservation via Univers des Âmes.\nClient : " + request.customerName() + "\nEmail : " + request.customerEmail(),
-                    itemReq.appointmentDate(),
-                    itemReq.appointmentDate().plusHours(1), // Durée par défaut 1h, à affiner selon le produit
+                    itemReq.appointmentDate().toLocalDateTime(),
+                    itemReq.appointmentDate().toLocalDateTime().plusHours(1), // Durée par défaut 1h, à affiner selon le produit
                     request.customerEmail()
                 );
             }

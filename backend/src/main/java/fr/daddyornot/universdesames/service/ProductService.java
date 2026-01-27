@@ -62,6 +62,10 @@ public class ProductService {
         product.setType(productDTO.type());
         product.setSessionCount(productDTO.sessionCount());
         product.setDurationMonths(productDTO.durationMonths());
+        product.setBufferTimeMinutes(productDTO.bufferTimeMinutes() != null ? productDTO.bufferTimeMinutes() : 0); // Assurer une valeur par défaut
+        product.setSubscription(productDTO.isSubscription() != null ? productDTO.isSubscription() : false);
+        product.setRecurringInterval(productDTO.recurringInterval());
+
 
         // Gestion des variantes
         product.getVariants().clear();
@@ -117,7 +121,10 @@ public class ProductService {
                 product.getSessionCount(),
                 product.getDurationMonths(),
                 variantDTOs,
-                sizeDTOs
+                sizeDTOs,
+                product.getBufferTimeMinutes(),
+                product.isSubscription(),
+                product.getRecurringInterval()
         );
     }
 }

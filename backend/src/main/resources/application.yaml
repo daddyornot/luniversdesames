@@ -12,6 +12,9 @@ spring:
     change-log: classpath:db/changelog/db.changelog-master.xml
     enabled: true
 
+app:
+  url: ${APP_URL:http://localhost:4200} # URL du frontend
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000
@@ -24,6 +27,7 @@ google:
 stripe:
   secret-key: ${STRIPE_SECRET_KEY:0000}
   public-key: ${STRIPE_PUBLIC_KEY:0000}
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_...}
 
 aws:
   s3:
@@ -32,4 +36,4 @@ aws:
     access-key: ${S3_ACCESS_KEY}
     secret-key: ${S3_SECRET_KEY}
     bucket: ${S3_BUCKET}
-    region: ${S3_REGION:eu-west-1} # Par défaut us-east-1 pour MinIO
+    region: ${S3_REGION:eu-west-1}

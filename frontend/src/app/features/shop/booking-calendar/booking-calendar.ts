@@ -13,6 +13,7 @@ export class BookingCalendar implements OnChanges {
   private bookingService = inject(BookingService);
 
   @Input() bufferMinutes: number = 0;
+  @Input() sessionCount!: number | undefined;
   @Output() slotSelected = new EventEmitter<string>();
 
   selectedDate = signal<Date>(new Date());

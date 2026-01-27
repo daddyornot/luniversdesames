@@ -1,7 +1,7 @@
 <div class="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm">
   <h3 class="font-serif text-lg text-spirit-primary mb-4 flex items-center gap-2">
     <mat-icon>calendar_today</mat-icon>
-    Choisir un créneau
+    {{ sessionCount && sessionCount! > 1 ? 'Réserver la 1ère séance' : 'Choisir un créneau' }}
   </h3>
 
   <!-- Sélecteur de jours (Scroll horizontal) -->

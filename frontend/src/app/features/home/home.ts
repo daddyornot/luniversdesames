@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {ShopItem} from "../shop/shop-item/shop-item";
 import {RouterLink} from "@angular/router";
 import {ProductService} from "../../services/product/product";
-import {Product} from "../../core/models/product";
+import {toSignal} from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -13,18 +13,9 @@ import {Product} from "../../core/models/product";
   templateUrl: './home.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Home implements OnInit {
+export class Home {
   private readonly service = inject(ProductService);
 
-  bracelets = signal<Product[]>([]);
-  services = signal<Product[]>([]);
-
-  ngOnInit() {
-    this.service.getProductsByType('PHYSICAL').subscribe(products => {
-      this.bracelets.set(products);
-    });
-    this.service.getServices().subscribe(services => {
-      this.services.set(services);
-    });
-  }
+  bracelets = toSignal(this.service.getProductsByType('PHYSICAL'), {initialValue: []});
+  services = toSignal(this.service.getServices(), {initialValue: []});
 }

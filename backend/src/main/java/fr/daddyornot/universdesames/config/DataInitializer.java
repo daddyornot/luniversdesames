@@ -83,7 +83,17 @@ public class DataInitializer implements CommandLineRunner {
 
             p4.setVariants(List.of(v1, v2));
 
-            productRepository.saveAll(List.of(p1, p2, p3, p4));
+            // --- NOUVEAU PRODUIT ABONNEMENT ---
+            Product p5 = new Product();
+            p5.setName("Cercle des Âmes (Abonnement)");
+            p5.setDescription("Accès illimité aux méditations guidées et 1 soin collectif par mois.");
+            p5.setPrice(29.90);
+            p5.setType(ProductType.ENERGY_CARE);
+            p5.setImageUrl("assets/images/astrology-993127_1280.jpg");
+            p5.setSubscription(true);
+            p5.setRecurringInterval("month");
+
+            productRepository.saveAll(List.of(p1, p2, p3, p4, p5));
             System.out.println("Données produits insérées !");
         }
 

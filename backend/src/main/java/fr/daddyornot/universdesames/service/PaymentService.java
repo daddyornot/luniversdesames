@@ -23,6 +23,9 @@ public class PaymentService {
     @Value("${stripe.secret-key}")
     private String secretKey;
 
+    @Value("${app.url}") // URL du frontend pour les redirections
+    private String appUrl;
+
     private final ProductRepository productRepository;
 
     @PostConstruct
@@ -32,42 +35,51 @@ public class PaymentService {
 
     public PaymentResponse createCheckoutSession(OrderRequest orderRequest) throws StripeException {
         List<SessionCreateParams.LineItem> lineItems = new ArrayList<>();
+        boolean hasSubscription = false;
 
         for (var item : orderRequest.items()) {
             Product product = productRepository.findById(item.productId())
-                .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
+                    .orElseThrow(() -> new RuntimeException("Produit non trouvé"));
 
-            lineItems.add(
-                SessionCreateParams.LineItem.builder()
-                    .setQuantity(Long.valueOf(item.quantity()))
-                    .setPriceData(
-                        SessionCreateParams.LineItem.PriceData.builder()
-                            .setCurrency("eur")
-                            .setUnitAmount((long) (product.getPrice() * 100))
-                            .setProductData(
-                                SessionCreateParams.LineItem.PriceData.ProductData.builder()
+            if (product.isSubscription()) {
+                hasSubscription = true;
+            }
+
+            SessionCreateParams.LineItem.PriceData.Builder priceDataBuilder = SessionCreateParams.LineItem.PriceData.builder()
+                    .setCurrency("eur")
+                    .setUnitAmount((long) (product.getPrice() * 100))
+                    .setProductData(
+                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
                                     .setName(product.getName())
                                     .setDescription(product.getDescription())
-                                    // .addImage(product.getImageUrl()) // Optionnel si URL publique
                                     .build()
-                            )
+                    );
+
+            if (product.isSubscription()) {
+                priceDataBuilder.setRecurring(
+                        SessionCreateParams.LineItem.PriceData.Recurring.builder()
+                                .setInterval(SessionCreateParams.LineItem.PriceData.Recurring.Interval.valueOf(product.getRecurringInterval().toUpperCase()))
+                                .build()
+                );
+            }
+
+            lineItems.add(
+                    SessionCreateParams.LineItem.builder()
+                            .setQuantity(Long.valueOf(item.quantity()))
+                            .setPriceData(priceDataBuilder.build())
                             .build()
-                    )
-                    .build()
             );
         }
 
-        SessionCreateParams params = SessionCreateParams.builder()
-            .setMode(SessionCreateParams.Mode.PAYMENT)
-            .setSuccessUrl("http://localhost:4200/checkout/success?session_id={CHECKOUT_SESSION_ID}")
-            .setCancelUrl("http://localhost:4200/panier")
-            .setCustomerEmail(orderRequest.customerEmail())
-            .addAllLineItem(lineItems)
-            .build();
+        SessionCreateParams.Builder paramsBuilder = SessionCreateParams.builder()
+                .setMode(hasSubscription ? SessionCreateParams.Mode.SUBSCRIPTION : SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(appUrl + "/checkout/success?session_id={CHECKOUT_SESSION_ID}")
+                .setCancelUrl(appUrl + "/panier")
+                .setCustomerEmail(orderRequest.customerEmail())
+                .addAllLineItem(lineItems);
 
-        Session session = Session.create(params);
+        Session session = Session.create(paramsBuilder.build());
 
-        // On renvoie l'URL de redirection vers Stripe
         return new PaymentResponse(session.getUrl());
     }
 }

@@ -15,6 +15,9 @@ public record ProductDTO(
     Integer sessionCount,
     Integer durationMonths,
     List<ProductVariantDTO> variants,
-    List<ProductSizeDTO> sizes
+    List<ProductSizeDTO> sizes,
+    Integer bufferTimeMinutes,
+    Boolean isSubscription, // Nouveau
+    String recurringInterval // Nouveau
 ) {
 }

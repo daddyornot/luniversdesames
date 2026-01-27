@@ -38,6 +38,12 @@ public class Product {
     
     private Integer bufferTimeMinutes = 0;
 
+    // --- ABONNEMENT ---
+    private boolean isSubscription = false;
+    
+    // "month", "year", "week", "day"
+    private String recurringInterval;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariant> variants = new ArrayList<>();
 

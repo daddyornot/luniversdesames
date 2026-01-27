@@ -50,7 +50,10 @@ public class ProductController {
                 productDTO.sessionCount(),
                 productDTO.durationMonths(),
                 productDTO.variants(),
-                productDTO.sizes()
+                productDTO.sizes(),
+                productDTO.bufferTimeMinutes(),
+                productDTO.isSubscription(),
+                productDTO.recurringInterval()
         );
         return ResponseEntity.ok(productService.saveProduct(toSave));
     }

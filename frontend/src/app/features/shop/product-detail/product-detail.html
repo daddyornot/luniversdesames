@@ -24,15 +24,29 @@
               </p>
             }
           </div>
-          <span class="text-2xl font-bold text-spirit-primary">{{ displayPrice() }}€</span>
+          <div class="text-right">
+            <span class="text-2xl font-bold text-spirit-primary">{{ displayPrice() }}€</span>
+            @if (p.isSubscription) {
+              <span class="block text-xs font-medium text-gray-500 uppercase tracking-wide">
+                / {{ p.recurringInterval === 'month' ? 'mois' : (p.recurringInterval === 'year' ? 'an' : p.recurringInterval) }}
+              </span>
+            }
+          </div>
         </div>
 
         <!-- Badges d'info -->
-        <div class="flex flex-wrap gap-2 mt-4 mb-6">
+        <div class="flex flex-wrap gap-2 items-center mt-4 mb-6">
           @if (p.type === 'PHYSICAL') {
-            <span class="px-3 py-1 bg-spirit-primary/5 text-spirit-primary text-xs rounded-full font-medium">Produit Physique</span>
+            <span class="px-3 py-1 bg-spirit-primary/5 text-spirit-primary text-xs rounded-full font-medium">Bijou</span>
           } @else {
             <span class="px-3 py-1 bg-purple-100 text-purple-800 text-xs rounded-full font-medium">Service</span>
+          }
+
+          @if (p.isSubscription) {
+            <span
+              class="px-3 py-1 bg-orange-100 text-orange-800 text-xs rounded-full font-medium flex items-center gap-1">
+              <mat-icon class="text-[10px] h-3 w-3">autorenew</mat-icon> Abonnement
+            </span>
           }
 
           @if (selectedVariant()?.durationMonths || p.durationMonths) {
@@ -91,13 +105,15 @@
           </div>
         }
 
+        <p class="text-gray-600 leading-relaxed text-sm">
+          {{ p.description || "Ce bracelet unique a été conçu pour harmoniser vos énergies. Chaque pierre a été sélectionnée avec soin pour ses vertus lithothérapeutiques." }}
+        </p>
+
         <!-- CALENDRIER DE RÉSERVATION -->
         @if (p.type !== 'PHYSICAL') {
-          <div class="mb-8 animate-in fade-in slide-in-from-bottom-4">
-            <h3 class="text-lg font-serif text-spirit-primary mb-2">
-              {{ displaySessionCount() && displaySessionCount()! > 1 ? 'Réserver la 1ère séance' : 'Choisir un créneau' }}
-            </h3>
-            <app-booking-calendar
+          <div class="my-8 animate-in fade-in slide-in-from-bottom-4">
+          <app-booking-calendar
+              [sessionCount]="displaySessionCount()"
               [bufferMinutes]="p.bufferTimeMinutes || 0"
               (slotSelected)="onSlotSelected($event)">
             </app-booking-calendar>
@@ -107,10 +123,6 @@
             }
           </div>
         }
-
-        <p class="text-gray-600 leading-relaxed text-sm">
-          {{ p.description || "Ce bracelet unique a été conçu pour harmoniser vos énergies. Chaque pierre a été sélectionnée avec soin pour ses vertus lithothérapeutiques." }}
-        </p>
       </div>
     </div>
 
@@ -120,7 +132,7 @@
               [disabled]="p.type !== 'PHYSICAL' && !selectedAppointment() || (p.type === 'PHYSICAL' && p.sizes && p.sizes.length > 0 && !selectedSize())"
               class="w-full py-4 bg-spirit-primary text-white rounded-2xl font-bold shadow-xl shadow-spirit-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
         <mat-icon>shopping_bag</mat-icon>
-        {{ (p.type !== 'PHYSICAL' && !selectedAppointment()) ? 'Choisir un créneau' : (p.type === 'PHYSICAL' && p.sizes && p.sizes.length > 0 && !selectedSize() ? 'Choisir une taille' : 'Ajouter au panier') }}
+        {{ (p.type !== 'PHYSICAL' && !selectedAppointment()) ? 'Choisir un créneau' : (p.type === 'PHYSICAL' && p.sizes && p.sizes.length > 0 && !selectedSize() ? 'Choisir une taille' : (p.isSubscription ? 'S\'abonner' : 'Ajouter au panier')) }}
       </button>
     </div>
 
