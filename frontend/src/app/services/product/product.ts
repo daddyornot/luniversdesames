@@ -1,58 +1,65 @@
-import {computed, inject, Injectable} from '@angular/core';
-import {toSignal} from '@angular/core/rxjs-interop';
-import {Product} from '../../core/models/product';
-import {BehaviorSubject, Observable, switchMap, tap} from 'rxjs';
+import {computed, inject, Injectable, signal} from '@angular/core';
+import {Product, ProductType} from '../../core/models/product';
 import {ApiService} from '../../core/services/api.service';
+import {tap} from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class ProductService {
   private api = inject(ApiService);
-  private refreshTrigger = new BehaviorSubject<void>(undefined);
 
-  private productsSource = toSignal(
-    this.refreshTrigger.pipe(
-      switchMap(() => this.api.get<Product[]>('products'))
-    ),
-    {initialValue: []}
-  );
+  // State (Source de vérité)
+  private state = signal<{
+    products: Product[];
+    loading: boolean;
+    error: string | null;
+  }>({
+    products: [],
+    loading: false,
+    error: null
+  });
 
-  readonly allProducts = computed(() => this.productsSource());
+  // Selectors
+  readonly products = computed(() => this.state().products);
+  readonly loading = computed(() => this.state().loading);
+  readonly error = computed(() => this.state().error);
 
   readonly bracelets = computed(() =>
-    this.allProducts().filter(p => p.type === 'PHYSICAL')
+    this.products().filter(p => p.type === 'PHYSICAL')
   );
 
   readonly services = computed(() =>
-    this.allProducts().filter(p => p.type !== 'PHYSICAL')
+    this.products().filter(p => p.type !== 'PHYSICAL')
   );
+
+  constructor() {
+    this.loadProducts();
+  }
+
+  loadProducts() {
+    this.state.update(s => ({...s, loading: true}));
+    this.api.get<Product[]>('products').subscribe({
+      next: (products) => {
+        this.state.update(s => ({...s, products, loading: false}));
+      },
+      error: (err) => {
+        console.error('Erreur chargement produits', err);
+        this.state.update(s => ({...s, error: 'Impossible de charger les produits', loading: false}));
+      }
+    });
+  }
 
   getProductById(id: string | number) {
     return computed(() =>
-      this.allProducts().find(p => p.id.toString() === id.toString())
+      this.products().find(p => p.id.toString() === id.toString())
     );
   }
 
-  getProductsByType(type: string): Observable<Product[]> {
+  // Méthodes spécifiques pour le backend (si besoin de filtrage serveur)
+  getProductsByType(type: string) {
     return this.api.get<Product[]>(`products?type=${type}`);
   }
 
-  getServices(): Observable<Product[]> {
+  getServices() {
     return this.api.get<Product[]>('products/services');
-  }
-
-  refresh() {
-    this.refreshTrigger.next();
-  }
-
-  createProduct(product: any) {
-    return this.api.post('products', product).pipe(tap(() => this.refresh()));
-  }
-
-  updateProduct(id: number, product: any) {
-    return this.api.put(`products/${id}`, product).pipe(tap(() => this.refresh()));
-  }
-
-  deleteProduct(id: number) {
-    return this.api.delete(`products/${id}`).pipe(tap(() => this.refresh()));
   }
 }

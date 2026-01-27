@@ -1,6 +1,12 @@
-import {ProductVariant} from './product-variant';
+export type ProductType = 'PHYSICAL' | 'ENERGY_CARE' | 'CARD_READING' | 'COACHING';
 
-export type ProductType = 'PHYSICAL' | 'ENERGY_CARE' | 'CARD_READING' | 'COACHING' | 'SUBSCRIPTION';
+export interface ProductVariant {
+  id?: number;
+  label: string;
+  price: number;
+  sessionCount?: number;
+  durationMonths?: number;
+}
 
 export interface ProductSize {
   id: number;
@@ -15,7 +21,7 @@ export interface Product {
   price: number;
   stones: string[];
   imageUrl: string;
-  type: ProductType
+  type: ProductType;
   sessionCount?: number;
   durationMonths?: number;
   variants?: ProductVariant[];

@@ -2,10 +2,9 @@ import {Component, computed, effect, inject, OnInit, signal} from '@angular/core
 import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
 import {ActivatedRoute, RouterLink} from '@angular/router';
-import {Product, ProductSize} from '../../../core/models/product';
+import {Product, ProductSize, ProductVariant} from '../../../core/models/product';
 import {ProductService} from '../../../services/product/product';
 import {CartService} from '../../../services/cart/cart';
-import {ProductVariant} from '../../../core/models/product-variant';
 import {BookingCalendar} from '../booking-calendar/booking-calendar';
 import {CartItem} from '../../../core/models/cart';
 
@@ -39,38 +38,6 @@ export class ProductDetail implements OnInit {
     return this.product()?.sessionCount;
   });
 
-  ngOnInit() {
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
-      if (id) {
-        // Since getProductById returns a computed signal, we can read it.
-        // But we need to react when it updates (data loaded).
-        // A simple way is to use an effect in constructor, but here we are in ngOnInit.
-        // We can use a workaround or just poll it? No.
-
-        // Better: ProductService should expose a way to get product by ID as observable or we use the signal in template directly.
-        // But we need to set selectedVariant.
-
-        // Let's assume we can just read the signal in the template, and use an effect for side effects.
-        // But effect() must be in injection context.
-
-        // I'll use a manual subscription to the service's source if possible, or just use the signal in template.
-        // But I need to set selectedVariant.
-
-        // I'll use `toObservable` on the signal?
-
-        // For now, I'll just use the signal in the template and use a computed for selectedVariant default?
-        // No, selectedVariant is user selection.
-
-        // I'll use a simple approach:
-        const pSignal = this.productService.getProductById(id);
-        // We can't subscribe to a signal.
-
-        // I'll change the logic to use `effect` in constructor.
-      }
-    });
-  }
-
   constructor() {
     effect(() => {
       const id = this.route.snapshot.paramMap.get('id');
@@ -87,6 +54,10 @@ export class ProductDetail implements OnInit {
         }
       }
     });
+  }
+
+  ngOnInit() {
+    // L'initialisation est gérée par l'effect dans le constructeur
   }
 
   selectVariant(variant: ProductVariant) {

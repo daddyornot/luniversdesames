@@ -4,8 +4,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {CartService} from '../../../services/cart/cart';
 import {CartItem} from '../../../core/models/cart';
 import {CommonModule} from '@angular/common';
-import {Product} from '../../../core/models/product';
-import {ProductVariant} from '../../../core/models/product-variant';
+import {Product, ProductVariant} from '../../../core/models/product';
 
 @Component({
   selector: 'app-shop-item',
@@ -46,9 +45,6 @@ export class ShopItem implements OnInit {
     // Si c'est un service qui nécessite une date (Coaching, Soin...), on redirige vers le détail
     // SAUF si c'est un produit physique
     if (p.type !== 'PHYSICAL') {
-      // On ne peut pas ajouter au panier directement depuis la liste car il faut choisir une date
-      // On pourrait rediriger vers le détail ici, ou afficher un toast "Veuillez choisir une date"
-      // Pour l'instant, le bouton "+" servira de lien vers le détail pour ces produits
       return;
     }
 
@@ -62,7 +58,7 @@ export class ShopItem implements OnInit {
       price: finalPrice,
       imageUrl: p.imageUrl,
       quantity: 1,
-      type: p.type // Utilise le type du produit
+      type: p.type
     };
 
     this.cartService.addToCart(item);

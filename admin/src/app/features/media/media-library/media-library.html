@@ -1,11 +1,11 @@
 <div class="flex flex-col h-full max-h-[80vh]">
   <!-- Header -->
-  <div class="flex justify-between items-center px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 sm:px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-10 gap-4">
     <h2 class="text-xl font-serif font-bold text-gray-800 flex items-center gap-2">
       <mat-icon class="text-admin-primary">perm_media</mat-icon>
       Médiathèque
     </h2>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
       <input type="file" #fileInput hidden (change)="onFileSelected($event)" accept="image/*">
       <button (click)="fileInput.click()" [disabled]="isUploading()"
               class="px-4 py-2 bg-admin-primary text-white rounded-lg text-sm font-medium hover:bg-admin-primary/90 flex items-center gap-2">
@@ -19,7 +19,7 @@
   </div>
 
   <!-- Grid -->
-  <div class="flex-1 overflow-y-auto p-6 bg-gray-50">
+  <div class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50">
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
       @for (url of images(); track url) {
         <div class="group relative aspect-square bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden cursor-pointer hover:ring-2 hover:ring-admin-primary transition-all"

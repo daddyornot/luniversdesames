@@ -1,5 +1,4 @@
-import {ProductVariant} from './product-variant';
-import {ProductSize, ProductType} from './product';
+import {ProductSize, ProductType, ProductVariant} from './product';
 
 export interface CartItem {
   id: number;

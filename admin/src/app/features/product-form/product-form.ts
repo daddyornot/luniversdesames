@@ -2,17 +2,32 @@ import {Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatSelectModule} from '@angular/material/select';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatButtonModule} from '@angular/material/button';
+import {MatTooltipModule} from '@angular/material/tooltip';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {ProductSize} from '../../core/models/product';
+import {ProductSize, ProductVariant} from '../../core/models/product';
 import {ProductService} from '../../core/services/product.service';
-import {ProductVariant} from '../../core/models/product-variant';
 import {MediaLibraryComponent} from '../media/media-library/media-library';
 import {ToastService} from '../../services/toast/toast';
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatIconModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatTooltipModule
+  ],
   templateUrl: './product-form.html'
 })
 export class ProductForm implements OnInit {
@@ -29,6 +44,19 @@ export class ProductForm implements OnInit {
 
   ngOnInit() {
     this.initForm();
+
+    // Gestion dynamique des validateurs pour l'abonnement
+    this.productForm.get('isSubscription')?.valueChanges.subscribe(isSub => {
+      const intervalControl = this.productForm.get('recurringInterval');
+      if (isSub) {
+        intervalControl?.setValidators([Validators.required]);
+      } else {
+        intervalControl?.clearValidators();
+        intervalControl?.setValue(null);
+      }
+      intervalControl?.updateValueAndValidity();
+    });
+
     if (this.data && this.data.id) {
       this.isEditMode.set(true);
       this.loadProduct(this.data.id);
@@ -49,8 +77,8 @@ export class ProductForm implements OnInit {
       bufferTimeMinutes: [0],
       variants: this.fb.array([]),
       sizes: this.fb.array([]),
-      isSubscription: [null],
-      recurringInterval: ['']
+      isSubscription: [false],
+      recurringInterval: [null]
     });
   }
 

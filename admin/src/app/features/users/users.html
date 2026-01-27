@@ -1,5 +1,5 @@
-<div class="min-h-screen bg-gray-50 p-6 pb-24">
-  <div class="flex justify-between items-center mb-8">
+<div class="min-h-screen bg-gray-50 p-4 md:p-6 pb-24">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <h1 class="text-2xl font-serif text-admin-dark">Utilisateurs</h1>
     <button (click)="openDialog()" class="bg-admin-primary text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-md hover:bg-blue-600 transition-colors">
       <mat-icon>person_add</mat-icon>
@@ -7,42 +7,83 @@
     </button>
   </div>
 
-  <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+  <!-- Desktop View -->
+  <div class="hidden md:block bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
     <table class="w-full text-left">
       <thead class="bg-gray-50 border-b border-gray-100">
         <tr>
           <th class="p-4 text-xs font-bold text-gray-500 uppercase">Nom</th>
-          <th class="p-4 text-xs font-bold text-gray-500 uppercase">Email</th>
-          <th class="p-4 text-xs font-bold text-gray-500 uppercase">Localisation</th>
-          <th class="p-4 text-xs font-bold text-gray-500 uppercase text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y divide-gray-100">
-        @for (user of users(); track user.id) {
-          <tr class="hover:bg-gray-50 transition-colors">
-            <td class="p-4">
-              <div class="font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</div>
-              <div class="text-xs text-gray-400">{{ user.phone || '-' }}</div>
-            </td>
-            <td class="p-4 text-gray-600">{{ user.email }}</td>
-            <td class="p-4 text-gray-600">
-              {{ user.city ? user.city + ', ' + user.country : '-' }}
-            </td>
-            <td class="p-4 text-right">
-              <button (click)="openDialog(user)" class="text-blue-600 hover:bg-blue-50 p-2 rounded-full transition-colors z-10 relative mr-2">
-                <mat-icon class="text-base">edit</mat-icon>
-              </button>
-              <button (click)="deleteUser(user.id)" class="text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors z-10 relative">
-                <mat-icon class="text-base">delete</mat-icon>
-              </button>
-            </td>
+            <th class="p-4 text-xs font-bold text-gray-500 uppercase">Email</th>
+            <th class="p-4 text-xs font-bold text-gray-500 uppercase">Localisation</th>
+            <th class="p-4 text-xs font-bold text-gray-500 uppercase text-right">Actions</th>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="4" class="p-8 text-center text-gray-400 italic">Aucun utilisateur trouvé.</td>
-          </tr>
-        }
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          @for (user of users(); track user.id) {
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="p-4">
+                <div class="font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</div>
+                <div class="text-xs text-gray-400">{{ user.phone || '-' }}</div>
+              </td>
+              <td class="p-4 text-gray-600">{{ user.email }}</td>
+              <td class="p-4 text-gray-600">
+                {{ user.city ? user.city + ', ' + user.country : '-' }}
+              </td>
+              <td class="p-4 text-right">
+                <button (click)="openDialog(user)" class="text-blue-600 hover:bg-blue-50 p-2 rounded-full transition-colors z-10 relative mr-2">
+                  <mat-icon class="text-base">edit</mat-icon>
+                </button>
+                <button (click)="deleteUser(user.id)" class="text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors z-10 relative">
+                  <mat-icon class="text-base">delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="p-8 text-center text-gray-400 italic">Aucun utilisateur trouvé.</td>
+            </tr>
+          }
       </tbody>
     </table>
+  </div>
+
+  <!-- Mobile View -->
+  <div class="md:hidden space-y-4">
+    @for (user of users(); track user.id) {
+      <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+        <div class="flex items-center gap-3 mb-3">
+          <div class="h-10 w-10 rounded-full bg-admin-primary/10 text-admin-primary flex items-center justify-center font-bold">
+            {{ user.firstName.charAt(0) }}
+          </div>
+          <div>
+            <div class="font-medium text-gray-900">{{ user.firstName }} {{ user.lastName }}</div>
+            <div class="text-xs text-gray-500">{{ user.email }}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 text-sm text-gray-600 mb-3">
+          <div>
+            <span class="block text-xs text-gray-400">Tél</span>
+            {{ user.phone || '-' }}
+          </div>
+          <div>
+            <span class="block text-xs text-gray-400">Ville</span>
+            {{ user.city || '-' }}
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 border-t border-gray-50 pt-2">
+          <button (click)="openDialog(user)" class="text-blue-600 hover:bg-blue-50 p-2 rounded-full transition-colors">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button (click)="deleteUser(user.id)" class="text-red-600 hover:bg-red-50 p-2 rounded-full transition-colors">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    }
+    @if (users().length === 0) {
+      <div class="p-8 text-center text-gray-400 italic">Aucun utilisateur trouvé.</div>
+    }
   </div>
 </div>
