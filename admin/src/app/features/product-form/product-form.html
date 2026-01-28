@@ -43,8 +43,7 @@
             <mat-select formControlName="type">
               <mat-option value="PHYSICAL">💎 Produit Physique</mat-option>
               <mat-option value="ENERGY_CARE">✨ Soin Énergétique</mat-option>
-              <option value="COACHING">🧘‍♀️ Coaching</option>
-              <mat-option value="SUBSCRIPTION">🔄 Abonnement</mat-option>
+              <mat-option value="COACHING">🧘‍♀️ Coaching</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -100,7 +99,9 @@
                         [class.bg-white]="!isStoneSelected(stone.id)"
                         [class.text-gray-700]="!isStoneSelected(stone.id)">
                     {{ stone.name }}
-                    <mat-icon *ngIf="isStoneSelected(stone.id)" class="text-xs h-4 w-4">check</mat-icon>
+                      @if (isStoneSelected(stone.id)) {
+                          <mat-icon class="text-xs h-4 w-4">check</mat-icon>
+                      }
                   </span>
                 </div>
               }

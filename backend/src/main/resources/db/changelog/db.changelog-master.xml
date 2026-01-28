@@ -18,4 +18,5 @@
     <include file="db/changelog/changes/20-01-add-product-subscription.xml"/>
     <include file="db/changelog/changes/20-01-refactor-product-sizes.xml"/>
     <include file="db/changelog/changes/20-01-add-product-stones-link.xml"/>
+    <include file="db/changelog/changes/20-01-add-shipping-fields.xml"/>
 </databaseChangeLog>

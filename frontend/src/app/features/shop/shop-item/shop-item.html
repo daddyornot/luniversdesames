@@ -21,7 +21,7 @@
       <h3 class="font-serif text-lg text-spirit-primary leading-tight line-clamp-2 min-h-[3.5rem] cursor-pointer"
           [routerLink]="['/boutique', product().id]">{{ product().name }}</h3>
       <p
-        class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">{{ product().stones.join(', ') }}</p>
+        class="text-[10px] uppercase tracking-widest text-gray-400 font-bold mt-1">{{ stonesList() }}</p>
     </div>
 
     <!-- VARIANTES (Chips) -->
