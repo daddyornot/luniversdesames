@@ -9,8 +9,8 @@ export interface Stone {
 
 @Injectable({providedIn: 'root'})
 export class StoneService {
-  private http = inject(HttpClient);
-  private apiUrl = isDevMode() ? 'http://localhost:8080/api/stones' : '/api/stones';
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = isDevMode() ? 'http://localhost:8080/api/stones' : '/api/stones';
 
   getAllStones() {
     return this.http.get<Stone[]>(this.apiUrl);

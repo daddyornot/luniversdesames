@@ -4,8 +4,8 @@ import {ProductSize} from '../models/product';
 
 @Injectable({providedIn: 'root'})
 export class ProductSizeService {
-  private http = inject(HttpClient);
-  private apiUrl = isDevMode() ? 'http://localhost:8080/api/sizes' : '/api/sizes';
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = isDevMode() ? 'http://localhost:8080/api/sizes' : '/api/sizes';
 
   getAllSizes() {
     return this.http.get<ProductSize[]>(this.apiUrl);

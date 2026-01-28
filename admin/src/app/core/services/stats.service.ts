@@ -15,8 +15,8 @@ export interface DashboardStats {
 
 @Injectable({providedIn: 'root'})
 export class StatsService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/dashboard`;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/dashboard`;
 
   getDashboardStats(period: string, startDate?: string, endDate?: string) {
     const params: any = { period };

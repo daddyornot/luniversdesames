@@ -1,6 +1,6 @@
 import { Stone } from './stone';
 
-export type ProductType = 'PHYSICAL' | 'ENERGY_CARE' | 'CARD_READING' | 'COACHING' | 'SUBSCRIPTION';
+export type ProductType = 'PHYSICAL' | 'ENERGY_CARE' | 'CARD_READING' | 'COACHING';
 
 export interface ProductVariant {
   id?: number;

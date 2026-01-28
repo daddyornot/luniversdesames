@@ -14,8 +14,8 @@ export interface GoogleEvent {
 
 @Injectable({providedIn: 'root'})
 export class CalendarService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/booking`;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/booking`;
 
   getEvents(start: string, end: string): Observable<GoogleEvent[]> {
     return this.http.get<GoogleEvent[]>(`${this.apiUrl}/events`, {

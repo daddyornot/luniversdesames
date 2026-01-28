@@ -2,23 +2,13 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
+import { User } from '../models/user';
 
-export interface User {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-  address?: string;
-  city?: string;
-  postalCode?: string;
-  country?: string;
-}
 
 @Injectable({providedIn: 'root'})
 export class UserService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/users`;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/users`;
 
   getAllUsers(): Observable<User[]> {
     return this.http.get<User[]>(this.apiUrl);

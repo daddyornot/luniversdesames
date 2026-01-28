@@ -1,98 +1,98 @@
-import {Component, computed, effect, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MatIconModule} from '@angular/material/icon';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import {Product, ProductSize, ProductVariant} from '../../../core/models/product';
-import {ProductService} from '../../../services/product/product';
-import {CartService} from '../../../services/cart/cart';
-import {BookingCalendar} from '../booking-calendar/booking-calendar';
-import {CartItem} from '../../../core/models/cart';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Product, ProductSize, ProductVariant } from '../../../core/models/product';
+import { ProductService } from '../../../services/product/product';
+import { CartService } from '../../../services/cart/cart';
+import { BookingCalendar } from '../booking-calendar/booking-calendar';
+import { CartItem } from '../../../core/models/cart';
 
 @Component({
-  selector: 'app-product-detail',
-  standalone: true,
-  imports: [CommonModule, MatIconModule, RouterLink, BookingCalendar],
-  templateUrl: './product-detail.html'
+    selector: 'app-product-detail',
+    standalone: true,
+    imports: [CommonModule, MatIconModule, BookingCalendar, RouterLink],
+    templateUrl: './product-detail.html'
 })
 export class ProductDetail implements OnInit {
-  private route = inject(ActivatedRoute);
-  private productService = inject(ProductService);
-  private cartService = inject(CartService);
+    private route = inject(ActivatedRoute);
+    private productService = inject(ProductService);
+    private cartService = inject(CartService);
 
-  product = signal<Product | undefined>(undefined);
-  selectedVariant = signal<ProductVariant | undefined>(undefined);
-  selectedAppointment = signal<string | undefined>(undefined);
-  selectedSize = signal<ProductSize | undefined>(undefined);
+    product = signal<Product | undefined>(undefined);
+    selectedVariant = signal<ProductVariant | undefined>(undefined);
+    selectedAppointment = signal<string | undefined>(undefined);
+    selectedSize = signal<ProductSize | undefined>(undefined);
 
-  displayPrice = computed(() => {
-    if (this.selectedVariant()) {
-      return this.selectedVariant()!.price;
-    }
-    return this.product()?.price;
-  });
-
-  displaySessionCount = computed(() => {
-    if (this.selectedVariant()) {
-      return this.selectedVariant()!.sessionCount;
-    }
-    return this.product()?.sessionCount;
-  });
-
-  constructor() {
-    effect(() => {
-      const id = this.route.snapshot.paramMap.get('id');
-      if (id) {
-        const p = this.productService.getProductById(id)();
-        if (p) {
-          this.product.set(p);
-          if (p.variants && p.variants.length > 0 && !this.selectedVariant()) {
-            this.selectedVariant.set(p.variants[0]);
-          }
-          if (p.sizes && p.sizes.length > 0 && !this.selectedSize()) {
-            this.selectedSize.set(p.sizes[0]);
-          }
+    displayPrice = computed(() => {
+        if (this.selectedVariant()) {
+            return this.selectedVariant()!.price;
         }
-      }
+        return this.product()?.price;
     });
-  }
 
-  ngOnInit() {
-    // L'initialisation est gérée par l'effect dans le constructeur
-  }
+    displaySessionCount = computed(() => {
+        if (this.selectedVariant()) {
+            return this.selectedVariant()!.sessionCount;
+        }
+        return this.product()?.sessionCount;
+    });
 
-  selectVariant(variant: ProductVariant) {
-    this.selectedVariant.set(variant);
-  }
+    constructor() {
+        effect(() => {
+            const id = this.route.snapshot.paramMap.get('id');
+            if (id) {
+                const p = this.productService.getProductById(id)();
+                if (p) {
+                    this.product.set(p);
+                    if (p.variants && p.variants.length > 0 && !this.selectedVariant()) {
+                        this.selectedVariant.set(p.variants[0]);
+                    }
+                    if (p.sizes && p.sizes.length > 0 && !this.selectedSize()) {
+                        this.selectedSize.set(p.sizes[0]);
+                    }
+                }
+            }
+        });
+    }
 
-  selectSize(size: ProductSize) {
-    this.selectedSize.set(size);
-  }
+    ngOnInit() {
+        // L'initialisation est gérée par l'effect dans le constructeur
+    }
 
-  onSlotSelected(slot: string) {
-    this.selectedAppointment.set(slot);
-  }
+    selectVariant(variant: ProductVariant) {
+        this.selectedVariant.set(variant);
+    }
 
-  addToCart() {
-    const p = this.product();
-    if (!p) return;
+    selectSize(size: ProductSize) {
+        this.selectedSize.set(size);
+    }
 
-    const variant = this.selectedVariant();
-    const size = this.selectedSize();
+    onSlotSelected(slot: string) {
+        this.selectedAppointment.set(slot);
+    }
 
-    let finalName = p.name;
-    if (variant) finalName += ` - ${variant.label}`;
-    if (size) finalName += ` - ${size.label}`;
+    addToCart() {
+        const p = this.product();
+        if (!p) return;
 
-    const item: CartItem = {
-      id: p.id,
-      name: finalName,
-      price: variant ? variant.price : p.price,
-      imageUrl: p.imageUrl,
-      quantity: 1,
-      type: p.type,
-      appointmentDate: this.selectedAppointment()
-    };
+        const variant = this.selectedVariant();
+        const size = this.selectedSize();
 
-    this.cartService.addToCart(item);
-  }
+        let finalName = p.name;
+        if (variant) finalName += ` - ${variant.label}`;
+        if (size) finalName += ` - ${size.label}`;
+
+        const item: CartItem = {
+            id: p.id,
+            name: finalName,
+            price: variant ? variant.price : p.price,
+            imageUrl: p.imageUrl,
+            quantity: 1,
+            type: p.type,
+            appointmentDate: this.selectedAppointment()
+        };
+
+        this.cartService.addToCart(item);
+    }
 }
