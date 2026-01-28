@@ -1,0 +1,24 @@
+@if (isVisible()) {
+  <div class="bg-spirit-primary text-white px-4 py-2 text-sm font-medium relative z-[60] transition-all duration-300 ease-in-out">
+    <div class="max-w-7xl mx-auto flex justify-between items-center gap-4">
+
+      <!-- Contenu centré sur mobile, aligné à gauche sur desktop -->
+      <div class="flex-1 text-center md:text-left flex flex-col md:flex-row md:items-center justify-center md:justify-start gap-1 md:gap-2">
+        <span>{{ config().message }}</span>
+
+        @if (config().link) {
+          <a [routerLink]="config().link" class="underline decoration-white/50 hover:decoration-white hover:text-white/90 transition-all whitespace-nowrap">
+            {{ config().linkText }}
+          </a>
+        }
+      </div>
+
+      <!-- Bouton fermer -->
+      @if (config().dismissible) {
+        <button (click)="close()" class="text-white/70 hover:text-white transition-colors p-1 -mr-2" aria-label="Fermer">
+          <mat-icon class="text-sm h-5 w-5 flex items-center justify-center">close</mat-icon>
+        </button>
+      }
+    </div>
+  </div>
+}

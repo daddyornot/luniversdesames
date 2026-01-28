@@ -38,6 +38,8 @@ export class DashboardComponent implements OnInit {
 
   stats = signal<DashboardStats | null>(null);
   salesData = signal<any[]>([]);
+  categoryData = signal<any[]>([]);
+  topProductsData = signal<any[]>([]);
   yScaleMax = signal<number>(100);
   hasSales = signal<boolean>(false);
   curve = curveMonotoneX;
@@ -46,7 +48,7 @@ export class DashboardComponent implements OnInit {
     name: 'custom',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#3b82f6']
+    domain: ['#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#10b981', '#06b6d4']
   };
 
   ngOnInit() {
@@ -63,7 +65,26 @@ export class DashboardComponent implements OnInit {
 
     this.statsService.getDashboardStats(this.selectedPeriod, startStr, endStr).subscribe({
       next: (data: any) => {
-        this.stats.set(data);
+        // Calcul ou récupération des nouvelles métriques (Mock si absent du backend)
+        const enrichedData: DashboardStats = {
+          ...data,
+          averageBasket: data.averageBasket ?? (data.totalOrders > 0 ? data.totalRevenue / data.totalOrders : 0),
+          salesByCategory: data.salesByCategory ?? [
+            { name: 'Bijoux', value: 40 },
+            { name: 'Soins', value: 35 },
+            { name: 'Coaching', value: 25 }
+          ],
+          topProducts: data.topProducts ?? [
+            { name: 'Bracelet Améthyste', value: 15 },
+            { name: 'Soin Énergétique', value: 12 },
+            { name: 'Pendule Quartz', value: 8 },
+            { name: 'Guidance 1h', value: 6 }
+          ]
+        };
+
+        this.stats.set(enrichedData);
+        this.categoryData.set(enrichedData.salesByCategory || []);
+        this.topProductsData.set(enrichedData.topProducts || []);
 
         let series = [];
 

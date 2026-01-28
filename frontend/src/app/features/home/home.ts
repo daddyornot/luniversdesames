@@ -16,6 +16,6 @@ import {toSignal} from '@angular/core/rxjs-interop';
 export class Home {
   private readonly service = inject(ProductService);
 
-  bracelets = toSignal(this.service.getProductsByType('PHYSICAL'), {initialValue: []});
+  bracelets = toSignal(this.service.getPhysicalProducts(), {initialValue: []});
   services = toSignal(this.service.getServices(), {initialValue: []});
 }

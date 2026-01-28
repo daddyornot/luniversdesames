@@ -4,11 +4,12 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonModule} from '@angular/material/button';
 import {MatMenuModule} from '@angular/material/menu';
 import {AuthService} from '../../auth/auth';
+import {TopBannerComponent} from '../../../shared/top-banner/top-banner';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [RouterLink, MatIconModule, MatButtonModule, MatMenuModule],
+  imports: [RouterLink, MatIconModule, MatButtonModule, MatMenuModule, TopBannerComponent],
   templateUrl: 'header.html'
 })
 export class HeaderComponent {

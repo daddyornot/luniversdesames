@@ -1,14 +1,16 @@
+<!-- Bannière Promo -->
+<app-top-banner></app-top-banner>
+
 <header
   class="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-spirit-primary/5 transition-all duration-300">
-  <h1 routerLink="/"
-      class="font-serif text-xl font-bold text-spirit-primary italic tracking-tight cursor-pointer select-none">
-    L'Univers des Âmes
-  </h1>
+  <div routerLink="/" class="flex items-center gap-3 cursor-pointer select-none hover:opacity-90 transition-opacity">
+    <img src="assets/logo-sans-fond.png" alt="Logo Univers des Âmes" class="h-10 w-auto object-contain">
+    <h1 class="font-serif text-xl font-bold text-spirit-primary italic tracking-tight">
+      L'Univers des Âmes
+    </h1>
+  </div>
 
   <div class="flex items-center gap-1">
-    <button mat-icon-button class="text-spirit-primary/70 hover:bg-spirit-primary/5 transition-colors">
-      <mat-icon>search</mat-icon>
-    </button>
 
     <button mat-icon-button [matMenuTriggerFor]="profileMenu"
             class="text-spirit-primary/70 hover:bg-spirit-primary/5 transition-colors">
@@ -49,7 +51,7 @@
           <mat-icon class="text-spirit-primary">login</mat-icon>
           <span>Se connecter</span>
         </button>
-        <button mat-menu-item routerLink="/auth">
+        <button mat-menu-item routerLink="/auth" [queryParams]="{mode: 'register'}">
           <mat-icon class="text-spirit-primary">person_add</mat-icon>
           <span>Créer un compte</span>
         </button>

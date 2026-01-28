@@ -1,62 +1,91 @@
-<div class="min-h-screen flex items-center justify-center bg-stone-50 py-12 px-4">
-  <div class="max-w-md w-full space-y-8 bg-white p-10 rounded-2xl shadow-sm border border-stone-100">
+<div class="flex items-center justify-center bg-stone-50 py-4 px-4">
+  <div class="max-w-md w-full bg-white p-8 md:p-10 rounded-2xl shadow-xl shadow-spirit-primary/5 border border-white">
 
     <div class="text-center">
-      <h2 class="text-3xl font-serif text-stone-800">
+      <h2 class="text-3xl font-serif text-spirit-primary font-bold">
         {{ mode() === 'login' ? 'Connexion' : 'Créer un compte' }}
       </h2>
-      <p class="mt-2 text-stone-500 italic">
+      <p class="mt-2 text-gray-500 italic font-serif">
         {{ mode() === 'login' ? 'Heureux de vous retrouver dans votre univers' : 'Rejoignez l\'Univers des Âmes' }}
       </p>
     </div>
 
-    <form class="mt-8 space-y-6" (ngSubmit)="onSubmit()">
-      <div class="space-y-4">
+    <form class="mt-8 flex flex-col" [formGroup]="authForm" (ngSubmit)="onSubmit()">
 
-        @if (mode() === 'register') {
-          <div class="grid grid-cols-2 gap-4">
-            <input [(ngModel)]="authData.firstName" name="firstName" type="text" required
-                   class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-                   placeholder="Prénom">
-            <input [(ngModel)]="authData.lastName" name="lastName" type="text" required
-                   class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-                   placeholder="Nom">
-          </div>
+      @if (mode() === 'register') {
+        <div class="grid grid-cols-2 gap-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Prénom</mat-label>
+            <input matInput formControlName="firstName">
+          </mat-form-field>
 
-          <input [(ngModel)]="authData.phone" name="phone" type="tel"
-                 class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-                 placeholder="Téléphone">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Nom</mat-label>
+            <input matInput formControlName="lastName">
+          </mat-form-field>
+        </div>
 
-          <input [(ngModel)]="authData.address" name="address" type="text"
-                 class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-                 placeholder="Adresse">
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Téléphone</mat-label>
+          <input matInput formControlName="phone" type="tel">
+          <mat-icon matSuffix>phone</mat-icon>
+        </mat-form-field>
 
-          <div class="grid grid-cols-2 gap-4">
-            <input [(ngModel)]="authData.postalCode" name="postalCode" type="text"
-                   class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-                   placeholder="Code Postal">
-            <input [(ngModel)]="authData.city" name="city" type="text"
-                   class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-                   placeholder="Ville">
-          </div>
-        }
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Adresse</mat-label>
+          <input matInput formControlName="address">
+          <mat-icon matSuffix>home</mat-icon>
+        </mat-form-field>
 
-        <input [(ngModel)]="authData.email" name="email" type="email" required
-               class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-               placeholder="Adresse email">
+        <div class="grid grid-cols-2 gap-4">
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Code Postal</mat-label>
+            <input matInput formControlName="postalCode">
+          </mat-form-field>
 
-        <input [(ngModel)]="authData.password" name="password" type="password" required
-               class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-stone-300 placeholder-stone-400 text-stone-900 focus:outline-none focus:ring-stone-500 focus:border-stone-500 sm:text-sm"
-               placeholder="Mot de passe">
-      </div>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Ville</mat-label>
+            <input matInput formControlName="city">
+          </mat-form-field>
+        </div>
+      }
 
-      <button type="submit" [disabled]="isLoading()"
-              class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-stone-800 hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-500 disabled:opacity-50 transition-all">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Adresse email</mat-label>
+        <input matInput formControlName="email" type="email">
+        <mat-icon matSuffix>email</mat-icon>
+        <mat-error *ngIf="authForm.get('email')?.hasError('required')">L'email est requis</mat-error>
+        <mat-error *ngIf="authForm.get('email')?.hasError('email')">Email invalide</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Mot de passe</mat-label>
+        <input matInput formControlName="password" [type]="hidePassword() ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hidePassword.set(!hidePassword())" type="button">
+          <mat-icon>{{hidePassword() ? 'visibility' : 'visibility_off'}}</mat-icon>
+        </button>
+        <mat-error *ngIf="authForm.get('password')?.hasError('required')">Le mot de passe est requis</mat-error>
+        <mat-error *ngIf="authForm.get('password')?.hasError('minlength')">Min 6 caractères</mat-error>
+      </mat-form-field>
+
+      @if (mode() === 'register') {
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Confirmer le mot de passe</mat-label>
+          <input matInput formControlName="confirmPassword" [type]="hideConfirmPassword() ? 'password' : 'text'">
+          <button mat-icon-button matSuffix (click)="hideConfirmPassword.set(!hideConfirmPassword())" type="button">
+            <mat-icon>{{hideConfirmPassword() ? 'visibility' : 'visibility_off'}}</mat-icon>
+          </button>
+          <mat-error *ngIf="authForm.get('confirmPassword')?.hasError('mismatch')">Les mots de passe ne correspondent pas</mat-error>
+        </mat-form-field>
+      }
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="isLoading()"
+              class="w-full !py-6 !text-base !rounded-lg mt-4 !bg-spirit-primary shadow-lg shadow-spirit-primary/20">
         {{ isLoading() ? 'Chargement...' : (mode() === 'login' ? 'Se connecter' : 'S\'inscrire') }}
       </button>
 
       <div class="text-center mt-4">
-        <button type="button" (click)="toggleMode()" class="text-sm text-stone-600 hover:underline">
+        <button type="button" (click)="toggleMode()" class="text-sm text-spirit-primary hover:text-spirit-primary/80 hover:underline transition-colors font-medium">
           {{ mode() === 'login' ? 'Pas encore de compte ? Inscrivez-vous' : 'Déjà un compte ? Connectez-vous' }}
         </button>
       </div>

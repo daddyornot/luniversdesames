@@ -1,5 +1,6 @@
 package fr.daddyornot.universdesames.controller;
 
+import fr.daddyornot.universdesames.model.ProductType;
 import fr.daddyornot.universdesames.model.dto.ProductDTO;
 import fr.daddyornot.universdesames.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,11 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
+    }
+
+    @GetMapping("/physical")
+    public ResponseEntity<List<ProductDTO>> getAllPhysicalProducts() {
+        return ResponseEntity.ok(productService.getProductsByType(ProductType.PHYSICAL));
     }
 
     @GetMapping("/services")

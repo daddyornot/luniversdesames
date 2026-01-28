@@ -14,17 +14,17 @@ import {CommonModule} from '@angular/common';
           <section>
             <h2 class="font-bold text-gray-800 mb-2">1. Éditeur du site (Propriétaire)</h2>
             <p>
-              Le site <strong>L'Univers des Âmes</strong> est édité par <strong>[Nom de votre compagne]</strong>,
-              entrepreneur individuel (Auto-entrepreneur).
+              Le site <strong>L'Univers des Âmes</strong> est édité par <strong>{{ config.editor.name }}</strong>,
+              {{ config.editor.status }}.
             </p>
             <p class="mt-2">
-              <strong>SIRET :</strong> [Numéro SIRET]<br>
-              <strong>Siège social :</strong> [Adresse complète de l'entreprise]<br>
-              <strong>Email de contact :</strong> [Email de contact de l'entreprise]<br>
-              <strong>Téléphone :</strong> [Numéro de téléphone professionnel]
+              <strong>SIRET :</strong> {{ config.editor.siret }}<br>
+              <strong>Siège social :</strong> {{ config.editor.address }}<br>
+              <strong>Email de contact :</strong> {{ config.editor.email }}<br>
+              <strong>Téléphone :</strong> {{ config.editor.phone }}
             </p>
             <p class="mt-2">
-              <strong>Directeur de la publication :</strong> [Nom de votre compagne]
+              <strong>Directeur de la publication :</strong> {{ config.editor.director }}
             </p>
           </section>
 
@@ -32,9 +32,9 @@ import {CommonModule} from '@angular/common';
             <h2 class="font-bold text-gray-800 mb-2">2. Conception et Développement</h2>
             <p>
               Le site a été conçu et développé par :<br>
-              <strong>[Votre Nom / Votre Structure si applicable]</strong><br>
-              [Votre Site Web si applicable]<br>
-              [Votre Email de contact]
+              <strong>{{ config.dev.name }}</strong><br>
+              {{ config.dev.website }}<br>
+              {{ config.dev.email }}
             </p>
           </section>
 
@@ -42,9 +42,9 @@ import {CommonModule} from '@angular/common';
             <h2 class="font-bold text-gray-800 mb-2">3. Hébergement</h2>
             <p>
               Le site est hébergé par :<br>
-              <strong>[Nom de l'hébergeur]</strong> (ex: OVH, Vercel, AWS...)<br>
-              [Adresse de l'hébergeur]<br>
-              [Site web de l'hébergeur]
+              <strong>{{ config.host.name }}</strong><br>
+              {{ config.host.address }}<br>
+              {{ config.host.website }}
             </p>
           </section>
 
@@ -64,15 +64,14 @@ import {CommonModule} from '@angular/common';
           <section>
             <h2 class="font-bold text-gray-800 mb-2">5. Données personnelles</h2>
             <p>
-              Les informations recueillies sur ce site sont enregistrées dans un fichier informatisé par <strong>[Nom de
-              votre compagne]</strong> pour la gestion des commandes et de la relation client.
+              Les informations recueillies sur ce site sont enregistrées dans un fichier informatisé par <strong>{{ config.editor.name }}</strong> pour la gestion des commandes et de la relation client.
               Elles sont conservées pendant la durée nécessaire à la gestion de la relation commerciale et sont
               destinées à l'usage exclusif de L'Univers des Âmes.
             </p>
             <p class="mt-2">
               Conformément à la loi « Informatique et Libertés », vous disposez d'un droit d'accès, de modification et
               de suppression des données vous concernant.
-              Pour l'exercer, vous pouvez nous contacter à l'adresse suivante : [Email de contact].
+              Pour l'exercer, vous pouvez nous contacter à l'adresse suivante : {{ config.editor.email }}.
             </p>
           </section>
 
@@ -99,4 +98,27 @@ import {CommonModule} from '@angular/common';
     </div>
   `
 })
-export class LegalMentionsComponent {}
+export class LegalMentionsComponent {
+  // Configuration centralisée des données légales
+  config = {
+    editor: {
+      name: 'Anne Lise MAILHEBIAU',
+      status: 'entrepreneur individuel (Auto-entrepreneur)',
+      siret: '123456789',
+      address: 'non mentionné',
+      email: 'luniversdesames@gmail.com',
+      phone: 'non mentionné',
+      director: 'Anne Lise MAILHEBIAU'
+    },
+    dev: {
+      name: 'Damien MAILHEBIAU',
+      website: 'non applicable',
+      email: 'non applicable'
+    },
+    host: {
+      name: 'non applicable',
+      address: 'non applicable',
+      website: 'non applicable'
+    }
+  };
+}

@@ -7,7 +7,10 @@ export interface DashboardStats {
   totalOrders: number;
   totalAppointments: number;
   newCustomers: number;
+  averageBasket?: number;
   salesChart: { label: string; value: number }[];
+  salesByCategory?: { name: string; value: number }[];
+  topProducts?: { name: string; value: number }[];
 }
 
 @Injectable({providedIn: 'root'})

@@ -12,7 +12,10 @@ import {MatIconModule} from '@angular/material/icon';
       <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
         <!-- Brand -->
         <div class="space-y-4">
-          <h3 class="font-serif text-xl text-spirit-primary italic">L'Univers des Âmes</h3>
+          <div class="flex items-center gap-3">
+            <img src="assets/logo-sans-fond.png" alt="Logo Univers des Âmes" class="h-24 w-auto object-contain">
+            <h3 class="font-serif text-xl text-spirit-primary italic">L'Univers des Âmes</h3>
+          </div>
           <p class="text-sm text-gray-500 leading-relaxed">
             Éveillez votre spiritualité avec nos créations artisanales et nos soins énergétiques.
           </p>
@@ -24,11 +27,11 @@ import {MatIconModule} from '@angular/material/icon';
           <div class="flex gap-4">
             <a href="https://www.instagram.com/universdesames" target="_blank"
                class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-spirit-primary shadow-sm hover:bg-spirit-primary hover:text-white transition-all">
-              <span class="font-bold">IG</span>
+              <img src="assets/images/instagram.png" alt="logo instagram"/>
             </a>
             <a href="https://www.tiktok.com/@universdesames" target="_blank"
                class="h-10 w-10 rounded-full bg-white flex items-center justify-center text-spirit-primary shadow-sm hover:bg-spirit-primary hover:text-white transition-all">
-              <span class="font-bold">TK</span>
+              <img src="assets/images/tik-tok.png" alt="logo tiktok"/>
             </a>
           </div>
         </div>

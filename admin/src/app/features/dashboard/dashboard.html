@@ -29,7 +29,7 @@
 
   @if (stats(); as s) {
     <!-- KPIs -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
       <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
         <div class="h-12 w-12 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center">
           <mat-icon>euro</mat-icon>
@@ -69,11 +69,21 @@
           <p class="text-2xl font-bold text-gray-800">{{ s.newCustomers }}</p>
         </div>
       </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center gap-4">
+        <div class="h-12 w-12 rounded-full bg-pink-50 text-pink-600 flex items-center justify-center">
+          <mat-icon>shopping_basket</mat-icon>
+        </div>
+        <div>
+          <p class="text-sm text-gray-500 font-medium">Panier Moyen</p>
+          <p class="text-2xl font-bold text-gray-800">{{ s.averageBasket | currency:'EUR' }}</p>
+        </div>
+      </div>
     </div>
 
-    <!-- Graphique -->
-    <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 h-[400px] flex flex-col">
-      <h3 class="text-lg font-bold text-gray-800 mb-6">Évolution des ventes</h3>
+    <!-- Graphique Principal (Ventes) -->
+    <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 h-[350px] md:h-[400px] flex flex-col">
+      <h3 class="text-lg font-bold text-gray-800 mb-4 md:mb-6">Évolution des ventes</h3>
       @if (hasSales()) {
         <div class="flex-1 w-full min-h-0 overflow-hidden relative">
           <ngx-charts-area-chart
@@ -98,6 +108,40 @@
           <p>Aucune vente enregistrée sur cette période.</p>
         </div>
       }
+    </div>
+
+    <!-- Graphiques Secondaires -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Répartition par catégorie -->
+      <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 h-[350px] flex flex-col">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Répartition par catégorie</h3>
+        <div class="flex-1 w-full min-h-0 overflow-hidden relative">
+          <ngx-charts-pie-chart
+            [scheme]="colorScheme"
+            [results]="categoryData()"
+            [doughnut]="true"
+            [labels]="true"
+            [legend]="false"
+            [arcWidth]="0.5">
+          </ngx-charts-pie-chart>
+        </div>
+      </div>
+
+      <!-- Top Produits -->
+      <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 h-[350px] flex flex-col">
+        <h3 class="text-lg font-bold text-gray-800 mb-4">Top Produits</h3>
+        <div class="flex-1 w-full min-h-0 overflow-hidden relative">
+          <ngx-charts-bar-horizontal
+            [scheme]="colorScheme"
+            [results]="topProductsData()"
+            [xAxis]="true"
+            [yAxis]="true"
+            [showXAxisLabel]="false"
+            [showYAxisLabel]="false"
+            [showDataLabel]="true">
+          </ngx-charts-bar-horizontal>
+        </div>
+      </div>
     </div>
   } @else {
     <div class="flex justify-center py-20">

@@ -11,5 +11,5 @@ import {toSignal} from '@angular/core/rxjs-interop';
 })
 export class ShopList {
   private productService = inject(ProductService);
-  products = toSignal(this.productService.getProductsByType('PHYSICAL'), {initialValue: []});
+  products = toSignal(this.productService.getPhysicalProducts(), {initialValue: []});
 }

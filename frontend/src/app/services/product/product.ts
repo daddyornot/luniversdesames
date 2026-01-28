@@ -59,6 +59,10 @@ export class ProductService {
     return this.api.get<Product[]>(`products?type=${type}`);
   }
 
+  getPhysicalProducts() {
+    return this.api.get<Product[]>('products/physical');
+  }
+
   getServices() {
     return this.api.get<Product[]>('products/services');
   }
