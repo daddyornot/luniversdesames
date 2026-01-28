@@ -2,6 +2,7 @@ import {computed, inject, Injectable, signal} from '@angular/core';
 import {ToastService} from '../toast/toast';
 import {CartItem} from '../../core/models/cart';
 import {LocalStorageService} from '../../core/local-storage/local-storage';
+import {Product, ProductSize, ProductVariant} from '../../core/models/product';
 
 
 @Injectable({

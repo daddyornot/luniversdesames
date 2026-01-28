@@ -18,7 +18,7 @@ describe('ShopItem', () => {
     price: 10,
     imageUrl: 'image.jpg',
     type: 'PHYSICAL',
-    stone: 'Amethyst'
+    stones: [{id: 1, name: 'Amethyst', description: 'Description'}]
   };
 
   beforeEach(async () => {

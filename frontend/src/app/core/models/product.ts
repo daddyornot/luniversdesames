@@ -1,3 +1,5 @@
+import { Stone } from './stone';
+
 export type ProductType = 'PHYSICAL' | 'ENERGY_CARE' | 'CARD_READING' | 'COACHING' | 'SUBSCRIPTION';
 
 export interface ProductVariant {
@@ -19,7 +21,7 @@ export interface Product {
   name: string;
   description: string;
   price: number;
-  stones: string[];
+  stones: Stone[];
   imageUrl: string;
   type: ProductType;
   sessionCount?: number;

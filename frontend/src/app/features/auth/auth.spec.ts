@@ -3,6 +3,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {AuthComponent} from './auth';
 import {provideHttpClient} from '@angular/common/http';
 import {provideHttpClientTesting} from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 describe('Auth', () => {
   let component: AuthComponent;
@@ -13,7 +14,8 @@ describe('Auth', () => {
       imports: [AuthComponent],
       providers: [
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        provideRouter([])
       ]
     })
       .compileComponents();
