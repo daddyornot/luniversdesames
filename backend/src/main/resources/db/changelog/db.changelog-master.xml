@@ -16,4 +16,6 @@
     <include file="db/changelog/changes/20-01-add-user-role.xml"/>
     <include file="db/changelog/changes/20-01-add-product-stones-and-sizes.xml"/>
     <include file="db/changelog/changes/20-01-add-product-subscription.xml"/>
+    <include file="db/changelog/changes/20-01-refactor-product-sizes.xml"/>
+    <include file="db/changelog/changes/20-01-add-product-stones-link.xml"/>
 </databaseChangeLog>

@@ -1,9 +1,9 @@
-<div class="flex flex-col h-full max-h-[90vh]">
+<div class="flex flex-col h-full max-h-[90vh] bg-gray-50">
   <!-- Header -->
-  <div class="flex justify-between items-center px-4 py-3 md:px-6 md:py-4 border-b border-gray-100 bg-white sticky top-0 z-10">
-    <h2 class="text-lg md:text-xl font-serif font-bold text-gray-800 flex items-center gap-2">
+  <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 bg-white sticky top-0 z-20 shadow-sm">
+    <h2 class="text-lg md:text-xl font-serif font-bold text-gray-800 flex items-center gap-2 truncate">
       <mat-icon class="text-admin-primary">{{ isEditMode() ? 'edit' : 'add_circle' }}</mat-icon>
-      {{ isEditMode() ? 'Modifier le produit' : 'Nouveau produit' }}
+      {{ isEditMode() ? 'Modifier' : 'Nouveau produit' }}
     </h2>
     <button mat-icon-button (click)="onCancel()">
       <mat-icon>close</mat-icon>
@@ -11,237 +11,221 @@
   </div>
 
   <!-- Content (Scrollable) -->
-  <div class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50">
-    <form [formGroup]="productForm" class="space-y-6">
+  <div class="flex-1 overflow-y-auto p-4 md:p-6">
+    <form [formGroup]="productForm" class="space-y-6 max-w-4xl mx-auto">
 
       <!-- Section 1: Informations Générales -->
-      <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
-        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <mat-icon class="text-sm">info</mat-icon> Informations
-        </h3>
+      <mat-card class="overflow-hidden">
+        <div class="bg-admin-primary/5 px-4 py-2 border-b border-admin-primary/10 flex items-center gap-2">
+          <mat-icon class="text-admin-primary text-sm">info</mat-icon>
+          <span class="text-xs font-bold text-admin-primary uppercase tracking-wider">Informations</span>
+        </div>
+        <mat-card-content class="p-4 grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Nom -->
-          <div class="col-span-2 md:col-span-1">
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Nom du produit</mat-label>
-              <input matInput formControlName="name" placeholder="Ex: Bracelet Améthyste">
-              <mat-error *ngIf="productForm.get('name')?.hasError('required')">Le nom est requis</mat-error>
-            </mat-form-field>
-          </div>
+          <mat-form-field appearance="outline" class="w-full md:col-span-2">
+            <mat-label>Nom du produit</mat-label>
+            <input matInput formControlName="name" placeholder="Ex: Bracelet Améthyste">
+            <mat-error *ngIf="productForm.get('name')?.hasError('required')">Le nom est requis</mat-error>
+          </mat-form-field>
 
           <!-- Prix -->
-          <div>
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Prix de base</mat-label>
-              <input matInput type="number" formControlName="price" placeholder="0.00">
-              <span matTextSuffix>€&nbsp;</span>
-              <mat-error *ngIf="productForm.get('price')?.hasError('required')">Le prix est requis</mat-error>
-            </mat-form-field>
-          </div>
-
-          <!-- Description -->
-          <div class="col-span-2">
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Description</mat-label>
-              <textarea matInput formControlName="description" rows="3" placeholder="Description détaillée du produit..."></textarea>
-            </mat-form-field>
-          </div>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Prix de base</mat-label>
+            <input matInput type="number" formControlName="price" placeholder="0.00">
+            <span matTextSuffix>€</span>
+            <mat-error *ngIf="productForm.get('price')?.hasError('required')">Requis</mat-error>
+          </mat-form-field>
 
           <!-- Type -->
-          <div>
-            <mat-form-field appearance="outline" class="w-full">
-              <mat-label>Type de produit</mat-label>
-              <mat-select formControlName="type">
-                <mat-option value="PHYSICAL">💎 Produit Physique</mat-option>
-                <mat-option value="ENERGY_CARE">✨ Soin Énergétique</mat-option>
-                <mat-option value="COACHING">🧘‍♀️ Coaching</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-label>Type de produit</mat-label>
+            <mat-select formControlName="type">
+              <mat-option value="PHYSICAL">💎 Produit Physique</mat-option>
+              <mat-option value="ENERGY_CARE">✨ Soin Énergétique</mat-option>
+              <option value="COACHING">🧘‍♀️ Coaching</option>
+              <mat-option value="SUBSCRIPTION">🔄 Abonnement</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-          <!-- Image Selection (Nouveau) -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">Image</label>
-            <div class="relative group cursor-pointer border border-dashed border-gray-300 rounded-lg hover:border-admin-primary transition-colors overflow-hidden h-32 flex items-center justify-center bg-gray-50"
-                 (click)="openMediaLibrary()">
+          <!-- Description -->
+          <mat-form-field appearance="outline" class="w-full md:col-span-2">
+            <mat-label>Description</mat-label>
+            <textarea matInput formControlName="description" rows="4" placeholder="Description détaillée..."></textarea>
+          </mat-form-field>
+
+          <!-- Image Selection -->
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Image du produit</label>
+            <div class="relative group cursor-pointer border-2 border-dashed border-gray-300 rounded-xl hover:border-admin-primary transition-colors overflow-hidden h-40 flex items-center justify-center bg-gray-50"
+                 (click)="openMediaLibrary()" matRipple>
 
               @if (productForm.get('imageUrl')?.value) {
                 <img [src]="productForm.get('imageUrl')?.value" class="w-full h-full object-cover">
                 <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span class="text-white font-medium flex items-center gap-2">
+                  <span class="text-white font-medium flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
                     <mat-icon>edit</mat-icon> Changer
                   </span>
                 </div>
               } @else {
-                <div class="text-gray-400 flex flex-col items-center gap-1">
-                  <mat-icon>add_photo_alternate</mat-icon>
-                  <span class="text-xs font-medium">Choisir une image</span>
+                <div class="text-gray-400 flex flex-col items-center gap-2">
+                  <mat-icon class="scale-150">add_photo_alternate</mat-icon>
+                  <span class="text-sm font-medium">Toucher pour choisir une image</span>
                 </div>
               }
-
-              <!-- Input caché pour la valeur -->
-              <input type="hidden" formControlName="imageUrl">
             </div>
           </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Section 2: Configuration -->
+      <mat-card class="overflow-hidden">
+        <div class="bg-admin-primary/5 px-4 py-2 border-b border-admin-primary/10 flex items-center gap-2">
+          <mat-icon class="text-admin-primary text-sm">tune</mat-icon>
+          <span class="text-xs font-bold text-admin-primary uppercase tracking-wider">Configuration</span>
         </div>
-      </div>
+        <mat-card-content class="p-4 pt-4 space-y-6">
 
-      <!-- Section 2: Détails Spécifiques -->
-      <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100">
-        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-          <mat-icon class="text-sm">tune</mat-icon> Configuration
-        </h3>
+          <!-- Pierres (Chips) -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Pierres / Matériaux</label>
+            <div class="flex flex-wrap gap-2">
+              @for (stone of availableStones(); track stone.id) {
+                <div class="cursor-pointer transition-all active:scale-95"
+                     (click)="toggleStone(stone, !isStoneSelected(stone.id))">
+                  <span class="px-3 py-1.5 rounded-full text-sm border flex items-center gap-1 transition-colors"
+                        [class.bg-admin-primary]="isStoneSelected(stone.id)"
+                        [class.text-white]="isStoneSelected(stone.id)"
+                        [class.border-admin-primary]="isStoneSelected(stone.id)"
+                        [class.bg-white]="!isStoneSelected(stone.id)"
+                        [class.text-gray-700]="!isStoneSelected(stone.id)">
+                    {{ stone.name }}
+                    <mat-icon *ngIf="isStoneSelected(stone.id)" class="text-xs h-4 w-4">check</mat-icon>
+                  </span>
+                </div>
+              }
+              @if (availableStones().length === 0) {
+                <p class="text-sm text-gray-400 italic">Aucune pierre disponible.</p>
+              }
+            </div>
+          </div>
 
-        <!-- Pierres (Pour tous) -->
-        <div class="mb-6">
-          <mat-form-field appearance="outline" class="w-full">
-            <mat-label>Pierres / Matériaux</mat-label>
-            <input matInput formControlName="stones" placeholder="Séparez par des virgules (ex: Améthyste, Quartz)">
-            <mat-icon matSuffix>diamond</mat-icon>
-          </mat-form-field>
-        </div>
-
-        <!-- Abonnement -->
-        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <mat-checkbox formControlName="isSubscription" color="primary" class="mb-4 block">
-            Ce produit est un abonnement
-          </mat-checkbox>
-
-          @if (productForm.get('isSubscription')?.value) {
-            <div class="animate-in fade-in slide-in-from-top-2">
-              <mat-form-field appearance="outline" class="w-full bg-white">
-                <mat-label>Fréquence de facturation</mat-label>
+          <!-- Champs Abonnement -->
+          @if (productForm.get('type')?.value === 'SUBSCRIPTION') {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-orange-50 p-4 rounded-lg border border-orange-100">
+              <div class="flex items-center">
+                <mat-checkbox formControlName="isSubscription" color="primary">Est un abonnement récurrent</mat-checkbox>
+              </div>
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Fréquence</mat-label>
                 <mat-select formControlName="recurringInterval">
-                  <mat-option [value]="null">Sélectionner une fréquence</mat-option>
                   <mat-option value="month">Mensuel</mat-option>
                   <mat-option value="year">Annuel</mat-option>
+                  <mat-option value="week">Hebdomadaire</mat-option>
                 </mat-select>
-                <mat-error *ngIf="productForm.get('recurringInterval')?.hasError('required')">Fréquence requise</mat-error>
               </mat-form-field>
             </div>
           }
-        </div>
 
-        <!-- Champs Services -->
-        @if (productForm.get('type')?.value !== 'PHYSICAL') {
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 animate-in fade-in slide-in-from-top-2">
-            <div>
+          <!-- Champs Services -->
+          @if (productForm.get('type')?.value !== 'PHYSICAL' && productForm.get('type')?.value !== 'SUBSCRIPTION') {
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Nb Séances</mat-label>
                 <input matInput type="number" formControlName="sessionCount">
               </mat-form-field>
-            </div>
-            <div>
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Durée (mois)</mat-label>
                 <input matInput type="number" formControlName="durationMonths">
               </mat-form-field>
-            </div>
-            <div>
-              <mat-form-field appearance="outline" class="w-full" matTooltip="Temps de pause nécessaire avant/après le RDV">
+              <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Buffer (min)</mat-label>
-                <input matInput type="number" formControlName="bufferTimeMinutes">
-                <mat-icon matSuffix class="text-gray-400 text-sm">help</mat-icon>
+                <input matInput type="number" formControlName="bufferTimeMinutes" matTooltip="Pause avant/après RDV">
               </mat-form-field>
             </div>
-          </div>
-        }
-      </div>
+          }
+        </mat-card-content>
+      </mat-card>
 
       <!-- Section 3: Variantes & Tailles -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <!-- Variantes -->
-        <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+        <mat-card class="h-full flex flex-col">
+          <div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+            <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider flex items-center gap-2">
               <mat-icon class="text-sm">layers</mat-icon> Variantes
             </h3>
-            <button mat-button color="primary" type="button" (click)="addVariant()">
+            <button mat-stroked-button color="primary" (click)="addVariant()" class="!px-2 !min-w-0">
               <mat-icon>add</mat-icon> Ajouter
             </button>
           </div>
 
-          <div formArrayName="variants" class="space-y-3 flex-1">
+          <mat-card-content class="p-4 flex-1 space-y-3" formArrayName="variants">
             @for (variantGroup of variants.controls; track $index) {
-              <div [formGroupName]="$index" class="p-3 bg-gray-50 rounded-lg border border-gray-200 relative group hover:border-admin-primary/30 transition-colors">
-                <button mat-icon-button color="warn" type="button" (click)="removeVariant($index)" class="absolute top-0 right-0 scale-75">
+              <div [formGroupName]="$index" class="p-3 bg-white rounded-lg border border-gray-200 shadow-sm relative group">
+                <button mat-icon-button color="warn" (click)="removeVariant($index)" class="absolute -top-2 -right-2 scale-75 bg-white shadow-sm border border-gray-100">
                   <mat-icon>close</mat-icon>
                 </button>
 
-                <div class="grid grid-cols-2 gap-3 pr-6">
-                  <div class="col-span-2">
-                    <mat-form-field appearance="outline" class="w-full density-compact">
-                      <mat-label>Nom</mat-label>
-                      <input matInput formControlName="label" placeholder="Ex: Formule Premium">
-                    </mat-form-field>
-                  </div>
-                  <div>
-                    <mat-form-field appearance="outline" class="w-full density-compact">
-                      <mat-label>Prix</mat-label>
-                      <input matInput type="number" formControlName="price">
-                    </mat-form-field>
-                  </div>
-                  <div>
-                    <mat-form-field appearance="outline" class="w-full density-compact">
-                      <mat-label>Sessions</mat-label>
-                      <input matInput type="number" formControlName="sessionCount">
-                    </mat-form-field>
-                  </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <mat-form-field appearance="outline" class="col-span-2 text-sm density-compact">
+                    <mat-label>Nom</mat-label>
+                    <input matInput formControlName="label" placeholder="Ex: Formule Premium">
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="text-sm density-compact">
+                    <mat-label>Prix</mat-label>
+                    <input matInput type="number" formControlName="price">
+                    <span matTextSuffix>€</span>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline" class="text-sm density-compact">
+                    <mat-label>Sessions</mat-label>
+                    <input matInput type="number" formControlName="sessionCount">
+                  </mat-form-field>
                 </div>
               </div>
             }
             @if (variants.controls.length === 0) {
-              <div class="text-center py-8 text-gray-400 text-sm italic border-2 border-dashed border-gray-100 rounded-lg">
+              <div class="text-center py-8 text-gray-400 text-sm italic">
                 Aucune variante définie
               </div>
             }
-          </div>
-        </div>
+          </mat-card-content>
+        </mat-card>
 
-        <!-- Tailles (Uniquement Physique) -->
+        <!-- Tailles (Chips) -->
         @if (productForm.get('type')?.value === 'PHYSICAL') {
-          <div class="bg-white p-4 md:p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col h-full animate-in fade-in slide-in-from-right-4">
-            <div class="flex justify-between items-center mb-4">
-              <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
+          <mat-card class="h-full flex flex-col">
+            <div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+              <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider flex items-center gap-2">
                 <mat-icon class="text-sm">straighten</mat-icon> Tailles
               </h3>
-              <button mat-button color="primary" type="button" (click)="addSize()">
-                <mat-icon>add</mat-icon> Ajouter
-              </button>
             </div>
 
-            <div formArrayName="sizes" class="space-y-3 flex-1">
-              @for (sizeGroup of sizes.controls; track $index) {
-                <div [formGroupName]="$index" class="p-3 bg-gray-50 rounded-lg border border-gray-200 relative group hover:border-admin-primary/30 transition-colors">
-                  <button mat-icon-button color="warn" type="button" (click)="removeSize($index)" class="absolute top-0 right-0 scale-75">
-                    <mat-icon>close</mat-icon>
-                  </button>
-
-                  <div class="grid grid-cols-3 gap-3 pr-6">
-                    <div class="col-span-1">
-                      <mat-form-field appearance="outline" class="w-full density-compact">
-                        <mat-label>Label</mat-label>
-                        <input matInput formControlName="label" placeholder="S, M">
-                      </mat-form-field>
-                    </div>
-                    <div class="col-span-2">
-                      <mat-form-field appearance="outline" class="w-full density-compact">
-                        <mat-label>Description</mat-label>
-                        <input matInput formControlName="description" placeholder="16cm...">
-                      </mat-form-field>
-                    </div>
+            <mat-card-content class="p-4 flex-1">
+              <div class="flex flex-wrap gap-2">
+                @for (size of availableSizes(); track size.id) {
+                  <div class="cursor-pointer transition-all active:scale-95"
+                       (click)="toggleSize(size, !isSizeSelected(size.id))">
+                    <span class="px-4 py-2 rounded-lg text-sm border flex flex-col items-center justify-center min-w-[60px] transition-colors"
+                          [class.bg-admin-primary]="isSizeSelected(size.id)"
+                          [class.text-white]="isSizeSelected(size.id)"
+                          [class.border-admin-primary]="isSizeSelected(size.id)"
+                          [class.bg-white]="!isSizeSelected(size.id)"
+                          [class.text-gray-700]="!isSizeSelected(size.id)">
+                      <span class="font-bold">{{ size.label }}</span>
+                      <span class="text-[10px] opacity-80">{{ size.description }}</span>
+                    </span>
                   </div>
-                </div>
-              }
-              @if (sizes.controls.length === 0) {
-                <div class="text-center py-8 text-gray-400 text-sm italic border-2 border-dashed border-gray-100 rounded-lg">
-                  Aucune taille définie
-                </div>
-              }
-            </div>
-          </div>
+                }
+                @if (availableSizes().length === 0) {
+                  <div class="w-full text-center py-8 text-gray-400 text-sm italic">
+                    Aucune taille disponible.
+                  </div>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
         }
       </div>
 
@@ -249,8 +233,8 @@
   </div>
 
   <!-- Footer (Actions) -->
-  <div class="px-4 py-3 md:px-6 md:py-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-3 sticky bottom-0 z-10">
-    <button mat-button (click)="onCancel()">
+  <div class="px-4 py-3 border-t border-gray-200 bg-white flex justify-end gap-3 sticky bottom-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+    <button mat-stroked-button (click)="onCancel()">
       Annuler
     </button>
     <button mat-flat-button color="primary" (click)="onSubmit()">

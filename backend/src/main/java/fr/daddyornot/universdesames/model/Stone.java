@@ -6,19 +6,18 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "ref_product_sizes") // On change le nom pour bien distinguer que c'est un référentiel
+@Table(name = "ref_stones")
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductSize {
+public class Stone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true, nullable = false)
-    private String label; // Ex: S, M, L
+    private String name;
 
-    private String description; // Ex: 16cm, poignet fin
-
-    // Plus de lien @ManyToOne vers Product ici
+    @Column(length = 1000) // Description plus longue pour les vertus
+    private String description;
 }

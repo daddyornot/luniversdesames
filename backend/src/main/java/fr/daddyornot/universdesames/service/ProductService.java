@@ -1,13 +1,13 @@
 package fr.daddyornot.universdesames.service;
 
-import fr.daddyornot.universdesames.model.Product;
-import fr.daddyornot.universdesames.model.ProductSize;
-import fr.daddyornot.universdesames.model.ProductType;
-import fr.daddyornot.universdesames.model.ProductVariant;
+import fr.daddyornot.universdesames.model.*;
 import fr.daddyornot.universdesames.model.dto.ProductDTO;
 import fr.daddyornot.universdesames.model.dto.ProductSizeDTO;
 import fr.daddyornot.universdesames.model.dto.ProductVariantDTO;
+import fr.daddyornot.universdesames.model.dto.StoneDTO;
 import fr.daddyornot.universdesames.repository.ProductRepository;
+import fr.daddyornot.universdesames.repository.ProductSizeRepository;
+import fr.daddyornot.universdesames.repository.StoneRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductSizeRepository productSizeRepository;
+    private final StoneRepository stoneRepository; // Injection du repo des pierres
 
     public List<ProductDTO> getAllProducts() {
         return productRepository.findAll().stream()
@@ -57,17 +59,29 @@ public class ProductService {
         product.setName(productDTO.name());
         product.setDescription(productDTO.description());
         product.setPrice(productDTO.price());
-        product.setStones(productDTO.stones());
         product.setImageUrl(productDTO.imageUrl());
         product.setType(productDTO.type());
         product.setSessionCount(productDTO.sessionCount());
         product.setDurationMonths(productDTO.durationMonths());
-        product.setBufferTimeMinutes(productDTO.bufferTimeMinutes() != null ? productDTO.bufferTimeMinutes() : 0); // Assurer une valeur par défaut
+        product.setBufferTimeMinutes(productDTO.bufferTimeMinutes() != null ? productDTO.bufferTimeMinutes() : 0);
         product.setSubscription(productDTO.isSubscription() != null ? productDTO.isSubscription() : false);
         product.setRecurringInterval(productDTO.recurringInterval());
 
+        // Gestion des pierres (ManyToMany)
+        product.getStones().clear();
+        if (productDTO.stones() != null) {
+            productDTO.stones().forEach(stoneDTO -> {
+                Stone stone = null;
+                if (stoneDTO.id() != null) {
+                    stone = stoneRepository.findById(stoneDTO.id()).orElse(null);
+                }
+                if (stone != null) {
+                    product.getStones().add(stone);
+                }
+            });
+        }
 
-        // Gestion des variantes
+        // Gestion des variantes (OneToMany)
         product.getVariants().clear();
         if (productDTO.variants() != null) {
             productDTO.variants().forEach(variantDTO -> {
@@ -81,15 +95,17 @@ public class ProductService {
             });
         }
 
-        // Gestion des tailles
+        // Gestion des tailles (ManyToMany)
         product.getSizes().clear();
         if (productDTO.sizes() != null) {
             productDTO.sizes().forEach(sizeDTO -> {
-                ProductSize size = new ProductSize();
-                size.setLabel(sizeDTO.label());
-                size.setDescription(sizeDTO.description());
-                size.setProduct(product);
-                product.getSizes().add(size);
+                ProductSize size = null;
+                if (sizeDTO.id() != null) {
+                    size = productSizeRepository.findById(sizeDTO.id()).orElse(null);
+                }
+                if (size != null) {
+                    product.getSizes().add(size);
+                }
             });
         }
 
@@ -110,12 +126,16 @@ public class ProductService {
                 .map(s -> new ProductSizeDTO(s.getId(), s.getLabel(), s.getDescription()))
                 .collect(Collectors.toList());
 
+        List<StoneDTO> stoneDTOs = product.getStones().stream()
+                .map(s -> new StoneDTO(s.getId(), s.getName(), s.getDescription()))
+                .collect(Collectors.toList());
+
         return new ProductDTO(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getStones(),
+                stoneDTOs, // Liste de StoneDTO
                 product.getImageUrl(),
                 product.getType(),
                 product.getSessionCount(),

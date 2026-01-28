@@ -1,12 +1,7 @@
 package fr.daddyornot.universdesames.config;
 
-import fr.daddyornot.universdesames.model.Product;
-import fr.daddyornot.universdesames.model.ProductSize;
-import fr.daddyornot.universdesames.model.ProductType;
-import fr.daddyornot.universdesames.model.ProductVariant;
-import fr.daddyornot.universdesames.model.User;
-import fr.daddyornot.universdesames.repository.ProductRepository;
-import fr.daddyornot.universdesames.repository.UserRepository;
+import fr.daddyornot.universdesames.model.*;
+import fr.daddyornot.universdesames.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,35 +14,69 @@ import java.util.List;
 public class DataInitializer implements CommandLineRunner {
 
     private final ProductRepository productRepository;
+    private final ProductSizeRepository productSizeRepository;
+    private final StoneRepository stoneRepository; // Nouveau repo
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
+        // DELETE ALL (Attention en prod, à commenter ou sécuriser)
+        // orderRepository.deleteAll();
+        // productRepository.deleteAll();
+        // productSizeRepository.deleteAll();
+        // stoneRepository.deleteAll();
+        // userRepository.deleteAll();
+
+        // Initialisation des Tailles de Référence
+        if (productSizeRepository.count() == 0) {
+            createSize("XS", "15cm, poignet très fin");
+            createSize("S", "16cm, poignet fin");
+            createSize("M", "17cm, poignet standard");
+            createSize("L", "18cm, poignet fort");
+            createSize("XL", "19cm, poignet très fort");
+            createSize("Unique", "Taille ajustable");
+            System.out.println("Tailles de référence créées !");
+        }
+
+        // Initialisation des Pierres de Référence
+        if (stoneRepository.count() == 0) {
+            createStone("Améthyste", "Pierre de la sagesse et de l'humilité. Favorise l'élévation spirituelle.");
+            createStone("Quartz", "Amplificateur d'énergie et de pensée.");
+            createStone("Œil de Tigre", "Pierre de protection contre les énergies négatives.");
+            createStone("Labradorite", "Pierre de protection des thérapeutes.");
+            createStone("Pierre de Lune", "Pierre de la féminité et de l'intuition.");
+            System.out.println("Pierres de référence créées !");
+        }
+
         // Initialisation Produits
         if (productRepository.count() == 0) {
+            ProductSize sizeS = productSizeRepository.findAll().stream().filter(s -> s.getLabel().equals("S")).findFirst().orElseThrow();
+            ProductSize sizeM = productSizeRepository.findAll().stream().filter(s -> s.getLabel().equals("M")).findFirst().orElseThrow();
+            ProductSize sizeUnique = productSizeRepository.findAll().stream().filter(s -> s.getLabel().equals("Unique")).findFirst().orElseThrow();
+
+            Stone amethyste = stoneRepository.findByName("Améthyste").orElseThrow();
+            Stone quartz = stoneRepository.findByName("Quartz").orElseThrow();
+            Stone oeilTigre = stoneRepository.findByName("Œil de Tigre").orElseThrow();
+
             Product p1 = new Product();
             p1.setName("Bracelet Améthyste");
             p1.setDescription("Pierre de la sagesse et de l'humilité. Favorise l'élévation spirituelle, la concentration et la méditation.");
             p1.setPrice(25.0);
-            p1.setStones(List.of("Améthyste", "Quartz"));
+            p1.setStones(List.of(amethyste, quartz)); // ManyToMany
             p1.setType(ProductType.PHYSICAL);
             p1.setImageUrl("assets/images/alexey-demidov-QRnUMyfhpgA-unsplash.jpg");
-            
-            ProductSize s1_p1 = new ProductSize(); s1_p1.setLabel("S"); s1_p1.setDescription("16cm, poignet fin"); s1_p1.setProduct(p1);
-            ProductSize s2_p1 = new ProductSize(); s2_p1.setLabel("M"); s2_p1.setDescription("18cm, poignet standard"); s2_p1.setProduct(p1);
-            p1.setSizes(List.of(s1_p1, s2_p1));
+            p1.setSizes(List.of(sizeS, sizeM)); // ManyToMany
 
             Product p2 = new Product();
             p2.setName("Bracelet Œil de Tigre");
             p2.setDescription("Pierre de protection. Renvoie les énergies négatives vers son émetteur.");
             p2.setPrice(22.0);
-            p2.setStones(List.of("Œil de Tigre"));
+            p2.setStones(List.of(oeilTigre));
             p2.setType(ProductType.PHYSICAL);
             p2.setImageUrl("assets/images/alexey-demidov-WTKBeM7rGQE-unsplash.jpg");
-            
-            ProductSize s1_p2 = new ProductSize(); s1_p2.setLabel("Unique"); s1_p2.setDescription("Taille ajustable"); s1_p2.setProduct(p2);
-            p2.setSizes(List.of(s1_p2));
+            p2.setSizes(List.of(sizeUnique));
 
             Product p3 = new Product();
             p3.setName("Guidance Spirituelle");
@@ -108,5 +137,19 @@ public class DataInitializer implements CommandLineRunner {
             userRepository.save(admin);
             System.out.println("Compte Admin créé : admin@universdesames.com / admin123");
         }
+    }
+
+    private void createSize(String label, String description) {
+        ProductSize size = new ProductSize();
+        size.setLabel(label);
+        size.setDescription(description);
+        productSizeRepository.save(size);
+    }
+
+    private void createStone(String name, String description) {
+        Stone stone = new Stone();
+        stone.setName(name);
+        stone.setDescription(description);
+        stoneRepository.save(stone);
     }
 }

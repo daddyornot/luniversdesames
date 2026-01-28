@@ -9,7 +9,7 @@ public record ProductDTO(
     String name,
     String description,
     Double price,
-    List<String> stones,
+    List<StoneDTO> stones,
     String imageUrl,
     ProductType type,
     Integer sessionCount,
@@ -17,7 +17,7 @@ public record ProductDTO(
     List<ProductVariantDTO> variants,
     List<ProductSizeDTO> sizes,
     Integer bufferTimeMinutes,
-    Boolean isSubscription, // Nouveau
-    String recurringInterval // Nouveau
+    Boolean isSubscription,
+    String recurringInterval
 ) {
 }

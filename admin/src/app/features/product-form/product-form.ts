@@ -11,8 +11,11 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {ProductSize, ProductVariant} from '../../core/models/product';
 import {ProductService} from '../../core/services/product.service';
+import {ProductSizeService} from '../../core/services/product-size.service';
+import {Stone, StoneService} from '../../core/services/stone.service'; // Nouveau service
 import {MediaLibraryComponent} from '../media/media-library/media-library';
 import {ToastService} from '../../services/toast/toast';
+import {MatCard, MatCardContent} from '@angular/material/card';
 
 @Component({
   selector: 'app-product-form',
@@ -26,13 +29,17 @@ import {ToastService} from '../../services/toast/toast';
     MatSelectModule,
     MatCheckboxModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatCard,
+    MatCardContent
   ],
   templateUrl: './product-form.html'
 })
 export class ProductForm implements OnInit {
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
+  private productSizeService = inject(ProductSizeService);
+  private stoneService = inject(StoneService); // Injection
   private toast = inject(ToastService);
   private dialog = inject(MatDialog);
 
@@ -42,10 +49,14 @@ export class ProductForm implements OnInit {
   productForm!: FormGroup;
   isEditMode = signal(false);
 
+  availableSizes = signal<ProductSize[]>([]);
+  availableStones = signal<Stone[]>([]); // Liste des pierres
+
   ngOnInit() {
     this.initForm();
+    this.loadAvailableSizes();
+    this.loadAvailableStones(); // Charger les pierres
 
-    // Gestion dynamique des validateurs pour l'abonnement
     this.productForm.get('isSubscription')?.valueChanges.subscribe(isSub => {
       const intervalControl = this.productForm.get('recurringInterval');
       if (isSub) {
@@ -69,7 +80,7 @@ export class ProductForm implements OnInit {
       name: ['', Validators.required],
       description: [''],
       price: [0, [Validators.required, Validators.min(0)]],
-      stones: [''],
+      stones: this.fb.array([]), // FormArray pour les pierres
       imageUrl: [''],
       type: ['PHYSICAL', Validators.required],
       sessionCount: [null],
@@ -82,15 +93,44 @@ export class ProductForm implements OnInit {
     });
   }
 
+  loadAvailableSizes() {
+    this.productSizeService.getAllSizes().subscribe(sizes => this.availableSizes.set(sizes));
+  }
+
+  loadAvailableStones() {
+    this.stoneService.getAllStones().subscribe(stones => this.availableStones.set(stones));
+  }
+
   loadProduct(id: number) {
     this.productService.getProductById(id).subscribe(product => {
       this.productForm.patchValue({
         ...product,
-        stones: product.stones ? product.stones.join(', ') : ''
+        // stones est géré manuellement ci-dessous
       });
 
       product.variants?.forEach(variant => this.addVariant(variant));
-      product.sizes?.forEach(size => this.addSize(size));
+
+      // Tailles
+      const sizesArray = this.productForm.get('sizes') as FormArray;
+      sizesArray.clear();
+      product.sizes?.forEach(size => {
+        sizesArray.push(this.fb.group({
+          id: [size.id],
+          label: [size.label],
+          description: [size.description]
+        }));
+      });
+
+      // Pierres
+      const stonesArray = this.productForm.get('stones') as FormArray;
+      stonesArray.clear();
+      product.stones?.forEach(stone => {
+        stonesArray.push(this.fb.group({
+          id: [stone.id],
+          name: [stone.name],
+          description: [stone.description]
+        }));
+      });
     });
   }
 
@@ -107,12 +147,36 @@ export class ProductForm implements OnInit {
     });
   }
 
-  get variants() {
-    return this.productForm.get('variants') as FormArray;
+  get variants() { return this.productForm.get('variants') as FormArray; }
+  get sizes() { return this.productForm.get('sizes') as FormArray; }
+  get stones() { return this.productForm.get('stones') as FormArray; }
+
+  // --- Gestion des Tailles ---
+  isSizeSelected(sizeId: number): boolean {
+    return this.sizes.controls.some(control => control.get('id')?.value === sizeId);
   }
 
-  get sizes() {
-    return this.productForm.get('sizes') as FormArray;
+  toggleSize(size: ProductSize, isChecked: boolean) {
+    if (isChecked) {
+      this.sizes.push(this.fb.group({ id: [size.id], label: [size.label], description: [size.description] }));
+    } else {
+      const index = this.sizes.controls.findIndex(control => control.get('id')?.value === size.id);
+      if (index !== -1) this.sizes.removeAt(index);
+    }
+  }
+
+  // --- Gestion des Pierres ---
+  isStoneSelected(stoneId: number): boolean {
+    return this.stones.controls.some(control => control.get('id')?.value === stoneId);
+  }
+
+  toggleStone(stone: Stone, isChecked: boolean) {
+    if (isChecked) {
+      this.stones.push(this.fb.group({ id: [stone.id], name: [stone.name], description: [stone.description] }));
+    } else {
+      const index = this.stones.controls.findIndex(control => control.get('id')?.value === stone.id);
+      if (index !== -1) this.stones.removeAt(index);
+    }
   }
 
   addVariant(variant?: ProductVariant) {
@@ -123,11 +187,11 @@ export class ProductForm implements OnInit {
       durationMonths: [variant?.durationMonths || null],
       sessionCount: [variant?.sessionCount || null]
     });
-    (this.productForm.get('variants') as FormArray).push(variantGroup);
+    this.variants.push(variantGroup);
   }
 
   removeVariant(index: number) {
-    (this.productForm.get('variants') as FormArray).removeAt(index);
+    this.variants.removeAt(index);
   }
 
   addSize(size?: ProductSize) {
@@ -136,11 +200,11 @@ export class ProductForm implements OnInit {
       label: [size?.label || '', Validators.required],
       description: [size?.description || '']
     });
-    (this.productForm.get('sizes') as FormArray).push(sizeGroup);
+    this.sizes.push(sizeGroup);
   }
 
   removeSize(index: number) {
-    (this.productForm.get('sizes') as FormArray).removeAt(index);
+    this.sizes.removeAt(index);
   }
 
   onCancel() {
@@ -154,7 +218,7 @@ export class ProductForm implements OnInit {
     }
 
     const productData = this.productForm.value;
-    productData.stones = productData.stones ? productData.stones.split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0) : [];
+    // Plus besoin de conversion manuelle pour stones, c'est déjà un tableau d'objets
 
     const request = this.isEditMode()
       ? this.productService.updateProduct(productData.id, productData)

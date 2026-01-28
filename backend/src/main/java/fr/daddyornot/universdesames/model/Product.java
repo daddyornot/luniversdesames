@@ -22,10 +22,14 @@ public class Product {
     private String description;
     private Double price;
 
-    @ElementCollection
-    @CollectionTable(name = "product_stones", joinColumns = @JoinColumn(name = "product_id"))
-    @Column(name = "stone_name")
-    private List<String> stones = new ArrayList<>();
+    // Remplacement de ElementCollection par ManyToMany
+    @ManyToMany
+    @JoinTable(
+        name = "product_stones_link",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "stone_id")
+    )
+    private List<Stone> stones = new ArrayList<>();
 
     @Column(name = "image_url")
     private String imageUrl;
@@ -47,6 +51,11 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductVariant> variants = new ArrayList<>();
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany
+    @JoinTable(
+        name = "product_available_sizes",
+        joinColumns = @JoinColumn(name = "product_id"),
+        inverseJoinColumns = @JoinColumn(name = "size_id")
+    )
     private List<ProductSize> sizes = new ArrayList<>();
 }

@@ -12,43 +12,43 @@
     <table mat-table [dataSource]="dataSource()" class="w-full">
 
       <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef> Ref. </th>
-          <td mat-cell *matCellDef="let element"> #{{element.id}} </td>
-        </ng-container>
+        <th mat-header-cell *matHeaderCellDef> Ref.</th>
+        <td mat-cell *matCellDef="let element"> #{{ element.id }}</td>
+      </ng-container>
 
-        <!-- Name Column -->
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef> Nom </th>
-          <td mat-cell *matCellDef="let element">
-            <div class="font-medium text-gray-900">{{element.name}}</div>
-            <div class="text-xs text-gray-500">{{element.type}}</div>
-          </td>
-        </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef> Nom</th>
+        <td mat-cell *matCellDef="let element">
+          <div class="font-medium text-gray-900">{{ element.name }}</div>
+          <div class="text-xs text-gray-500">{{ element.type }}</div>
+        </td>
+      </ng-container>
 
-        <!-- Price Column -->
-        <ng-container matColumnDef="price">
-          <th mat-header-cell *matHeaderCellDef> Prix </th>
-          <td mat-cell *matCellDef="let element"> {{element.price | currency:'EUR'}} </td>
-        </ng-container>
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef> Prix</th>
+        <td mat-cell *matCellDef="let element"> {{ element.price | currency:'EUR' }}</td>
+      </ng-container>
 
-        <!-- Stone Column -->
-        <ng-container matColumnDef="stone">
-          <th mat-header-cell *matHeaderCellDef> Pierre </th>
-          <td mat-cell *matCellDef="let element"> {{element.stone || '-'}} </td>
-        </ng-container>
+      <!-- Stone Column -->
+      <ng-container matColumnDef="stone">
+        <th mat-header-cell *matHeaderCellDef> Pierre</th>
+        <td mat-cell *matCellDef="let element"> {{ element.stone || '-' }}</td>
+      </ng-container>
 
-        <!-- Actions Column -->
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef> Actions </th>
-          <td mat-cell *matCellDef="let element">
-            <button mat-icon-button color="primary" (click)="openProductForm(element.id)">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteProduct(element)">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
-        </ng-container>
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions</th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button color="primary" (click)="openProductForm(element.id)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteProduct(element)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -61,15 +61,21 @@
       <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
         <div class="flex justify-between items-start mb-2">
           <div>
-            <div class="font-medium text-gray-900">{{product.name}}</div>
-            <div class="text-xs text-gray-500">{{product.type}}</div>
+            <div class="font-medium text-gray-900">{{ product.name }}</div>
+            <div class="text-xs text-gray-500">{{ product.type }}</div>
           </div>
-          <div class="font-bold text-gray-800">{{product.price | currency:'EUR'}}</div>
+          <div class="font-bold text-gray-800">{{ product.price | currency:'EUR' }}</div>
         </div>
 
-        <div class="text-sm text-gray-600 mb-3">
-          <span class="text-xs text-gray-400 uppercase">Pierre:</span> {{product.stones || '-'}}
-        </div>
+        @if (product.stones.length > 0) {
+          <div class="text-sm text-gray-600 mb-3 flex flex-wrap items-center gap-2">
+            <span class="text-xs text-gray-400">Pierre:</span>
+            @for (stone of product.stones; track stone.id) {
+              <span
+                class="px-2 py-0.5 rounded-full text-xs font-medium bg-admin-primary/10 text-admin-primary border border-admin-primary/20">{{ stone.name }}</span>
+            }
+          </div>
+        }
 
         <div class="flex justify-end gap-2 border-t border-gray-50 pt-2">
           <button mat-icon-button color="primary" (click)="openProductForm(product.id)">

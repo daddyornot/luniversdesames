@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="12" author="gemini">
+        <!-- Renommer la table product_sizes en ref_product_sizes -->
+        <renameTable oldTableName="product_sizes" newTableName="ref_product_sizes"/>
+
+        <!-- Supprimer la colonne product_id de ref_product_sizes (car ManyToMany maintenant) -->
+        <!-- Attention : cela supprime les liens existants. En prod, il faudrait migrer les données vers la table de jointure avant -->
+        <dropForeignKeyConstraint baseTableName="ref_product_sizes" constraintName="fk_product_sizes_product"/>
+        <dropColumn tableName="ref_product_sizes" columnName="product_id"/>
+
+        <!-- Créer la table de jointure -->
+        <createTable tableName="product_available_sizes">
+            <column name="product_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_pas_product" references="products(id)"/>
+            </column>
+            <column name="size_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_pas_size" references="ref_product_sizes(id)"/>
+            </column>
+        </createTable>
+
+        <!-- Ajouter une contrainte d'unicité sur le label des tailles -->
+        <addUniqueConstraint tableName="ref_product_sizes" columnNames="label" constraintName="uk_product_size_label"/>
+    </changeSet>
+
+</databaseChangeLog>
