@@ -6,10 +6,10 @@ import {environment} from '../../../environments/environment';
 
 @Injectable({providedIn: 'root'})
 export class AuthService {
-  private http = inject(HttpClient);
-  private router = inject(Router);
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
 
-  private apiUrl = `${environment.apiUrl}/auth`;
+  private readonly apiUrl = `${environment.apiUrl}/auth`;
 
   currentUser = signal<any>(this.getUserFromStorage());
 

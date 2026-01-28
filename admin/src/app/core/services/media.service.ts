@@ -5,8 +5,8 @@ import {environment} from '../../../environments/environment';
 
 @Injectable({providedIn: 'root'})
 export class MediaService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/media`;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/media`;
 
   uploadFile(file: File): Observable<{url: string}> {
     const formData = new FormData();

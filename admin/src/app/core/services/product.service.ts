@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
@@ -8,10 +8,9 @@ import {Product} from '../models/product';
   providedIn: 'root'
 })
 export class ProductService {
-  private apiUrl = `${environment.apiUrl}/products`;
+  private readonly apiUrl = `${environment.apiUrl}/products`;
+  private readonly http = inject(HttpClient);
 
-  constructor(private http: HttpClient) {
-  }
 
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(this.apiUrl);

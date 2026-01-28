@@ -35,8 +35,8 @@ export interface Order {
 
 @Injectable({providedIn: 'root'})
 export class OrderService {
-  private http = inject(HttpClient);
-  private apiUrl = `${environment.apiUrl}/orders`;
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = `${environment.apiUrl}/orders`;
 
   getAllOrders(): Observable<Order[]> {
     return this.http.get<Order[]>(this.apiUrl);
