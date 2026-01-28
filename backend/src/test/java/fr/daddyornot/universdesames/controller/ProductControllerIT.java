@@ -5,6 +5,7 @@ import fr.daddyornot.universdesames.config.JwtFilter;
 import fr.daddyornot.universdesames.config.WebSecurityConfig;
 import fr.daddyornot.universdesames.model.ProductType;
 import fr.daddyornot.universdesames.model.dto.ProductDTO;
+import fr.daddyornot.universdesames.model.dto.StoneDTO;
 import fr.daddyornot.universdesames.repository.UserRepository;
 import fr.daddyornot.universdesames.service.JwtUtils;
 import fr.daddyornot.universdesames.service.ProductService;
@@ -47,7 +48,8 @@ class ProductControllerIT {
     @Test
     void shouldReturnAllProducts_PublicAccess() throws Exception {
         // GIVEN
-        ProductDTO p1 = new ProductDTO(1L, "Pierre", "Desc", 10.0, List.of("Quartz"), "img.jpg", ProductType.PHYSICAL, null, null, null, null, null, null, null);
+        StoneDTO stoneDTO = new StoneDTO(1L, "Quartz", "Quartz");
+        ProductDTO p1 = new ProductDTO(1L, "Pierre", "Desc", 10.0, List.of(stoneDTO), "img.jpg", ProductType.PHYSICAL, null, null, null, null, null, null, null);
         given(productService.getAllProducts()).willReturn(List.of(p1));
 
         // WHEN & THEN
