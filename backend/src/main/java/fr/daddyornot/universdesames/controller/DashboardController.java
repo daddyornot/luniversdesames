@@ -1,6 +1,7 @@
 package fr.daddyornot.universdesames.controller;
 
 import fr.daddyornot.universdesames.service.DashboardService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/stats")
+    @Operation(operationId = "getStats")
     public ResponseEntity<Map<String, Object>> getStats(
             @RequestParam(defaultValue = "CURRENT_MONTH") String period,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,

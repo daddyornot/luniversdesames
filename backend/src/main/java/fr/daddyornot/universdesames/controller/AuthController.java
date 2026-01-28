@@ -7,6 +7,7 @@ import fr.daddyornot.universdesames.model.dto.RegisterRequest;
 import fr.daddyornot.universdesames.model.dto.UserDTO;
 import fr.daddyornot.universdesames.service.JwtUtils;
 import fr.daddyornot.universdesames.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,13 +28,13 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
+    @Operation(operationId = "register", summary = "Inscription d'un nouvel utilisateur")    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         userService.register(registerRequest);
         return ResponseEntity.ok().body(Map.of("message", "Utilisateur enregistré avec succès !"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    @Operation(operationId = "login", summary = "Authentification")    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.email(), loginRequest.password())
         );
@@ -45,11 +46,12 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserDTO> getProfile(Authentication authentication) {
+    @Operation(operationId = "getCurrentUserProfile", summary = "Récupère le profil de l'utilisateur connecté")    public ResponseEntity<UserDTO> getProfile(Authentication authentication) {
         return ResponseEntity.ok(userService.getProfile(authentication.getName()));
     }
 
     @PutMapping("/profile")
+    @Operation(operationId = "updateCurrentUserProfile", summary = "Met à jour le profil connecté")
     public ResponseEntity<UserDTO> updateProfile(Authentication authentication, @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.updateProfile(authentication.getName(), userDTO));
     }

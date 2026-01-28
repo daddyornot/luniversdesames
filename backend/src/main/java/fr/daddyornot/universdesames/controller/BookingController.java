@@ -34,7 +34,7 @@ public class BookingController {
     }
 
     @GetMapping("/events")
-    @Secured("ROLE_ADMIN") // À décommenter quand la sécurité sera active
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<List<Event>> getEvents(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {

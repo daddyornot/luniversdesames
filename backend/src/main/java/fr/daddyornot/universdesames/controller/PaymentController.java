@@ -4,6 +4,7 @@ import com.stripe.exception.StripeException;
 import fr.daddyornot.universdesames.model.dto.OrderRequest;
 import fr.daddyornot.universdesames.model.dto.PaymentResponse;
 import fr.daddyornot.universdesames.service.PaymentService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class PaymentController {
     private final PaymentService paymentService;
 
     @PostMapping("/create-session")
+    @Operation(operationId = "createCheckoutSession")
     public ResponseEntity<PaymentResponse> createCheckoutSession(@Valid @RequestBody OrderRequest orderRequest) throws StripeException {
         return ResponseEntity.ok(paymentService.createCheckoutSession(orderRequest));
     }
