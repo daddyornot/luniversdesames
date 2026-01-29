@@ -12,10 +12,10 @@
 
 
 export interface ProductVariantDTO { 
-    id?: number;
-    label?: string;
-    price?: number;
-    sessionCount?: number;
-    durationMonths?: number;
+    id: number;
+    label: string;
+    price: number;
+    sessionCount: number;
+    durationMonths: number;
 }
 

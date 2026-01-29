@@ -16,10 +16,10 @@ export interface RegisterRequest {
     password: string;
     firstName: string;
     lastName: string;
-    phone?: string;
-    address?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
+    phone: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
 }
 

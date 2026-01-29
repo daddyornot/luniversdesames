@@ -6,6 +6,9 @@ import fr.daddyornot.universdesames.service.InvoiceService;
 import fr.daddyornot.universdesames.service.OrderService;
 import fr.daddyornot.universdesames.service.ShippingService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -51,8 +54,18 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrdersByUser(userEmail));
     }
 
-    @GetMapping("/{id}/invoice")
-    @Operation(operationId = "downloadOrderInvoice", summary = "Télécharge la facture en PDF")
+    @GetMapping(value = "/{id}/invoice", produces = MediaType.APPLICATION_PDF_VALUE)
+    @Operation(
+        operationId = "downloadOrderInvoice",
+        summary = "Télécharge la facture en PDF",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Facture PDF",
+                content = @Content(mediaType = "application/pdf", schema = @Schema(type = "string", format = "binary"))
+            )
+        }
+    )
     public ResponseEntity<byte[]> downloadInvoice(@PathVariable Long id, Authentication authentication) {
         // TODO: Vérifier que la commande appartient bien à l'utilisateur connecté (Sécurité)
         Order order = orderService.getOrderById(id);

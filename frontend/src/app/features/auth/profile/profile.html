@@ -1,194 +1,232 @@
 <div class="min-h-screen bg-stone-50 pb-28">
-  <!-- En-tête Profil -->
-  <div class="bg-white border-b border-stone-100 px-6 pt-10 pb-8 shadow-sm relative overflow-hidden">
-    <div class="absolute top-0 right-0 w-32 h-32 bg-spirit-primary/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+    <!-- En-tête Profil -->
+    <div class="bg-white border-b border-stone-100 px-6 pt-10 pb-8 shadow-sm relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-spirit-primary/5 rounded-full -mr-10 -mt-10 blur-2xl"></div>
 
-    <div class="relative flex items-center gap-5">
-      <div
-        class="h-20 w-20 rounded-full bg-gradient-to-br from-spirit-primary to-spirit-primary/80 flex items-center justify-center text-white text-3xl font-serif shadow-lg shadow-spirit-primary/20">
-        {{ auth.currentUser()?.firstName?.charAt(0) }}
-      </div>
-      <div>
-        <h1 class="text-2xl font-serif text-stone-800 tracking-tight">Bonjour, <span
-          class="italic text-spirit-primary">{{ auth.currentUser()?.firstName }}</span></h1>
-        <p class="text-stone-500 text-sm mt-1 flex items-center gap-1">
-          <mat-icon class="text-xs scale-75">mail</mat-icon>
-          {{ auth.currentUser()?.email }}
-        </p>
-      </div>
-    </div>
-  </div>
-
-  <div class="px-6 py-8 max-w-3xl mx-auto space-y-10">
-
-    <!-- SECTION MES INFORMATIONS -->
-    <section class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
-      <div class="p-5 border-b border-stone-50 flex justify-between items-center bg-stone-50/30">
-        <h2 class="text-lg font-serif text-stone-800 flex items-center gap-2 opacity-80">
-          <mat-icon class="text-spirit-primary">person</mat-icon>
-          Mes Informations
-        </h2>
-        <button (click)="toggleEdit()" class="text-sm text-spirit-primary font-bold hover:underline">
-          {{ isEditingProfile() ? 'Annuler' : 'Modifier' }}
-        </button>
-      </div>
-
-      <div class="p-6">
-        @if (isEditingProfile()) {
-          <form (ngSubmit)="saveProfile()" class="space-y-4">
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Prénom</label>
-                <input [(ngModel)]="userProfile()!.firstName" name="firstName"
-                       class="w-full p-2 bg-gray-50 rounded border border-gray-200">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nom</label>
-                <input [(ngModel)]="userProfile()!.lastName" name="lastName"
-                       class="w-full p-2 bg-gray-50 rounded border border-gray-200">
-              </div>
+        <div class="relative flex items-center gap-5">
+            <div
+                class="h-20 w-20 rounded-full bg-gradient-to-br from-spirit-primary to-spirit-primary/80 flex items-center justify-center text-white text-3xl font-serif shadow-lg shadow-spirit-primary/20"
+            >
+                {{ authService.currentUser()?.firstName?.charAt(0) }}
             </div>
-
             <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Téléphone</label>
-              <input [(ngModel)]="userProfile()!.phone" name="phone"
-                     class="w-full p-2 bg-gray-50 rounded border border-gray-200">
+                <h1 class="text-2xl font-serif text-stone-800 tracking-tight">Bonjour, <span
+                    class="italic text-spirit-primary"
+                >{{ authService.currentUser()?.firstName }}</span></h1>
+                <p class="text-stone-500 text-sm mt-1 flex items-center gap-1">
+                    <mat-icon class="text-xs scale-75">mail</mat-icon>
+                    {{ authService.currentUser()?.email }}
+                </p>
             </div>
-
-            <div>
-              <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Adresse</label>
-              <input [(ngModel)]="userProfile()!.address" name="address"
-                     class="w-full p-2 bg-gray-50 rounded border border-gray-200">
-            </div>
-
-            <div class="grid grid-cols-2 gap-4">
-              <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Code Postal</label>
-                <input [(ngModel)]="userProfile()!.postalCode" name="postalCode"
-                       class="w-full p-2 bg-gray-50 rounded border border-gray-200">
-              </div>
-              <div>
-                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ville</label>
-                <input [(ngModel)]="userProfile()!.city" name="city"
-                       class="w-full p-2 bg-gray-50 rounded border border-gray-200">
-              </div>
-            </div>
-
-            <button type="submit"
-                    class="w-full py-3 bg-spirit-primary text-white rounded-xl font-bold shadow-lg shadow-spirit-primary/20 mt-4">
-              Enregistrer les modifications
-            </button>
-          </form>
-        } @else {
-          <div class="space-y-3 text-sm text-gray-600">
-            <p><span
-              class="font-bold text-gray-400 w-24 inline-block">Nom :</span> {{ userProfile()?.firstName }} {{ userProfile()?.lastName }}
-            </p>
-            <p><span class="font-bold text-gray-400 w-24 inline-block">Email :</span> {{ userProfile()?.email }}</p>
-            <p><span class="font-bold text-gray-400 w-24 inline-block">Tél :</span> {{ userProfile()?.phone || '-' }}
-            </p>
-            <p><span
-              class="font-bold text-gray-400 w-24 inline-block">Adresse :</span> {{ userProfile()?.address || '-' }}</p>
-            <p><span
-              class="font-bold text-gray-400 w-24 inline-block">Ville :</span> {{ userProfile()?.postalCode }} {{ userProfile()?.city }}
-            </p>
-          </div>
-        }
-      </div>
-    </section>
-
-    <!-- SECTION HISTORIQUE COMMANDES -->
-    <section>
-      <h2 class="text-lg font-serif text-stone-800 mb-6 flex items-center gap-2 opacity-80">
-        <mat-icon class="text-spirit-primary">history</mat-icon>
-        Historique des commandes
-      </h2>
-
-      @if (isLoadingOrders()) {
-        <div class="space-y-4">
-          @for (i of [1, 2, 3]; track i) {
-            <div class="h-24 bg-white rounded-2xl animate-pulse border border-stone-100"></div>
-          }
         </div>
-      } @else if (orders().length > 0) {
-        <div class="space-y-6">
-          @for (order of orders(); track order.id) {
-            <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
-              <!-- Header Commande -->
-              <div class="p-5 border-b border-stone-50 flex justify-between items-start bg-stone-50/30">
-                <div>
-                  <div class="flex items-center gap-2">
-                    <span class="h-2 w-2 rounded-full bg-spirit-primary"></span>
-                    <p class="text-xs text-stone-400 uppercase tracking-wider font-bold">Commande #{{ order.id }}</p>
-                  </div>
-                  <p class="text-stone-600 text-sm mt-1 pl-4">{{ order.date | date:'dd MMMM yyyy à HH:mm' }}</p>
+    </div>
+
+    <div class="px-6 py-8 max-w-3xl mx-auto space-y-10">
+
+        <!-- SECTION MES INFORMATIONS -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div class="p-5 border-b border-stone-50 flex justify-between items-center bg-stone-50/30">
+                <h2 class="text-lg font-serif text-stone-800 flex items-center gap-2 opacity-80">
+                    <mat-icon class="text-spirit-primary">person</mat-icon>
+                    Mes Informations
+                </h2>
+                <button (click)="toggleEdit()" class="text-sm text-spirit-primary font-bold hover:underline">
+                    {{ isEditingProfile() ? 'Annuler' : 'Modifier' }}
+                </button>
+            </div>
+
+            <div class="p-6">
+                @if (isEditingProfile()) {
+                    <form (ngSubmit)="saveProfile()" class="space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Prénom</label>
+                                <input
+                                    [(ngModel)]="userProfile()!.firstName" name="firstName"
+                                    class="w-full p-2 bg-gray-50 rounded border border-gray-200"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Nom</label>
+                                <input
+                                    [(ngModel)]="userProfile()!.lastName" name="lastName"
+                                    class="w-full p-2 bg-gray-50 rounded border border-gray-200"
+                                >
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Téléphone</label>
+                            <input
+                                [(ngModel)]="userProfile()!.phone" name="phone"
+                                class="w-full p-2 bg-gray-50 rounded border border-gray-200"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Adresse</label>
+                            <input
+                                [(ngModel)]="userProfile()!.address" name="address"
+                                class="w-full p-2 bg-gray-50 rounded border border-gray-200"
+                            >
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Code Postal</label>
+                                <input
+                                    [(ngModel)]="userProfile()!.postalCode" name="postalCode"
+                                    class="w-full p-2 bg-gray-50 rounded border border-gray-200"
+                                >
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ville</label>
+                                <input
+                                    [(ngModel)]="userProfile()!.city" name="city"
+                                    class="w-full p-2 bg-gray-50 rounded border border-gray-200"
+                                >
+                            </div>
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="w-full py-3 bg-spirit-primary text-white rounded-xl font-bold shadow-lg shadow-spirit-primary/20 mt-4"
+                        >
+                            Enregistrer les modifications
+                        </button>
+                    </form>
+                } @else {
+                    <div class="space-y-3 text-sm text-gray-600">
+                        <p><span
+                            class="font-bold text-gray-400 w-24 inline-block"
+                        >Nom :</span> {{ userProfile()?.firstName }} {{ userProfile()?.lastName }}
+                        </p>
+                        <p><span
+                            class="font-bold text-gray-400 w-24 inline-block"
+                        >Email :</span> {{ userProfile()?.email }}</p>
+                        <p><span
+                            class="font-bold text-gray-400 w-24 inline-block"
+                        >Tél :</span> {{ userProfile()?.phone || '-' }}
+                        </p>
+                        <p><span
+                            class="font-bold text-gray-400 w-24 inline-block"
+                        >Adresse :</span> {{ userProfile()?.address || '-' }}</p>
+                        <p><span
+                            class="font-bold text-gray-400 w-24 inline-block"
+                        >Ville :</span> {{ userProfile()?.postalCode }} {{ userProfile()?.city }}
+                        </p>
+                    </div>
+                }
+            </div>
+        </section>
+
+        <!-- SECTION HISTORIQUE COMMANDES -->
+        <section>
+            <h2 class="text-lg font-serif text-stone-800 mb-6 flex items-center gap-2 opacity-80">
+                <mat-icon class="text-spirit-primary">history</mat-icon>
+                Historique des commandes
+            </h2>
+
+            @if (isLoadingOrders()) {
+                <div class="space-y-4">
+                    @for (i of [1, 2, 3]; track i) {
+                        <div class="h-24 bg-white rounded-2xl animate-pulse border border-stone-100"></div>
+                    }
                 </div>
-                <div class="flex flex-col items-end gap-2">
+            } @else if (orders().length > 0) {
+                <div class="space-y-6">
+                    @for (order of orders(); track order.id) {
+                        <div class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                            <!-- Header Commande -->
+                            <div
+                                class="p-5 border-b border-stone-50 flex justify-between items-start bg-stone-50/30"
+                            >
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="h-2 w-2 rounded-full bg-spirit-primary"></span>
+                                        <p class="text-xs text-stone-400 uppercase tracking-wider font-bold">
+                                            Commande #{{ order.id }}</p>
+                                    </div>
+                                    <p class="text-stone-600 text-sm mt-1 pl-4">{{ order.createdAt | date:'dd MMMM yyyy à HH:mm' }}</p>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
                   <span
-                    [class]="'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ' + getStatusColor(order.status)">
-                    {{ getStatusLabel(order.status) }}
+                      [class]="'px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ' + getStatusColor(order.shippingStatus)"
+                  >
+                    {{ getStatusLabel(order.shippingStatus) }}
                   </span>
-                  <!-- Bouton Facture -->
-                  <button (click)="downloadInvoice(order.id, order.invoiceNumber)"
-                          class="flex items-center gap-1 text-xs text-spirit-primary hover:underline font-medium bg-transparent border-none cursor-pointer">
-                    <mat-icon class="text-sm h-4 w-4">description</mat-icon>
-                    Facture
-                  </button>
-                </div>
-              </div>
+                                    <!-- Bouton Facture -->
+                                    <button
+                                        (click)="handleDownload(order.id, order.invoiceNumber)"
+                                        class="flex items-center gap-1 text-xs text-spirit-primary hover:underline font-medium bg-transparent border-none cursor-pointer"
+                                    >
+                                        <mat-icon class="text-sm h-4 w-4">description</mat-icon>
+                                        Facture
+                                    </button>
+                                </div>
+                            </div>
 
-              <!-- Liste des articles -->
-              <div class="p-5 space-y-4">
-                @for (item of order.items; track item.productId) {
-                  <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                      <div class="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center text-stone-400">
-                        <mat-icon class="scale-75">local_mall</mat-icon>
-                      </div>
-                      <div>
-                        <!-- Utilisation du nom ou fallback -->
-                        <p
-                          class="text-sm font-medium text-stone-800">{{ item.productName || 'Produit #' + item.productId }}</p>
-                        <div class="flex flex-col text-xs text-stone-500">
-                          <span>Qté: {{ item.quantity }}</span>
+                            <!-- Liste des articles -->
+                            <div class="p-5 space-y-4">
+                                @for (item of order.items; track item.productId) {
+                                    <div class="flex justify-between items-center">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="h-10 w-10 rounded-lg bg-stone-100 flex items-center justify-center text-stone-400"
+                                            >
+                                                <mat-icon class="scale-75">local_mall</mat-icon>
+                                            </div>
+                                            <div>
+                                                <!-- Utilisation du nom ou fallback -->
+                                                <p
+                                                    class="text-sm font-medium text-stone-800"
+                                                >{{ item.productName || 'Produit #' + item.productId }}</p>
+                                                <div class="flex flex-col text-xs text-stone-500">
+                                                    <span>Qté: {{ item.quantity }}</span>
 
-                          <!-- Affichage du RDV si présent -->
-                          @if (item.appointmentDate) {
-                            <span class="text-spirit-primary font-bold mt-0.5 flex items-center gap-1">
+                                                    <!-- Affichage du RDV si présent -->
+                                                    @if (item.appointmentDate) {
+                                                        <span
+                                                            class="text-spirit-primary font-bold mt-0.5 flex items-center gap-1"
+                                                        >
                               <mat-icon class="text-[10px] h-3 w-3">event</mat-icon>
                               RDV : {{ item.appointmentDate | date:'dd/MM à HH:mm' }}
                             </span>
-                          }
-                        </div>
-                      </div>
-                    </div>
-                    <span class="text-sm font-bold text-stone-600">{{ item.price }}€</span>
-                  </div>
-                }
-              </div>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="text-sm font-bold text-stone-600">{{ item.priceAtPurchase }}
+                                            €</span>
+                                    </div>
+                                }
+                            </div>
 
-              <!-- Footer Total -->
-              <div class="bg-stone-50 px-5 py-3 flex justify-between items-center">
-                <span class="text-xs text-stone-500 font-medium uppercase">Total payé</span>
-                <span class="text-lg font-bold text-spirit-primary">{{ order.totalAmount }}€</span>
-              </div>
-            </div>
-          }
-        </div>
-      } @else {
-        <div
-          class="flex flex-col items-center justify-center text-center py-16 bg-white rounded-3xl border border-stone-100 shadow-sm">
-          <div class="h-20 w-20 bg-stone-50 rounded-full flex items-center justify-center mb-4">
-            <mat-icon class="text-stone-300 text-4xl">shopping_basket</mat-icon>
-          </div>
-          <h3 class="text-stone-800 font-medium text-lg">Aucune commande</h3>
-          <p class="text-stone-500 text-sm mt-2 max-w-[200px]">Votre historique est vide pour le moment.</p>
-          <button routerLink="/boutique"
-                  class="mt-6 px-6 py-2.5 bg-spirit-primary text-white rounded-full text-sm font-medium shadow-lg shadow-spirit-primary/20 active:scale-95 transition-all">
-            Découvrir la boutique
-          </button>
-        </div>
-      }
-    </section>
-  </div>
+                            <!-- Footer Total -->
+                            <div class="bg-stone-50 px-5 py-3 flex justify-between items-center">
+                                <span class="text-xs text-stone-500 font-medium uppercase">Total payé</span>
+                                <span class="text-lg font-bold text-spirit-primary">{{ order.totalAmount }}€</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+            } @else {
+                <div
+                    class="flex flex-col items-center justify-center text-center py-16 bg-white rounded-3xl border border-stone-100 shadow-sm"
+                >
+                    <div class="h-20 w-20 bg-stone-50 rounded-full flex items-center justify-center mb-4">
+                        <mat-icon class="text-stone-300 text-4xl">shopping_basket</mat-icon>
+                    </div>
+                    <h3 class="text-stone-800 font-medium text-lg">Aucune commande</h3>
+                    <p class="text-stone-500 text-sm mt-2 max-w-[200px]">Votre historique est vide pour le moment.</p>
+                    <button
+                        routerLink="/boutique"
+                        class="mt-6 px-6 py-2.5 bg-spirit-primary text-white rounded-full text-sm font-medium shadow-lg shadow-spirit-primary/20 active:scale-95 transition-all"
+                    >
+                        Découvrir la boutique
+                    </button>
+                </div>
+            }
+        </section>
+    </div>
 </div>

@@ -1,108 +1,84 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {CommonModule, DatePipe} from '@angular/common';
-import {AuthService} from '../../../core/auth/auth';
-import {Order, OrderService} from '../../../services/order/order';
-import {MatIconModule} from '@angular/material/icon';
-import {RouterLink} from '@angular/router';
-import {ApiService} from '../../../core/services/api.service';
-import {User} from '../../../core/models/user';
-import {FormsModule} from '@angular/forms';
-import {ToastService} from '../../../services/toast/toast';
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { CommonModule, DatePipe } from '@angular/common';
+import { AuthService } from '../../../core/auth/auth';
+import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../../services/toast/toast';
+import { AuthControllerService, UserDTO } from '../../../core/api';
+import { OrderStore } from '../../../store/order.store';
+import { MatProgressSpinner } from '@angular/material/progress-spinner';
 
 @Component({
-  selector: 'app-profile',
-  standalone: true,
-  imports: [CommonModule, MatIconModule, DatePipe, RouterLink, FormsModule],
-  templateUrl: './profile.html'
+    selector: 'app-profile',
+    standalone: true,
+    imports: [CommonModule, MatIconModule, DatePipe, RouterLink, FormsModule, MatProgressSpinner],
+    templateUrl: './profile.html'
 })
 export class ProfileComponent implements OnInit {
-  auth = inject(AuthService);
-  private orderService = inject(OrderService);
-  private api = inject(ApiService);
-  private toast = inject(ToastService);
+    protected readonly authService = inject(AuthService);
+    private readonly orderStore = inject(OrderStore);
+    private readonly authApi = inject(AuthControllerService);
+    private readonly toast = inject(ToastService);
 
-  orders = signal<Order[]>([]);
-  isLoadingOrders = signal(true);
+    orders = this.orderStore.orders;
+    isLoadingOrders = this.orderStore.loading;
 
-  userProfile = signal<User | null>(null);
-  isEditingProfile = signal(false);
+    userProfile = signal<UserDTO | null>(null);
+    isEditingProfile = signal(false);
 
-  ngOnInit() {
-    this.loadOrders();
-    this.loadProfile();
-  }
+    ngOnInit() {
+        this.loadProfile();
+    }
 
-  private loadOrders() {
-    this.orderService.getMyOrders().subscribe({
-      next: (data) => {
-        this.orders.set(data);
-        this.isLoadingOrders.set(false);
-      },
-      error: (err) => {
-        console.error('Erreur chargement commandes', err);
-        this.isLoadingOrders.set(false);
-      }
-    });
-  }
+    private loadProfile() {
+        this.authApi.getCurrentUserProfile().subscribe({
+            next: (user) => this.userProfile.set(user),
+            error: (err) => console.error('Erreur chargement profil', err)
+        });
+    }
 
-  private loadProfile() {
-    this.api.get<User>('auth/profile').subscribe({
-      next: (user) => this.userProfile.set(user),
-      error: (err) => console.error('Erreur chargement profil', err)
-    });
-  }
+    toggleEdit() {
+        this.isEditingProfile.update(v => !v);
+    }
 
-  toggleEdit() {
-    this.isEditingProfile.update(v => !v);
-  }
+    saveProfile() {
+        const user = this.userProfile();
+        if (!user) return;
 
-  saveProfile() {
-    const user = this.userProfile();
-    if (!user) return;
+        this.authApi.updateCurrentUserProfile(user).subscribe({
+            next: (updatedUser) => {
+                this.userProfile.set(updatedUser);
+                this.isEditingProfile.set(false);
+                this.toast.showSuccess('Profil mis à jour');
+            },
+            error: () => this.toast.showError('Erreur lors de la mise à jour')
+        });
+    }
 
-    this.api.put<User>('auth/profile', user).subscribe({
-      next: (updatedUser) => {
-        this.userProfile.set(updatedUser);
-        this.isEditingProfile.set(false);
-        this.toast.showSuccess('Profil mis à jour');
-      },
-      error: () => this.toast.showError('Erreur lors de la mise à jour')
-    });
-  }
+    getStatusLabel(status: string): string {
+        const labels: Record<string, string> = {
+            'PENDING': 'En attente',
+            'PAID': 'Payée',
+            'SHIPPED': 'Expédiée',
+            'DELIVERED': 'Livrée',
+            'CANCELLED': 'Annulée'
+        };
+        return labels[status] || status;
+    }
 
-  downloadInvoice(orderId: number, invoiceNumber?: string) {
-    this.orderService.downloadInvoice(orderId).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `facture-${invoiceNumber || orderId}.pdf`;
-        link.click();
-        window.URL.revokeObjectURL(url);
-      },
-      error: () => this.toast.showError('Impossible de télécharger la facture')
-    });
-  }
+    getStatusColor(status: string): string {
+        const colors: Record<string, string> = {
+            'PENDING': 'bg-yellow-100 text-yellow-800',
+            'PAID': 'bg-blue-100 text-blue-800',
+            'SHIPPED': 'bg-purple-100 text-purple-800',
+            'DELIVERED': 'bg-green-100 text-green-800',
+            'CANCELLED': 'bg-red-100 text-red-800'
+        };
+        return colors[status] || 'bg-gray-100 text-gray-800';
+    }
 
-  getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      'PENDING': 'En attente',
-      'PAID': 'Payée',
-      'SHIPPED': 'Expédiée',
-      'DELIVERED': 'Livrée',
-      'CANCELLED': 'Annulée'
-    };
-    return labels[status] || status;
-  }
-
-  getStatusColor(status: string): string {
-    const colors: Record<string, string> = {
-      'PENDING': 'bg-yellow-100 text-yellow-800',
-      'PAID': 'bg-blue-100 text-blue-800',
-      'SHIPPED': 'bg-purple-100 text-purple-800',
-      'DELIVERED': 'bg-green-100 text-green-800',
-      'CANCELLED': 'bg-red-100 text-red-800'
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-  }
+    protected handleDownload(orderId: number, invoiceNumber: string) {
+        this.orderStore.downloadInvoice({ orderId, invoiceNumber });
+    }
 }

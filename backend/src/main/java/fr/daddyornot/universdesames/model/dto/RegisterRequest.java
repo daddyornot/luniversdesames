@@ -23,13 +23,18 @@ public record RegisterRequest(
     String lastName,
 
     @Pattern(regexp = "^\\+?[0-9. ()-]{7,25}$", message = "Le numéro de téléphone est invalide")
+    @NotBlank(message = "Le téléphone est obligatoire")
     String phone,
 
+    @NotBlank(message = "L'adresse est obligatoire")
     String address,
+    @NotBlank(message = "La ville est obligatoire")
     String city,
     
     @Pattern(regexp = "^[0-9]{5}$", message = "Le code postal doit contenir 5 chiffres")
+    @NotBlank(message = "Le code postal est obligatoire")
     String postalCode,
 
+    @NotBlank(message = "Le pays est obligatoire")
     String country
 ) {}

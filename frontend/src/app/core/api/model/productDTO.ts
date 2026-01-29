@@ -18,12 +18,12 @@ export interface ProductDTO {
     /**
      * ID unique du produit
      */
-    id?: number;
+    id: number;
     name: string;
     /**
      * Description détaillée en HTML ou texte brut
      */
-    description?: string;
+    description: string;
     price: number;
     /**
      * Liste des pierres associées
@@ -51,7 +51,7 @@ export interface ProductDTO {
      * Temps de repos entre deux rendez-vous (minutes)
      */
     bufferTimeMinutes?: number;
-    isSubscription?: boolean;
+    isSubscription: boolean;
     recurringInterval?: ProductDTO.RecurringIntervalEnum;
 }
 export namespace ProductDTO {

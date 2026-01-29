@@ -6,13 +6,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 public record ProductDTO(
-    @Schema(description = "ID unique du produit", example = "1")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "ID unique du produit", example = "1")
     Long id,
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "Bracelet Améthyste")
     String name,
 
-    @Schema(description = "Description détaillée en HTML ou texte brut")
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "Description détaillée en HTML ou texte brut")
     String description,
 
     @Schema(requiredMode = Schema.RequiredMode.REQUIRED, example = "29.99")
@@ -41,6 +41,7 @@ public record ProductDTO(
     @Schema(description = "Temps de repos entre deux rendez-vous (minutes)")
     Integer bufferTimeMinutes,
 
+    @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
     Boolean isSubscription,
 
     @Schema(allowableValues = {"month", "year", "week"}, example = "month")

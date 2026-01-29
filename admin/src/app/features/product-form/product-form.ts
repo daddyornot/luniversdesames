@@ -16,6 +16,7 @@ import {Stone, StoneService} from '../../core/services/stone.service'; // Nouvea
 import {MediaLibraryComponent} from '../media/media-library/media-library';
 import {ToastService} from '../../services/toast/toast';
 import {MatCard, MatCardContent} from '@angular/material/card';
+import { ProductDTO } from '../../core/api';
 
 @Component({
   selector: 'app-product-form',
@@ -234,4 +235,6 @@ export class ProductForm implements OnInit {
       }
     });
   }
+
+    protected readonly ProductDTO = ProductDTO;
 }

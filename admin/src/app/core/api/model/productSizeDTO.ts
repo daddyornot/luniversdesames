@@ -12,8 +12,8 @@
 
 
 export interface ProductSizeDTO { 
-    id?: number;
-    label?: string;
-    description?: string;
+    id: number;
+    label: string;
+    description: string;
 }
 

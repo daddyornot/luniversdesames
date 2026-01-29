@@ -41,9 +41,9 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Type de produit</mat-label>
             <mat-select formControlName="type">
-              <mat-option value="PHYSICAL">💎 Produit Physique</mat-option>
-              <mat-option value="ENERGY_CARE">✨ Soin Énergétique</mat-option>
-              <mat-option value="COACHING">🧘‍♀️ Coaching</mat-option>
+              <mat-option [value]=ProductDTO.TypeEnum.Physical>💎 Produit Physique</mat-option>
+              <mat-option [value]=ProductDTO.TypeEnum.EnergyCare>✨ Soin Énergétique</mat-option>
+              <mat-option [value]=ProductDTO.TypeEnum.Coaching>🧘‍♀️ Coaching</mat-option>
             </mat-select>
           </mat-form-field>
 

@@ -1,10 +1,10 @@
 import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { CartService } from '../../../services/cart/cart';
 import { CartItem } from '../../../core/models/cart';
 import { CommonModule } from '@angular/common';
-import { Product, ProductVariant } from '../../../core/models/product';
 import { RouterModule } from '@angular/router';
+import { ProductDTO, ProductVariantDTO } from '../../../core/api';
+import { CartStore } from '../../../store/cart.store';
 
 @Component({
     selector: 'app-shop-item',
@@ -13,11 +13,12 @@ import { RouterModule } from '@angular/router';
     templateUrl: 'shop-item.html'
 })
 export class ShopItem implements OnInit {
-    product = input.required<Product>();
-    private cartService = inject(CartService);
+    product = input.required<ProductDTO>();
+
+    private readonly cartStore = inject(CartStore);
 
     // État local pour la variante sélectionnée
-    selectedVariant = signal<ProductVariant | null>(null);
+    selectedVariant = signal<ProductVariantDTO | null>(null);
 
     // Prix affiché dynamique
     displayPrice = computed(() => {
@@ -38,7 +39,7 @@ export class ShopItem implements OnInit {
         }
     }
 
-    selectVariant(event: Event, variant: ProductVariant) {
+    selectVariant(event: Event, variant: ProductVariantDTO) {
         event.stopPropagation(); // Empêche d'ouvrir le détail du produit
         this.selectedVariant.set(variant);
     }
@@ -61,11 +62,11 @@ export class ShopItem implements OnInit {
             id: p.id,
             name: finalName,
             price: finalPrice,
-            imageUrl: p.imageUrl,
+            imageUrl: p.imageUrl ?? '',
             quantity: 1,
             type: p.type
         };
 
-        this.cartService.addToCart(item);
+        this.cartStore.addToCart(item);
     }
 }

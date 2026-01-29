@@ -1,12 +1,11 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, Signal, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { Product, ProductSize, ProductVariant } from '../../../core/models/product';
-import { ProductService } from '../../../services/product/product';
-import { CartService } from '../../../services/cart/cart';
+import { RouterLink } from '@angular/router';
 import { BookingCalendar } from '../booking-calendar/booking-calendar';
-import { CartItem } from '../../../core/models/cart';
+import { ProductDTO, ProductSizeDTO, ProductVariantDTO } from '../../../core/api';
+import { ProductStore } from '../../../store/product.store';
+import { CartStore } from '../../../store/cart.store';
 
 @Component({
     selector: 'app-product-detail',
@@ -14,57 +13,57 @@ import { CartItem } from '../../../core/models/cart';
     imports: [CommonModule, MatIconModule, BookingCalendar, RouterLink],
     templateUrl: './product-detail.html'
 })
-export class ProductDetail implements OnInit {
-    private route = inject(ActivatedRoute);
-    private productService = inject(ProductService);
-    private cartService = inject(CartService);
+export class ProductDetail {
+    public readonly id = input.required({ transform: numberAttribute });
 
-    product = signal<Product | undefined>(undefined);
-    selectedVariant = signal<ProductVariant | undefined>(undefined);
+    private readonly store = inject(ProductStore);
+    private readonly cartStore = inject(CartStore);
+
+    // États locaux pour la sélection
+    selectedVariant = signal<ProductVariantDTO | undefined>(undefined);
+    selectedSize = signal<ProductSizeDTO | undefined>(undefined);
     selectedAppointment = signal<string | undefined>(undefined);
-    selectedSize = signal<ProductSize | undefined>(undefined);
+
+    // Raccourci vers le produit sélectionné dans le store
+    product: Signal<ProductDTO | null> = this.store.selectedProduct;
 
     displayPrice = computed(() => {
-        if (this.selectedVariant()) {
-            return this.selectedVariant()!.price;
-        }
+        const variant = this.selectedVariant();
+        if (variant) return variant.price;
         return this.product()?.price;
     });
 
     displaySessionCount = computed(() => {
-        if (this.selectedVariant()) {
-            return this.selectedVariant()!.sessionCount;
-        }
+        const variant = this.selectedVariant();
+        if (variant) return variant.sessionCount;
         return this.product()?.sessionCount;
     });
 
     constructor() {
+        // Déclenche le chargement hybride dès que l'ID change
+        // L'effet de bord gère aussi les sélections par défaut une fois chargé
+        this.store.getById(this.id);
+
+        // On réinitialise les sélections quand le produit change
+        // On utilise un effect ici car c'est une réaction à un changement de donnée externe (le store)
         effect(() => {
-            const id = this.route.snapshot.paramMap.get('id');
-            if (id) {
-                const p = this.productService.getProductById(id)();
-                if (p) {
-                    this.product.set(p);
-                    if (p.variants && p.variants.length > 0 && !this.selectedVariant()) {
-                        this.selectedVariant.set(p.variants[0]);
-                    }
-                    if (p.sizes && p.sizes.length > 0 && !this.selectedSize()) {
-                        this.selectedSize.set(p.sizes[0]);
-                    }
+            const p = this.product();
+            if (p) {
+                if (p.variants?.length && !this.selectedVariant()) {
+                    this.selectedVariant.set(p.variants[0]);
+                }
+                if (p.sizes?.length && !this.selectedSize()) {
+                    this.selectedSize.set(p.sizes[0]);
                 }
             }
         });
     }
 
-    ngOnInit() {
-        // L'initialisation est gérée par l'effect dans le constructeur
-    }
-
-    selectVariant(variant: ProductVariant) {
+    selectVariant(variant: ProductVariantDTO) {
         this.selectedVariant.set(variant);
     }
 
-    selectSize(size: ProductSize) {
+    selectSize(size: ProductSizeDTO) {
         this.selectedSize.set(size);
     }
 
@@ -83,16 +82,16 @@ export class ProductDetail implements OnInit {
         if (variant) finalName += ` - ${variant.label}`;
         if (size) finalName += ` - ${size.label}`;
 
-        const item: CartItem = {
+        this.cartStore.addToCart({
             id: p.id,
             name: finalName,
-            price: variant ? variant.price : p.price,
-            imageUrl: p.imageUrl,
+            price: variant?.price ?? p.price ?? 0,
+            imageUrl: p.imageUrl ?? '',
             quantity: 1,
-            type: p.type,
+            type: p.type as any, // Cast si nécessaire selon ton interface CartItem
             appointmentDate: this.selectedAppointment()
-        };
-
-        this.cartService.addToCart(item);
+        });
     }
+
+    protected readonly ProductDTO = ProductDTO;
 }

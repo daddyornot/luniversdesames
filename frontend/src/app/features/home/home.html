@@ -68,7 +68,7 @@
                [routerLink]="['/boutique', service.id]">
             <div class="h-12 w-12 rounded-2xl bg-spirit-primary/5 text-spirit-primary flex items-center justify-center mb-4 group-hover:bg-spirit-primary group-hover:text-white transition-colors">
               <mat-icon class="scale-125">
-                {{ service.type === 'ENERGY_CARE' ? 'self_improvement' : (service.type === 'CARD_READING' ? 'style' : 'psychology') }}
+                {{ service.type === ProductDTO.TypeEnum.EnergyCare ? 'self_improvement' : (service.type === ProductDTO.TypeEnum.CardReading ? 'style' : 'psychology') }}
               </mat-icon>
             </div>
             <h3 class="font-bold text-xl text-gray-800 mb-2">{{ service.name }}</h3>

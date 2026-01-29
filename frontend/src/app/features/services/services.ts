@@ -1,66 +1,72 @@
-import {Component, inject, Signal, signal} from '@angular/core';
-import {MatIconModule} from '@angular/material/icon';
-import {ProductService} from '../../services/product/product';
-import {Product} from '../../core/models/product';
-import {BookingCalendar} from '../shop/booking-calendar/booking-calendar';
-import {CartService} from '../../services/cart/cart';
-import {ToastService} from '../../services/toast/toast';
-import {CartItem} from '../../core/models/cart';
-import {toSignal} from '@angular/core/rxjs-interop';
-import {RouterLink} from '@angular/router';
+import { Component, effect, inject, Signal, signal } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
+import { BookingCalendar } from '../shop/booking-calendar/booking-calendar';
+import { ToastService } from '../../services/toast/toast';
+import { CartItem } from '../../core/models/cart';
+import { RouterLink } from '@angular/router';
+import { ProductDTO } from '../../core/api';
+import { ProductStore } from '../../store/product.store';
+import { CartStore } from '../../store/cart.store';
 
 @Component({
-  selector: 'app-services',
-  standalone: true,
-  imports: [MatIconModule, BookingCalendar, RouterLink],
-  templateUrl: './services.html',
-  styleUrl: 'services.css'
+    selector: 'app-services',
+    standalone: true,
+    imports: [MatIconModule, BookingCalendar, RouterLink],
+    templateUrl: './services.html',
+    styleUrl: 'services.css'
 })
 export class Services {
-  private readonly service = inject(ProductService);
-  private cartService = inject(CartService);
-  private toast = inject(ToastService);
+    private readonly productStore = inject(ProductStore);
+    private readonly cartStore = inject(CartStore);
+    private readonly toast = inject(ToastService);
 
-  allServices: Signal<Product[]> = toSignal(this.service.getServices(), {initialValue: []});
+    allServices: Signal<ProductDTO[]> = this.productStore.items;
 
-  selectedService = signal<Product | null>(null);
-  selectedSlot = signal<string | null>(null);
+    constructor() {
+        effect(() => {
+            console.log('Services', this.allServices());
+        });
 
-  openCalendar = signal(false);
+    }
 
-  openBooking(service: Product) {
-    this.selectedService.set(service);
-    this.selectedSlot.set(null);
-    this.openCalendar.set(true);
-  }
+    selectedService = signal<ProductDTO | null>(null);
+    selectedSlot = signal<string | null>(null);
 
-  closeBooking() {
-    this.openCalendar.set(false);
-    this.selectedService.set(null);
-  }
+    openCalendar = signal(false);
 
-  onSlotSelected(dateIso: string) {
-    this.selectedSlot.set(dateIso);
-  }
+    openBooking(service: ProductDTO) {
+        this.selectedService.set(service);
+        this.selectedSlot.set(null);
+        this.openCalendar.set(true);
+    }
 
-  confirmBooking() {
-    const service = this.selectedService();
-    const slot = this.selectedSlot();
+    closeBooking() {
+        this.openCalendar.set(false);
+        this.selectedService.set(null);
+    }
 
-    if (!service || !slot) return;
+    onSlotSelected(dateIso: string) {
+        this.selectedSlot.set(dateIso);
+    }
 
-    const item: CartItem = {
-      id: service.id,
-      name: service.name,
-      price: service.price,
-      imageUrl: service.imageUrl,
-      quantity: 1,
-      type: service.type,
-      appointmentDate: slot
-    };
+    confirmBooking() {
+        const service = this.selectedService();
+        const slot = this.selectedSlot();
 
-    this.cartService.addToCart(item);
-    this.toast.showSuccess('Séance ajoutée au panier');
-    this.closeBooking();
-  }
+        if (!service || !slot) return;
+
+        const item: CartItem = {
+            id: service.id,
+            name: service.name,
+            price: service.price,
+            imageUrl: service.imageUrl ?? '',
+            quantity: 1,
+            type: service.type,
+            appointmentDate: slot
+        };
+
+        this.cartStore.addToCart(item);
+        this.toast.showSuccess('Séance ajoutée au panier');
+        this.closeBooking();
+    }
 }

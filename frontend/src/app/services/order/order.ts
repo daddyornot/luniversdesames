@@ -1,51 +1,22 @@
-import {inject, Injectable} from '@angular/core';
-import {Observable} from 'rxjs';
-import {ApiService} from '../../core/services/api.service';
-
-export interface OrderItem {
-  productId: string;
-  productName?: string;
-  quantity: number;
-  price: number;
-  appointmentDate?: string;
-}
-
-export interface Order {
-  id: number;
-  date: string;
-  status: string;
-  totalAmount: number;
-  items: OrderItem[];
-  invoiceNumber?: string; // Utile pour le nom du fichier
-}
-
-export interface CreateOrderRequest {
-  customerName: string;
-  customerEmail: string;
-  items: {
-    productId: string | number;
-    quantity: number;
-    appointmentDate?: string;
-  }[];
-}
+import { inject, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { Order, OrderControllerService, OrderRequest } from '../../core/api';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class OrderService {
-  private api = inject(ApiService);
+    private readonly api = inject(OrderControllerService);
 
-  getMyOrders(): Observable<Order[]> {
-    return this.api.get<Order[]>('orders/my-orders');
-  }
+    getMyOrders(): Observable<Order[]> {
+        return this.api.getMyOrders();
+    }
 
-  createOrder(order: CreateOrderRequest): Observable<any> {
-    return this.api.post('orders', order);
-  }
+    createOrder(order: OrderRequest): Observable<any> {
+        return this.api.createOrder(order);
+    }
 
-  downloadInvoice(orderId: number): Observable<Blob> {
-    return this.api.get(`orders/${orderId}/invoice`, {
-      responseType: 'blob'
-    });
-  }
+    downloadInvoice(orderId: number): Observable<Blob> {
+        return this.api.downloadOrderInvoice(orderId);
+    }
 }

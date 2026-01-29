@@ -14,10 +14,10 @@ import { FieldInfoFieldAnnotatedType } from './fieldInfoFieldAnnotatedType';
 
 
 export interface FieldInfoTersMethodForFieldInnerParametersInnerDeclaringExecutableTypeParametersInner { 
-    genericDeclaration?: any | null;
-    annotatedBounds?: Array<FieldInfoFieldAnnotatedType>;
     name?: string;
     bounds?: Array<FieldInfoFieldGenericType>;
+    genericDeclaration?: any | null;
+    annotatedBounds?: Array<FieldInfoFieldAnnotatedType>;
     typeName?: string;
     annotations?: any | null;
     declaredAnnotations?: any | null;

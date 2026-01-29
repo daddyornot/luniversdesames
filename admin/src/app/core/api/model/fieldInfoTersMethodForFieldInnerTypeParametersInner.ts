@@ -14,9 +14,9 @@ import { FieldInfoFieldAnnotatedType } from './fieldInfoFieldAnnotatedType';
 
 
 export interface FieldInfoTersMethodForFieldInnerTypeParametersInner { 
-    annotatedBounds?: Array<FieldInfoFieldAnnotatedType>;
     name?: string;
     bounds?: Array<FieldInfoFieldGenericType>;
+    annotatedBounds?: Array<FieldInfoFieldAnnotatedType>;
     typeName?: string;
     annotations?: any | null;
     declaredAnnotations?: any | null;

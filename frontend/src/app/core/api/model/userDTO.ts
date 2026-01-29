@@ -12,14 +12,14 @@
 
 
 export interface UserDTO { 
-    id?: number;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-    address?: string;
-    city?: string;
-    postalCode?: string;
-    country?: string;
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    phone: string;
+    address: string;
+    city: string;
+    postalCode: string;
+    country: string;
 }
 
