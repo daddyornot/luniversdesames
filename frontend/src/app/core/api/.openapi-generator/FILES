@@ -52,8 +52,7 @@ model/fieldInfoTersMethodForFieldInnerTypeParametersInner.ts
 model/itemRequest.ts
 model/loginRequest.ts
 model/models.ts
-model/order.ts
-model/orderItem.ts
+model/orderDTO.ts
 model/orderRequest.ts
 model/paymentResponse.ts
 model/productDTO.ts

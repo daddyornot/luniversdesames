@@ -18,14 +18,8 @@ export const routes: Routes = [
   {
     path: 'mon-compte',
     canActivate: [authGuard],
-    children: [
-      {
-        path: 'commandes',
-        loadComponent: () => import('./features/auth/profile/profile').then(m => m.ProfileComponent),
-        title: 'Mes Commandes'
-      },
-      { path: '', redirectTo: 'commandes', pathMatch: 'full' }
-    ]
+    loadComponent: () => import('./features/auth/profile/profile').then(m => m.ProfileComponent),
+    title: 'Mon Compte'
   },
 
   // E-commerce
@@ -88,5 +82,5 @@ export const routes: Routes = [
     title: 'Contactez-nous'
   },
 
-  { path: '**', redirectTo: '' }
+  {path: '**', redirectTo: ''}
 ];

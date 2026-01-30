@@ -31,8 +31,7 @@ export * from './fieldInfoTersMethodForFieldInnerParametersInnerDeclaringExecuta
 export * from './fieldInfoTersMethodForFieldInnerTypeParametersInner';
 export * from './itemRequest';
 export * from './loginRequest';
-export * from './order';
-export * from './orderItem';
+export * from './orderDTO';
 export * from './orderRequest';
 export * from './paymentResponse';
 export * from './productDTO';

@@ -36,7 +36,11 @@ public class AuthController {
     private final UserService userService;
 
     @PostMapping("/register")
-    @Operation(operationId = "register", summary = "Inscription d'un nouvel utilisateur")
+    @Operation(operationId = "register", summary = "Inscription d'un nouvel utilisateur", responses = {
+            @ApiResponse(responseCode = "200", description = "Utilisateur enregistré avec succès",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Map.class))),
+            @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content(mediaType = "application/json"))
+    })
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) {
         userService.register(registerRequest);
         return ResponseEntity.ok().body(Map.of("message", "Utilisateur enregistré avec succès !"));
@@ -50,7 +54,8 @@ public class AuthController {
                 mediaType = "application/json",
                 schema = @Schema(implementation = AuthResponse.class)
             )
-        )
+        ),
+        @ApiResponse(responseCode = "401", description = "Identifiants incorrects", content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
@@ -64,13 +69,19 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    @Operation(operationId = "getCurrentUserProfile", summary = "Récupère le profil de l'utilisateur connecté")
+    @Operation(operationId = "getCurrentUserProfile", summary = "Récupère le profil de l'utilisateur connecté", responses = {
+            @ApiResponse(responseCode = "200", description = "Profil récupéré avec succès", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Non authentifié", content = @Content(mediaType = "application/json"))
+    })
     public ResponseEntity<UserDTO> getProfile(Authentication authentication) {
         return ResponseEntity.ok(userService.getProfile(authentication.getName()));
     }
 
     @PutMapping("/profile")
-    @Operation(operationId = "updateCurrentUserProfile", summary = "Met à jour le profil connecté")
+    @Operation(operationId = "updateCurrentUserProfile", summary = "Met à jour le profil connecté", responses = {
+            @ApiResponse(responseCode = "200", description = "Profil mis à jour", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Non authentifié", content = @Content(mediaType = "application/json"))
+    })
     public ResponseEntity<UserDTO> updateProfile(Authentication authentication, @RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(userService.updateProfile(authentication.getName(), userDTO));
     }

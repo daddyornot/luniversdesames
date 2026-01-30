@@ -20,14 +20,7 @@ export class Services {
     private readonly cartStore = inject(CartStore);
     private readonly toast = inject(ToastService);
 
-    allServices: Signal<ProductDTO[]> = this.productStore.items;
-
-    constructor() {
-        effect(() => {
-            console.log('Services', this.allServices());
-        });
-
-    }
+    allServices: Signal<ProductDTO[]> = this.productStore.serviceProducts;
 
     selectedService = signal<ProductDTO | null>(null);
     selectedSlot = signal<string | null>(null);

@@ -78,6 +78,7 @@ public class ProductController {
         responses = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = ProductDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Accès refusé", content = @Content(mediaType = "application/json"))
         }
     )
     public ResponseEntity<ProductDTO> createProduct(@RequestBody ProductDTO productDTO) {
@@ -90,6 +91,8 @@ public class ProductController {
         responses = {
             @ApiResponse(responseCode = "200", content = @Content(mediaType = "application/json",
                 schema = @Schema(implementation = ProductDTO.class))),
+            @ApiResponse(responseCode = "403", description = "Accès refusé", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Produit non trouvé", content = @Content(mediaType = "application/json"))
         }
     )
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
@@ -114,7 +117,11 @@ public class ProductController {
 
     @DeleteMapping("/{id}")
     @Secured("ROLE_ADMIN")
-    @Operation(operationId = "deleteProductById")
+    @Operation(operationId = "deleteProductById", responses = {
+            @ApiResponse(responseCode = "204", description = "Produit supprimé"),
+            @ApiResponse(responseCode = "403", description = "Accès refusé", content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Produit non trouvé", content = @Content(mediaType = "application/json"))
+    })
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.noContent().build();

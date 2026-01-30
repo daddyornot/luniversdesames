@@ -15,5 +15,6 @@ export interface ItemRequest {
     productId: number;
     quantity?: number;
     appointmentDate?: string;
+    sizeId?: number;
 }
 

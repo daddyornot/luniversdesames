@@ -2,6 +2,11 @@ package fr.daddyornot.universdesames.controller;
 
 import com.google.api.services.calendar.model.Event;
 import fr.daddyornot.universdesames.service.GoogleCalendarService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +28,10 @@ public class BookingController {
     private final GoogleCalendarService googleCalendarService;
 
     @GetMapping("/slots")
+    @Operation(operationId = "getAvailableSlots", summary = "Créneaux disponibles", responses = {
+            @ApiResponse(responseCode = "200", description = "Liste des créneaux",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = String.class))))
+    })
     public ResponseEntity<List<String>> getAvailableSlots(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam(required = false, defaultValue = "0") Integer bufferMinutes) {
@@ -35,6 +44,11 @@ public class BookingController {
 
     @GetMapping("/events")
     @Secured("ROLE_ADMIN")
+    @Operation(operationId = "getEvents", summary = "Lister les événements (Admin)", responses = {
+            @ApiResponse(responseCode = "200", description = "Liste des événements",
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Event.class)))),
+            @ApiResponse(responseCode = "403", description = "Accès refusé", content = @Content(mediaType = "application/json"))
+    })
     public ResponseEntity<List<Event>> getEvents(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {

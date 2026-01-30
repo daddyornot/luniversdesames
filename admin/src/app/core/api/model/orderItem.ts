@@ -18,5 +18,7 @@ export interface OrderItem {
     quantity?: number;
     priceAtPurchase?: number;
     appointmentDate?: string;
+    sizeLabel?: string;
+    sizeDescription?: string;
 }
 

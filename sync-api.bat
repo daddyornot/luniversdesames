@@ -2,8 +2,8 @@
 setlocal
 
 :: 1. DEFINITION DU CHEMIN VERS TON JDK INTELLIJ
-set "JAVA_HOME=C:\Users\I52174\.jdks\jdk-21.0.5"
-set "PATH=%JAVA_HOME%\bin;%PATH%"
+@REM set "JAVA_HOME=C:\Users\I52174\.jdks\jdk-21.0.5"
+@REM set "PATH=%JAVA_HOME%\bin;%PATH%"
 
 echo ======================================================
 echo VERIFICATION DE LA VERSION JAVA

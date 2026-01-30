@@ -1,13 +1,11 @@
 package fr.daddyornot.universdesames.service;
 
-import fr.daddyornot.universdesames.model.Order;
-import fr.daddyornot.universdesames.model.OrderItem;
-import fr.daddyornot.universdesames.model.Product;
-import fr.daddyornot.universdesames.model.User;
+import fr.daddyornot.universdesames.model.*;
 import fr.daddyornot.universdesames.model.dto.ItemRequest;
 import fr.daddyornot.universdesames.model.dto.OrderRequest;
 import fr.daddyornot.universdesames.repository.OrderRepository;
 import fr.daddyornot.universdesames.repository.ProductRepository;
+import fr.daddyornot.universdesames.repository.ProductSizeRepository;
 import fr.daddyornot.universdesames.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -28,6 +26,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
+    private final ProductSizeRepository productSizeRepository;
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final GoogleCalendarService googleCalendarService;
@@ -63,22 +62,25 @@ public class OrderService {
             orderItem.setProductName(product.getName());
             orderItem.setQuantity(itemReq.quantity());
             orderItem.setPriceAtPurchase(product.getPrice());
-            orderItem.setAppointmentDate(itemReq.appointmentDate() != null ?
-                    itemReq.appointmentDate().toLocalDateTime() : null
-            );
+            orderItem.setAppointmentDate(itemReq.appointmentDate());
+
+            // Gestion de la taille
+            if (itemReq.sizeId() != null) {
+                ProductSize size = productSizeRepository.findById(itemReq.sizeId())
+                    .orElseThrow(() -> new RuntimeException("Taille non trouvée"));
+                orderItem.setSizeLabel(size.getLabel());
+                orderItem.setSizeDescription(size.getDescription());
+            }
 
             order.getItems().add(orderItem);
             total += product.getPrice() * itemReq.quantity();
 
-            // Si c'est un service avec une date, on crée l'événement Google Calendar
             if (itemReq.appointmentDate() != null) {
-                // On lance la création de l'événement de manière asynchrone (ou synchrone si on veut être sûr)
-                // Ici on le fait directement car createEvent gère ses exceptions
                 googleCalendarService.createEvent(
                     "RDV : " + product.getName() + " - " + request.customerName(),
                     "Réservation via Univers des Âmes.\nClient : " + request.customerName() + "\nEmail : " + request.customerEmail(),
                     itemReq.appointmentDate().toLocalDateTime(),
-                    itemReq.appointmentDate().toLocalDateTime().plusHours(1), // Durée par défaut 1h, à affiner selon le produit
+                    itemReq.appointmentDate().toLocalDateTime().plusHours(1),
                     request.customerEmail()
                 );
             }
