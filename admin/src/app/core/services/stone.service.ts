@@ -1,11 +1,6 @@
 import {inject, Injectable, isDevMode} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-
-export interface Stone {
-  id: number;
-  name: string;
-  description: string;
-}
+import { StoneDTO } from '../api';
 
 @Injectable({providedIn: 'root'})
 export class StoneService {
@@ -13,11 +8,11 @@ export class StoneService {
   private readonly apiUrl = isDevMode() ? 'http://localhost:8080/api/stones' : '/api/stones';
 
   getAllStones() {
-    return this.http.get<Stone[]>(this.apiUrl);
+    return this.http.get<StoneDTO[]>(this.apiUrl);
   }
 
-  createStone(stone: Partial<Stone>) {
-    return this.http.post<Stone>(this.apiUrl, stone);
+  createStone(stone: Partial<StoneDTO>) {
+    return this.http.post<StoneDTO>(this.apiUrl, stone);
   }
 
   deleteStone(id: number) {

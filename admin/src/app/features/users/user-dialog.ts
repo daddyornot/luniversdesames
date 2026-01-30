@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { User } from '../../core/services/user.service';
+import { UserDTO } from '../../core/api';
 
 @Component({
   selector: 'app-user-dialog',
@@ -30,7 +30,7 @@ export class UserDialogComponent {
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<UserDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: User | null
+    @Inject(MAT_DIALOG_DATA) public data: UserDTO | null
   ) {
     this.form = this.fb.group({
       id: [data?.id || null],

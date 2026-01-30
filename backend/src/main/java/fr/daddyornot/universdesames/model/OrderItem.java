@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Getter
@@ -20,6 +21,10 @@ public class OrderItem {
     private Long productId;
     private String productName;
     private Integer quantity;
-    private Double priceAtPurchase; // Le prix figé au moment de la commande
-    private LocalDateTime appointmentDate; // Date du RDV si c'est un service
+    private Double priceAtPurchase;
+    private ZonedDateTime appointmentDate;
+
+    // Champs pour figer les détails de la taille
+    private String sizeLabel;
+    private String sizeDescription;
 }

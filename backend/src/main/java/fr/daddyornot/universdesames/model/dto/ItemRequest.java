@@ -12,6 +12,8 @@ public record ItemRequest(
     @Min(value = 1, message = "La quantité minimum est de 1")
     Integer quantity,
 
-    ZonedDateTime appointmentDate // Optionnel, uniquement pour les services
+    ZonedDateTime appointmentDate, // Optionnel pour les services
+
+    Long sizeId // Optionnel pour les produits physiques
 ) {
 }

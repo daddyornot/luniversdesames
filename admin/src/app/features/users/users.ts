@@ -1,10 +1,11 @@
 import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {MatIconModule} from '@angular/material/icon';
-import {UserService, User} from '../../core/services/user.service';
+import {UserService} from '../../core/services/user.service';
 import {ToastService} from '../../services/toast/toast';
 import {MatDialog, MatDialogModule} from '@angular/material/dialog';
 import {UserDialogComponent} from './user-dialog';
+import {UserDTO} from '../../core/api';
 
 @Component({
   selector: 'app-users',
@@ -18,7 +19,7 @@ export class UsersComponent implements OnInit {
   private toast = inject(ToastService);
   private dialog = inject(MatDialog);
 
-  users = signal<User[]>([]);
+  users = signal<UserDTO[]>([]);
 
   ngOnInit() {
     this.loadUsers();
@@ -31,7 +32,7 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  openDialog(user?: User) {
+  openDialog(user?: UserDTO) {
     const dialogRef = this.dialog.open(UserDialogComponent, {
       width: '600px',
       data: user || null

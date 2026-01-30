@@ -67,7 +67,7 @@
           <div class="font-bold text-gray-800">{{ product.price | currency:'EUR' }}</div>
         </div>
 
-        @if (product.stones.length > 0) {
+        @if (product.stones && product.stones.length > 0) {
           <div class="text-sm text-gray-600 mb-3 flex flex-wrap items-center gap-2">
             <span class="text-xs text-gray-400">Pierre:</span>
             @for (stone of product.stones; track stone.id) {

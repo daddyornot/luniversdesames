@@ -46,15 +46,15 @@ public class MediaService {
 
     @PostConstruct
     public void init() {
-//        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
-//        AwsClientBuilder.EndpointConfiguration endpointConfig = new AwsClientBuilder.EndpointConfiguration(this.endpoint, region);
-//        this.s3Client = AmazonS3ClientBuilder.standard()
-//                .withEndpointConfiguration(endpointConfig)
-//                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-//                .withPathStyleAccessEnabled(true)
-//                .build();
-//
-//        createBucketAndSetPublicPolicy();
+        BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+        AwsClientBuilder.EndpointConfiguration endpointConfig = new AwsClientBuilder.EndpointConfiguration(this.endpoint, region);
+        this.s3Client = AmazonS3ClientBuilder.standard()
+                .withEndpointConfiguration(endpointConfig)
+                .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                .withPathStyleAccessEnabled(true)
+                .build();
+
+        createBucketAndSetPublicPolicy();
     }
 
     private void createBucketAndSetPublicPolicy() {

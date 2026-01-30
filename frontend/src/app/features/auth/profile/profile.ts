@@ -1,13 +1,12 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit, Signal, signal} from '@angular/core';
 import {CommonModule, DatePipe} from '@angular/common';
 import {AuthService} from '../../../core/auth/auth';
-import {Order, OrderService} from '../../../services/order/order';
 import {MatIconModule} from '@angular/material/icon';
 import {RouterLink} from '@angular/router';
-import {ApiService} from '../../../core/services/api.service';
-import {User} from '../../../core/models/user';
 import {FormsModule} from '@angular/forms';
 import {ToastService} from '../../../services/toast/toast';
+import {AuthControllerService, OrderDTO, UserDTO} from '../../../core/api';
+import {OrderStore} from '../../../store/order.store';
 
 @Component({
   selector: 'app-profile',
@@ -16,37 +15,23 @@ import {ToastService} from '../../../services/toast/toast';
   templateUrl: './profile.html'
 })
 export class ProfileComponent implements OnInit {
-  auth = inject(AuthService);
-  private orderService = inject(OrderService);
-  private api = inject(ApiService);
-  private toast = inject(ToastService);
+  protected readonly authService = inject(AuthService);
+  private readonly orderStore = inject(OrderStore);
+  private readonly authApi = inject(AuthControllerService);
+  private readonly toast = inject(ToastService);
 
-  orders = signal<Order[]>([]);
-  isLoadingOrders = signal(true);
+  orders: Signal<OrderDTO[]> = this.orderStore.orders;
+  isLoadingOrders = this.orderStore.loading;
 
-  userProfile = signal<User | null>(null);
+  userProfile = signal<UserDTO | null>(null);
   isEditingProfile = signal(false);
 
   ngOnInit() {
-    this.loadOrders();
     this.loadProfile();
   }
 
-  private loadOrders() {
-    this.orderService.getMyOrders().subscribe({
-      next: (data) => {
-        this.orders.set(data);
-        this.isLoadingOrders.set(false);
-      },
-      error: (err) => {
-        console.error('Erreur chargement commandes', err);
-        this.isLoadingOrders.set(false);
-      }
-    });
-  }
-
   private loadProfile() {
-    this.api.get<User>('auth/profile').subscribe({
+    this.authApi.getCurrentUserProfile().subscribe({
       next: (user) => this.userProfile.set(user),
       error: (err) => console.error('Erreur chargement profil', err)
     });
@@ -60,27 +45,13 @@ export class ProfileComponent implements OnInit {
     const user = this.userProfile();
     if (!user) return;
 
-    this.api.put<User>('auth/profile', user).subscribe({
+    this.authApi.updateCurrentUserProfile(user).subscribe({
       next: (updatedUser) => {
         this.userProfile.set(updatedUser);
         this.isEditingProfile.set(false);
         this.toast.showSuccess('Profil mis à jour');
       },
       error: () => this.toast.showError('Erreur lors de la mise à jour')
-    });
-  }
-
-  downloadInvoice(orderId: number, invoiceNumber?: string) {
-    this.orderService.downloadInvoice(orderId).subscribe({
-      next: (blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `facture-${invoiceNumber || orderId}.pdf`;
-        link.click();
-        window.URL.revokeObjectURL(url);
-      },
-      error: () => this.toast.showError('Impossible de télécharger la facture')
     });
   }
 
@@ -104,5 +75,9 @@ export class ProfileComponent implements OnInit {
       'CANCELLED': 'bg-red-100 text-red-800'
     };
     return colors[status] || 'bg-gray-100 text-gray-800';
+  }
+
+  protected handleDownload(orderId: number, invoiceNumber: string) {
+    this.orderStore.downloadInvoice({orderId, invoiceNumber});
   }
 }

@@ -1,43 +1,44 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MatIconModule} from '@angular/material/icon';
-import {CartService} from '../../services/cart/cart';
-import {Router, RouterLink} from '@angular/router';
-import {AuthService} from '../../core/auth/auth';
-import {ToastService} from '../../services/toast/toast';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/auth/auth';
+import { ToastService } from '../../services/toast/toast';
+import { CartStore } from '../../store/cart.store';
 
 @Component({
-  selector: 'app-cart',
-  standalone: true,
-  imports: [CommonModule, MatIconModule, RouterLink],
-  templateUrl: './cart.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-cart',
+    standalone: true,
+    imports: [CommonModule, MatIconModule, RouterLink],
+    templateUrl: './cart.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Cart {
-  private router = inject(Router);
-  private auth = inject(AuthService);
-  private toast = inject(ToastService);
-  cartService = inject(CartService);
+    private readonly router = inject(Router);
+    private readonly auth = inject(AuthService);
+    private readonly toast = inject(ToastService);
+    protected readonly cartStore = inject(CartStore);
 
-  items = this.cartService.items;
-  total = this.cartService.totalPrice;
+    protected items = this.cartStore.items;
+    protected total = this.cartStore.totalPrice;
+    protected cartCount = this.cartStore.count;
 
-  updateQty(id: number, delta: number) {
-    this.cartService.updateQuantity(id, delta);
-  }
-
-  remove(id: number) {
-    this.cartService.removeItem(id);
-  }
-
-  checkout() {
-    if (!this.auth.isAuthenticated()) {
-      this.toast.showError('Veuillez vous connecter pour commander');
-      this.router.navigate(['/auth']);
-      return;
+    updateQty(id: number, delta: number) {
+        this.cartStore.updateQuantity(id, delta);
     }
 
-    // Redirection vers la page de paiement sécurisé
-    this.router.navigate(['/checkout']);
-  }
+    remove(id: number) {
+        this.cartStore.removeItem(id);
+    }
+
+    checkout() {
+        if (!this.auth.isAuthenticated()) {
+            this.toast.showError('Veuillez vous connecter pour commander');
+            this.router.navigate(['/auth']);
+            return;
+        }
+
+        // Redirection vers la page de paiement sécurisé
+        this.router.navigate(['/checkout']);
+    }
 }

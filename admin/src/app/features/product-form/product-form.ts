@@ -9,13 +9,13 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
-import {ProductSize, ProductVariant} from '../../core/models/product';
 import {ProductService} from '../../core/services/product.service';
 import {ProductSizeService} from '../../core/services/product-size.service';
-import {Stone, StoneService} from '../../core/services/stone.service'; // Nouveau service
 import {MediaLibraryComponent} from '../media/media-library/media-library';
 import {ToastService} from '../../services/toast/toast';
 import {MatCard, MatCardContent} from '@angular/material/card';
+import {ProductDTO, ProductSizeDTO, ProductVariantDTO, StoneDTO} from '../../core/api';
+import {StoneService} from '../../core/services/stone.service';
 
 @Component({
   selector: 'app-product-form',
@@ -49,8 +49,8 @@ export class ProductForm implements OnInit {
   productForm!: FormGroup;
   isEditMode = signal(false);
 
-  availableSizes = signal<ProductSize[]>([]);
-  availableStones = signal<Stone[]>([]); // Liste des pierres
+  availableSizes = signal<ProductSizeDTO[]>([]);
+  availableStones = signal<StoneDTO[]>([]); // Liste des pierres
 
   ngOnInit() {
     this.initForm();
@@ -147,18 +147,26 @@ export class ProductForm implements OnInit {
     });
   }
 
-  get variants() { return this.productForm.get('variants') as FormArray; }
-  get sizes() { return this.productForm.get('sizes') as FormArray; }
-  get stones() { return this.productForm.get('stones') as FormArray; }
+  get variants() {
+    return this.productForm.get('variants') as FormArray;
+  }
+
+  get sizes() {
+    return this.productForm.get('sizes') as FormArray;
+  }
+
+  get stones() {
+    return this.productForm.get('stones') as FormArray;
+  }
 
   // --- Gestion des Tailles ---
   isSizeSelected(sizeId: number): boolean {
     return this.sizes.controls.some(control => control.get('id')?.value === sizeId);
   }
 
-  toggleSize(size: ProductSize, isChecked: boolean) {
+  toggleSize(size: ProductSizeDTO, isChecked: boolean) {
     if (isChecked) {
-      this.sizes.push(this.fb.group({ id: [size.id], label: [size.label], description: [size.description] }));
+      this.sizes.push(this.fb.group({id: [size.id], label: [size.label], description: [size.description]}));
     } else {
       const index = this.sizes.controls.findIndex(control => control.get('id')?.value === size.id);
       if (index !== -1) this.sizes.removeAt(index);
@@ -170,16 +178,16 @@ export class ProductForm implements OnInit {
     return this.stones.controls.some(control => control.get('id')?.value === stoneId);
   }
 
-  toggleStone(stone: Stone, isChecked: boolean) {
+  toggleStone(stone: StoneDTO, isChecked: boolean) {
     if (isChecked) {
-      this.stones.push(this.fb.group({ id: [stone.id], name: [stone.name], description: [stone.description] }));
+      this.stones.push(this.fb.group({id: [stone.id], name: [stone.name], description: [stone.description]}));
     } else {
       const index = this.stones.controls.findIndex(control => control.get('id')?.value === stone.id);
       if (index !== -1) this.stones.removeAt(index);
     }
   }
 
-  addVariant(variant?: ProductVariant) {
+  addVariant(variant?: ProductVariantDTO) {
     const variantGroup = this.fb.group({
       id: [variant?.id || null],
       label: [variant?.label || '', Validators.required],
@@ -194,7 +202,7 @@ export class ProductForm implements OnInit {
     this.variants.removeAt(index);
   }
 
-  addSize(size?: ProductSize) {
+  addSize(size?: ProductSizeDTO) {
     const sizeGroup = this.fb.group({
       id: [size?.id || null],
       label: [size?.label || '', Validators.required],
@@ -234,4 +242,6 @@ export class ProductForm implements OnInit {
       }
     });
   }
+
+  protected readonly ProductDTO = ProductDTO;
 }

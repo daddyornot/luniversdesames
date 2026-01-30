@@ -1,49 +1,54 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {HttpClient} from '@angular/common/http';
-import {CartService} from '../../../services/cart/cart';
-import {ToastService} from '../../../services/toast/toast';
-import {API_CONFIG} from '../../../core/config/api.config';
-import {AuthService} from '../../../core/auth/auth';
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ToastService } from '../../../services/toast/toast';
+import { AuthService } from '../../../core/auth/auth';
+import { CartStore } from '../../../store/cart.store';
+import { PaymentControllerService } from '../../../core/api';
 
 @Component({
-  selector: 'app-payment',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './payment.html'
+    selector: 'app-payment',
+    standalone: true,
+    imports: [CommonModule],
+    templateUrl: './payment.html'
 })
 export class PaymentComponent implements OnInit {
-  private http = inject(HttpClient);
-  private cartService = inject(CartService);
-  private toast = inject(ToastService);
-  private auth = inject(AuthService);
+    private readonly paymentApi = inject(PaymentControllerService);
+    private readonly cartStore = inject(CartStore);
+    private readonly toast = inject(ToastService);
+    private readonly auth = inject(AuthService);
 
-  ngOnInit() {
-    this.initiateCheckout();
-  }
+    ngOnInit() {
+        this.initiateCheckout();
+    }
 
-  initiateCheckout() {
-    const user = this.auth.currentUser();
-    const orderPayload = {
-      customerName: user?.firstName || 'Client',
-      customerEmail: user?.email,
-      items: this.cartService.items().map(item => ({
-        productId: item.id,
-        quantity: item.quantity,
-        appointmentDate: item.appointmentDate
-      }))
-    };
-
-    this.http.post<{ url: string }>(`${API_CONFIG.baseUrl}/payment/create-session`, orderPayload)
-      .subscribe({
-        next: (res) => {
-          // Redirection vers Stripe Checkout
-          window.location.href = res.url;
-        },
-        error: (err) => {
-          console.error(err);
-          this.toast.showError('Erreur lors de l\'initialisation du paiement');
+    initiateCheckout() {
+        const user = this.auth.currentUser();
+        if (!user) {
+            this.toast.showError('Impossible d\'effectuer un paiement : l\'utilisateur n\'est pas connecté !');
+            return;
         }
-      });
-  }
+        const orderPayload = {
+            customerName: user.firstName,
+            customerEmail: user.email,
+            items: this.cartStore.items().map(item => ({
+                productId: item.id,
+                quantity: item.quantity,
+                appointmentDate: item.appointmentDate
+            }))
+        };
+
+        this.paymentApi.createCheckoutSession(orderPayload)
+            .subscribe({
+                next: (res) => {
+                    // Redirection vers Stripe Checkout
+                    if (res.url != null) {
+                        globalThis.location.href = res.url;
+                    }
+                },
+                error: (err) => {
+                    console.error(err);
+                    this.toast.showError('Erreur lors de l\'initialisation du paiement');
+                }
+            });
+    }
 }

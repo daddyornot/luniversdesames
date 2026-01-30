@@ -1,21 +1,27 @@
-import {ChangeDetectionStrategy, Component, inject} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {MatIconModule} from '@angular/material/icon';
-import {ShopItem} from "../shop/shop-item/shop-item";
-import {RouterLink} from "@angular/router";
-import {ProductService} from "../../services/product/product";
-import {toSignal} from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { ShopItem } from '../shop/shop-item/shop-item';
+import { RouterLink } from '@angular/router';
+import { ProductDTO } from '../../core/api';
+import { ProductStore } from '../../store/product.store';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  imports: [MatIconModule, CommonModule, ShopItem, RouterLink],
-  templateUrl: './home.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-home',
+    standalone: true,
+    imports: [MatIconModule, CommonModule, ShopItem, RouterLink],
+    templateUrl: './home.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Home {
-  private readonly service = inject(ProductService);
+    private readonly productStore = inject(ProductStore);
+    protected readonly ProductDTO = ProductDTO;
 
-  bracelets = toSignal(this.service.getPhysicalProducts(), {initialValue: []});
-  services = toSignal(this.service.getServices(), {initialValue: []});
+    protected bracelets = this.productStore.physicalProducts;
+    protected services = this.productStore.serviceProducts;
+
+    constructor() {
+        this.productStore.loadAll();
+    }
+
 }

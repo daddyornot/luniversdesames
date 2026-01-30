@@ -1,6 +1,7 @@
 <div class="flex flex-col h-full max-h-[100dvh] bg-gray-50">
   <!-- Header -->
-  <div class="flex justify-between items-center px-4 py-3 border-b border-gray-200 bg-white sticky top-0 z-20 shadow-sm">
+  <div
+    class="flex justify-between items-center px-4 py-3 border-b border-gray-200 bg-white sticky top-0 z-20 shadow-sm">
     <h2 class="text-lg md:text-xl font-serif font-bold text-gray-800 flex items-center gap-2 truncate">
       <mat-icon class="text-admin-primary">{{ isEditMode() ? 'edit' : 'add_circle' }}</mat-icon>
       {{ isEditMode() ? 'Modifier' : 'Nouveau produit' }}
@@ -41,9 +42,9 @@
           <mat-form-field appearance="outline" class="w-full">
             <mat-label>Type de produit</mat-label>
             <mat-select formControlName="type">
-              <mat-option value="PHYSICAL">💎 Produit Physique</mat-option>
-              <mat-option value="ENERGY_CARE">✨ Soin Énergétique</mat-option>
-              <mat-option value="COACHING">🧘‍♀️ Coaching</mat-option>
+              <mat-option [value]=ProductDTO.TypeEnum.Physical>💎 Produit Physique</mat-option>
+              <mat-option [value]=ProductDTO.TypeEnum.EnergyCare>✨ Soin Énergétique</mat-option>
+              <mat-option [value]=ProductDTO.TypeEnum.Coaching>🧘‍♀️ Coaching</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -56,13 +57,16 @@
           <!-- Image Selection -->
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">Image du produit</label>
-            <div class="relative group cursor-pointer border-2 border-dashed border-gray-300 rounded-xl hover:border-admin-primary transition-colors overflow-hidden h-40 flex items-center justify-center bg-gray-50"
-                 (click)="openMediaLibrary()" matRipple>
+            <div
+              class="relative group cursor-pointer border-2 border-dashed border-gray-300 rounded-xl hover:border-admin-primary transition-colors overflow-hidden h-40 flex items-center justify-center bg-gray-50"
+              (click)="openMediaLibrary()" matRipple>
 
               @if (productForm.get('imageUrl')?.value) {
                 <img [src]="productForm.get('imageUrl')?.value" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span class="text-white font-medium flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
+                <div
+                  class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <span
+                    class="text-white font-medium flex items-center gap-2 bg-black/40 px-3 py-1 rounded-full backdrop-blur-sm">
                     <mat-icon>edit</mat-icon> Changer
                   </span>
                 </div>
@@ -86,12 +90,13 @@
         <mat-card-content class="p-4 pt-4 space-y-6">
 
           <!-- Pierres (Chips) -->
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">Pierres / Matériaux</label>
-            <div class="flex flex-wrap gap-2">
-              @for (stone of availableStones(); track stone.id) {
-                <div class="cursor-pointer transition-all active:scale-95"
-                     (click)="toggleStone(stone, !isStoneSelected(stone.id))">
+          @if (productForm.get('type')?.value === 'PHYSICAL') {
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Pierres / Matériaux</label>
+              <div class="flex flex-wrap gap-2">
+                @for (stone of availableStones(); track stone.id) {
+                  <div class="cursor-pointer transition-all active:scale-95"
+                       (click)="toggleStone(stone, !isStoneSelected(stone.id))">
                   <span class="px-3 py-1.5 rounded-full text-sm border flex items-center gap-1 transition-colors"
                         [class.bg-admin-primary]="isStoneSelected(stone.id)"
                         [class.text-white]="isStoneSelected(stone.id)"
@@ -99,23 +104,25 @@
                         [class.bg-white]="!isStoneSelected(stone.id)"
                         [class.text-gray-700]="!isStoneSelected(stone.id)">
                     {{ stone.name }}
-                      @if (isStoneSelected(stone.id)) {
-                          <mat-icon class="text-xs h-4 w-4">check</mat-icon>
-                      }
+                    @if (isStoneSelected(stone.id)) {
+                      <mat-icon class="text-xs h-4 w-4">check</mat-icon>
+                    }
                   </span>
-                </div>
-              }
-              @if (availableStones().length === 0) {
-                <p class="text-sm text-gray-400 italic">Aucune pierre disponible.</p>
-              }
+                  </div>
+                }
+                @if (availableStones().length === 0) {
+                  <p class="text-sm text-gray-400 italic">Aucune pierre disponible.</p>
+                }
+              </div>
             </div>
-          </div>
+          }
 
           <!-- Champs Abonnement -->
-          @if (productForm.get('type')?.value === 'SUBSCRIPTION') {
+          @if (productForm.get('isSubscription')?.value === true) {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-orange-50 p-4 rounded-lg border border-orange-100">
               <div class="flex items-center">
-                <mat-checkbox formControlName="isSubscription" color="primary">Est un abonnement récurrent</mat-checkbox>
+                <mat-checkbox formControlName="isSubscription" color="primary">Est un abonnement récurrent
+                </mat-checkbox>
               </div>
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Fréquence</mat-label>
@@ -129,7 +136,7 @@
           }
 
           <!-- Champs Services -->
-          @if (productForm.get('type')?.value !== 'PHYSICAL' && productForm.get('type')?.value !== 'SUBSCRIPTION') {
+          @if (productForm.get('type')?.value !== 'PHYSICAL') {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <mat-form-field appearance="outline" class="w-full">
                 <mat-label>Nb Séances</mat-label>
@@ -152,54 +159,61 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
         <!-- Variantes -->
-        <mat-card class="h-full flex flex-col">
-          <div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
-            <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider flex items-center gap-2">
-              <mat-icon class="text-sm">layers</mat-icon> Variantes
-            </h3>
-            <button mat-stroked-button color="primary" (click)="addVariant()" class="!px-2 !min-w-0">
-              <mat-icon>add</mat-icon> Ajouter
-            </button>
-          </div>
+        @if (productForm.get('type')?.value !== 'PHYSICAL') {
+          <mat-card class="h-full flex flex-col">
+            <div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
+              <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider flex items-center gap-2">
+                <mat-icon class="text-sm">layers</mat-icon>
+                Variantes
+              </h3>
+              <button mat-stroked-button color="primary" (click)="addVariant()" class="!px-2 !min-w-0">
+                <mat-icon>add</mat-icon>
+                Ajouter
+              </button>
+            </div>
 
-          <mat-card-content class="p-4 flex-1 space-y-3" formArrayName="variants">
-            @for (variantGroup of variants.controls; track $index) {
-              <div [formGroupName]="$index" class="p-3 bg-white rounded-lg border border-gray-200 shadow-sm relative group">
-                <button mat-icon-button color="warn" (click)="removeVariant($index)" class="absolute -top-2 -right-2 scale-75 bg-white shadow-sm border border-gray-100">
-                  <mat-icon>close</mat-icon>
-                </button>
+            <mat-card-content class="p-4 flex-1 space-y-3" formArrayName="variants">
+              @for (variantGroup of variants.controls; track $index) {
+                <div [formGroupName]="$index"
+                     class="p-3 bg-white rounded-lg border border-gray-200 shadow-sm relative group">
+                  <button mat-icon-button color="warn" (click)="removeVariant($index)"
+                          class="absolute -top-2 -right-2 scale-75 bg-white shadow-sm border border-gray-100">
+                    <mat-icon>close</mat-icon>
+                  </button>
 
-                <div class="grid grid-cols-2 gap-3">
-                  <mat-form-field appearance="outline" class="col-span-2 text-sm density-compact">
-                    <mat-label>Nom</mat-label>
-                    <input matInput formControlName="label" placeholder="Ex: Formule Premium">
-                  </mat-form-field>
-                  <mat-form-field appearance="outline" class="text-sm density-compact">
-                    <mat-label>Prix</mat-label>
-                    <input matInput type="number" formControlName="price">
-                    <span matTextSuffix>€</span>
-                  </mat-form-field>
-                  <mat-form-field appearance="outline" class="text-sm density-compact">
-                    <mat-label>Sessions</mat-label>
-                    <input matInput type="number" formControlName="sessionCount">
-                  </mat-form-field>
+                  <div class="grid grid-cols-2 gap-3">
+                    <mat-form-field appearance="outline" class="col-span-2 text-sm density-compact">
+                      <mat-label>Nom</mat-label>
+                      <input matInput formControlName="label" placeholder="Ex: Formule Premium">
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="text-sm density-compact">
+                      <mat-label>Prix</mat-label>
+                      <input matInput type="number" formControlName="price">
+                      <span matTextSuffix>€</span>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="text-sm density-compact">
+                      <mat-label>Sessions</mat-label>
+                      <input matInput type="number" formControlName="sessionCount">
+                    </mat-form-field>
+                  </div>
                 </div>
-              </div>
-            }
-            @if (variants.controls.length === 0) {
-              <div class="text-center py-8 text-gray-400 text-sm italic">
-                Aucune variante définie
-              </div>
-            }
-          </mat-card-content>
-        </mat-card>
+              }
+              @if (variants.controls.length === 0) {
+                <div class="text-center py-8 text-gray-400 text-sm italic">
+                  Aucune variante définie
+                </div>
+              }
+            </mat-card-content>
+          </mat-card>
+        }
 
         <!-- Tailles (Chips) -->
         @if (productForm.get('type')?.value === 'PHYSICAL') {
           <mat-card class="h-full flex flex-col">
             <div class="bg-gray-50 px-4 py-3 border-b border-gray-100 flex justify-between items-center">
               <h3 class="text-sm font-bold text-gray-600 uppercase tracking-wider flex items-center gap-2">
-                <mat-icon class="text-sm">straighten</mat-icon> Tailles
+                <mat-icon class="text-sm">straighten</mat-icon>
+                Tailles
               </h3>
             </div>
 
@@ -208,12 +222,13 @@
                 @for (size of availableSizes(); track size.id) {
                   <div class="cursor-pointer transition-all active:scale-95"
                        (click)="toggleSize(size, !isSizeSelected(size.id))">
-                    <span class="px-4 py-2 rounded-lg text-sm border flex flex-col items-center justify-center min-w-[60px] transition-colors"
-                          [class.bg-admin-primary]="isSizeSelected(size.id)"
-                          [class.text-white]="isSizeSelected(size.id)"
-                          [class.border-admin-primary]="isSizeSelected(size.id)"
-                          [class.bg-white]="!isSizeSelected(size.id)"
-                          [class.text-gray-700]="!isSizeSelected(size.id)">
+                    <span
+                      class="px-4 py-2 rounded-lg text-sm border flex flex-col items-center justify-center min-w-[60px] transition-colors"
+                      [class.bg-admin-primary]="isSizeSelected(size.id)"
+                      [class.text-white]="isSizeSelected(size.id)"
+                      [class.border-admin-primary]="isSizeSelected(size.id)"
+                      [class.bg-white]="!isSizeSelected(size.id)"
+                      [class.text-gray-700]="!isSizeSelected(size.id)">
                       <span class="font-bold">{{ size.label }}</span>
                       <span class="text-[10px] opacity-80">{{ size.description }}</span>
                     </span>
@@ -234,7 +249,8 @@
   </div>
 
   <!-- Footer (Actions) -->
-  <div class="px-4 py-3 border-t border-gray-200 bg-white flex justify-end gap-3 sticky bottom-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+  <div
+    class="px-4 py-3 border-t border-gray-200 bg-white flex justify-end gap-3 sticky bottom-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
     <button mat-stroked-button (click)="onCancel()">
       Annuler
     </button>

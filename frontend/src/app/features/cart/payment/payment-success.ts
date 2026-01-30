@@ -1,10 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {Router, RouterLink} from '@angular/router';
-import {CartService} from '../../../services/cart/cart';
-import {CreateOrderRequest, OrderService} from '../../../services/order/order';
+import {RouterLink} from '@angular/router';
 import {AuthService} from '../../../core/auth/auth';
 import {ToastService} from '../../../services/toast/toast';
+import {OrderRequest} from '../../../core/api';
+import {CartStore} from '../../../store/cart.store';
+import {OrderStore} from '../../../store/order.store';
 
 @Component({
   selector: 'app-payment-success',
@@ -13,11 +14,10 @@ import {ToastService} from '../../../services/toast/toast';
   templateUrl: './payment-success.html'
 })
 export class PaymentSuccessComponent implements OnInit {
-  private cartService = inject(CartService);
-  private orderService = inject(OrderService);
-  private auth = inject(AuthService);
-  private toast = inject(ToastService);
-  private router = inject(Router);
+  private readonly cartStore = inject(CartStore);
+  private readonly orderStore = inject(OrderStore);
+  private readonly auth = inject(AuthService);
+  private readonly toast = inject(ToastService);
 
   ngOnInit() {
     // On finalise la commande ici (version simplifiée sans Webhook)
@@ -26,11 +26,11 @@ export class PaymentSuccessComponent implements OnInit {
   }
 
   finalizeOrder() {
-    const items = this.cartService.items();
+    const items = this.cartStore.items();
     if (items.length === 0) return; // Déjà traité
 
     const user = this.auth.currentUser();
-    const orderPayload: CreateOrderRequest = {
+    const orderPayload: OrderRequest = {
       customerName: user?.firstName || 'Client',
       customerEmail: user?.email || 'email',
       items: items.map(item => ({
@@ -40,16 +40,17 @@ export class PaymentSuccessComponent implements OnInit {
       }))
     };
 
-    this.orderService.createOrder(orderPayload).subscribe({
-      next: () => {
-        this.cartService.clearCart();
+    this.orderStore.createOrder({
+      request: orderPayload,
+      onSuccess: () => {
+        this.cartStore.clearCart();
         this.toast.showSuccess('Commande enregistrée');
       },
-      error: (err) => {
+      onError: (err) => {
         console.error('Erreur création commande', err);
         // Même si ça échoue ici (ex: doublon), le paiement est passé.
         // On vide le panier pour ne pas confondre l'utilisateur.
-        this.cartService.clearCart();
+        this.cartStore.clearCart();
       }
     });
   }

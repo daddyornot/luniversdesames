@@ -57,7 +57,7 @@ class OrderServiceTest {
         OrderRequest request = new OrderRequest(
                 userEmail,
                 "Test User",
-                List.of(new ItemRequest(1L, 2, null)) // 2 articles à 50€
+                List.of(new ItemRequest(1L, 2, null, null)) // 2 articles à 50€
         );
 
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
@@ -97,7 +97,7 @@ class OrderServiceTest {
         OrderRequest request = new OrderRequest(
                 userEmail,
                 "Test User",
-                List.of(new ItemRequest(1L, 1, rdvDate))
+                List.of(new ItemRequest(1L, 1, rdvDate, null))
         );
 
         when(userRepository.findByEmail(userEmail)).thenReturn(Optional.of(user));
